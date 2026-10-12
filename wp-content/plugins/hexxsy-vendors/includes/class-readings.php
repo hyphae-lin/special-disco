@@ -39,6 +39,9 @@ class Readings {
 	public static function init(): void {
 		add_action( 'woocommerce_product_options_general_product_data', array( __CLASS__, 'product_fields' ) );
 		add_action( 'woocommerce_admin_process_product_object', array( __CLASS__, 'save_product_fields' ) );
+		add_filter( 'woocommerce_product_supports', array( __CLASS__, 'disable_ajax_add_to_cart' ), 10, 3 );
+		add_filter( 'woocommerce_product_add_to_cart_url', array( __CLASS__, 'loop_button_url' ), 10, 2 );
+		add_filter( 'woocommerce_product_add_to_cart_text', array( __CLASS__, 'loop_button_text' ), 10, 2 );
 	}
 
 	/**
@@ -127,30 +130,79 @@ class Readings {
 	}
 
 	/**
-	 * Save reading settings. Nonce and capability checks are done by
-	 * WooCommerce before this hook runs.
+	 * Save reading settings from the product editor. Nonce and capability
+	 * checks are done by WooCommerce before this hook runs.
 	 *
 	 * @param \WC_Product $product Product being saved.
 	 */
 	public static function save_product_fields( \WC_Product $product ): void {
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		$format = isset( $_POST[ self::FORMAT_META ] ) ? sanitize_key( $_POST[ self::FORMAT_META ] ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		self::apply_settings( $product, wp_unslash( $_POST ) );
+	}
+
+	/**
+	 * Apply reading settings from submitted form data. Shared by the product
+	 * editor and the vendor dashboard.
+	 *
+	 * @param \WC_Product $product Product to update. Not saved here.
+	 * @param array       $input   Unslashed form data.
+	 */
+	public static function apply_settings( \WC_Product $product, array $input ): void {
+		$format = isset( $input[ self::FORMAT_META ] ) ? sanitize_key( $input[ self::FORMAT_META ] ) : '';
 		if ( ! in_array( $format, array( self::WRITTEN, self::LIVE ), true ) ) {
 			$format = '';
 		}
 		$product->update_meta_data( self::FORMAT_META, $format );
 
-		$product->update_meta_data( self::TURNAROUND_META, isset( $_POST[ self::TURNAROUND_META ] ) ? absint( $_POST[ self::TURNAROUND_META ] ) : 0 );
-		$product->update_meta_data( self::DURATION_META, isset( $_POST[ self::DURATION_META ] ) ? absint( $_POST[ self::DURATION_META ] ) : 0 );
+		$product->update_meta_data( self::TURNAROUND_META, isset( $input[ self::TURNAROUND_META ] ) ? absint( $input[ self::TURNAROUND_META ] ) : 0 );
+		$product->update_meta_data( self::DURATION_META, isset( $input[ self::DURATION_META ] ) ? absint( $input[ self::DURATION_META ] ) : 0 );
 
-		$intake = isset( $_POST[ self::INTAKE_META ] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST[ self::INTAKE_META ] ) ) : array();
+		$intake = isset( $input[ self::INTAKE_META ] ) ? array_map( 'sanitize_key', (array) $input[ self::INTAKE_META ] ) : array();
 		$product->update_meta_data( self::INTAKE_META, array_values( array_intersect( $intake, array_keys( self::INTAKE_FIELDS ) ) ) );
-		// phpcs:enable
 
 		// Readings are services: nothing ships, and each order needs its own reading.
 		if ( '' !== $format ) {
 			$product->set_virtual( true );
 			$product->set_sold_individually( true );
 		}
+	}
+
+	/**
+	 * Shop-page buttons can't collect intake answers or (later) a call time,
+	 * so readings link to their own page instead of adding to cart directly.
+	 *
+	 * @param bool        $supports Whether the feature is supported.
+	 * @param string      $feature  Feature name.
+	 * @param \WC_Product $product  Product.
+	 */
+	public static function disable_ajax_add_to_cart( $supports, $feature, $product ) {
+		return 'ajax_add_to_cart' === $feature && '' !== self::format( $product ) ? false : $supports;
+	}
+
+	/**
+	 * Point the shop-page button at the reading's page.
+	 *
+	 * @param string      $url     Add-to-cart URL.
+	 * @param \WC_Product $product Product.
+	 */
+	public static function loop_button_url( $url, $product ) {
+		return '' !== self::format( $product ) ? $product->get_permalink() : $url;
+	}
+
+	/**
+	 * Label the shop-page button for a reading.
+	 *
+	 * @param string      $text    Button text.
+	 * @param \WC_Product $product Product.
+	 */
+	public static function loop_button_text( $text, $product ) {
+		$format = self::format( $product );
+		if ( self::WRITTEN === $format ) {
+			return __( 'Request reading', 'hexxsy-vendors' );
+		}
+		if ( self::LIVE === $format ) {
+			return __( 'Book a call', 'hexxsy-vendors' );
+		}
+		return $text;
 	}
 }

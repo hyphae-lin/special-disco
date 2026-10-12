@@ -28,6 +28,9 @@ class Roles {
 			)
 		);
 
+		// Dashboard endpoints register on init, after activation runs.
+		update_option( Dashboard::FLUSH_FLAG, 1 );
+
 		if ( false === get_option( Commission::OPTION ) ) {
 			add_option( Commission::OPTION, Commission::DEFAULT_RATE );
 		}

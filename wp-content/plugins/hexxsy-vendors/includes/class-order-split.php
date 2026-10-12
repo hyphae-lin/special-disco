@@ -23,10 +23,36 @@ class Order_Split {
 	const EARNINGS_META   = '_hexxsy_vendor_earnings';
 
 	/**
+	 * Order-level meta, one row per vendor on the order, so a vendor's
+	 * orders can be queried (line item meta can't be, under HPOS).
+	 */
+	const ORDER_VENDOR_META = '_hexxsy_vendor';
+
+	/**
 	 * Hook in.
 	 */
 	public static function init(): void {
 		add_action( 'woocommerce_checkout_create_order_line_item', array( __CLASS__, 'stamp_line_item' ), 20, 4 );
+		add_action( 'woocommerce_checkout_create_order', array( __CLASS__, 'stamp_order' ) );
+	}
+
+	/**
+	 * Tag the order with each vendor who has a line on it. Runs after line
+	 * items are created and before the order is first saved.
+	 *
+	 * @param \WC_Order $order Order.
+	 */
+	public static function stamp_order( $order ): void {
+		$vendor_ids = array();
+		foreach ( $order->get_items() as $item ) {
+			$vendor_id = (int) $item->get_meta( self::VENDOR_META );
+			if ( $vendor_id ) {
+				$vendor_ids[ $vendor_id ] = true;
+			}
+		}
+		foreach ( array_keys( $vendor_ids ) as $vendor_id ) {
+			$order->add_meta_data( self::ORDER_VENDOR_META, $vendor_id, false );
+		}
 	}
 
 	/**
