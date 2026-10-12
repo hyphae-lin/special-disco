@@ -23,6 +23,14 @@ class Order_Split {
 	const EARNINGS_META   = '_hexxsy_vendor_earnings';
 
 	/**
+	 * Reading details as sold, so later product edits don't change what
+	 * the customer bought.
+	 */
+	const FORMAT_META     = '_hexxsy_reading_format';
+	const TURNAROUND_META = '_hexxsy_turnaround_days';
+	const DURATION_META   = '_hexxsy_duration_minutes';
+
+	/**
 	 * Order-level meta, one row per vendor on the order, so a vendor's
 	 * orders can be queried (line item meta can't be, under HPOS).
 	 */
@@ -79,5 +87,12 @@ class Order_Split {
 		$item->add_meta_data( self::RATE_META, $rate, true );
 		$item->add_meta_data( self::COMMISSION_META, wc_format_decimal( $split['commission'] / $factor, $decimals ), true );
 		$item->add_meta_data( self::EARNINGS_META, wc_format_decimal( $split['vendor'] / $factor, $decimals ), true );
+
+		$product = $item->get_product();
+		if ( $product && '' !== Readings::format( $product ) ) {
+			$item->add_meta_data( self::FORMAT_META, Readings::format( $product ), true );
+			$item->add_meta_data( self::TURNAROUND_META, (int) $product->get_meta( Readings::TURNAROUND_META ), true );
+			$item->add_meta_data( self::DURATION_META, (int) $product->get_meta( Readings::DURATION_META ), true );
+		}
 	}
 }

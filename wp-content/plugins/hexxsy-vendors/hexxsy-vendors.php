@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Hexxsy Vendors
  * Description:       Multi-vendor marketplace for readings on Hexxsy: vendor applications and approval, reading offerings, intake questions and commission tracking.
- * Version:           0.2.0
+ * Version:           0.3.0
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Requires Plugins:  woocommerce
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'HEXXSY_VENDORS_VERSION', '0.2.0' );
+define( 'HEXXSY_VENDORS_VERSION', '0.3.0' );
 define( 'HEXXSY_VENDORS_FILE', __FILE__ );
 define( 'HEXXSY_VENDORS_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -27,6 +27,8 @@ require_once HEXXSY_VENDORS_DIR . 'includes/class-readings.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-intake.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-order-split.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-dashboard.php';
+require_once HEXXSY_VENDORS_DIR . 'includes/class-pdf.php';
+require_once HEXXSY_VENDORS_DIR . 'includes/class-delivery.php';
 
 register_activation_hook( __FILE__, array( 'Hexxsy\Vendors\Roles', 'install' ) );
 register_deactivation_hook( __FILE__, array( 'Hexxsy\Vendors\Roles', 'uninstall' ) );
@@ -50,5 +52,6 @@ add_action(
 		Hexxsy\Vendors\Intake::init();
 		Hexxsy\Vendors\Order_Split::init();
 		Hexxsy\Vendors\Dashboard::init();
+		Hexxsy\Vendors\Delivery::init();
 	}
 );

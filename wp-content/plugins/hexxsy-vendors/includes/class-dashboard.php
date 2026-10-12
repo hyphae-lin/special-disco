@@ -145,6 +145,9 @@ class Dashboard {
 			case 'save_shop':
 				$redirect = self::save_shop( $input );
 				break;
+			case 'deliver_reading':
+				$redirect = Delivery::save( $input );
+				break;
 			default:
 				return;
 		}
@@ -555,6 +558,7 @@ class Dashboard {
 						<?php endforeach; ?>
 					</dl>
 				<?php endif; ?>
+				<?php Delivery::render_vendor_panel( $order, $item ); ?>
 			</div>
 			<?php
 		}
