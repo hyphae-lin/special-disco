@@ -21,6 +21,12 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 - Written reading delivery
 - Custom theme
 
+## Live call policy
+
+- Customers can cancel free of charge up to 24 hours before the call.
+- Inside 24 hours, no refund. A customer who doesn't show isn't refunded either.
+- If the reader doesn't show, or cancels at any time, the customer gets a full refund.
+
 ## Development
 
 ```sh
