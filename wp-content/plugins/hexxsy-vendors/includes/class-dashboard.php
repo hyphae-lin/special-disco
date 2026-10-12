@@ -8,7 +8,7 @@
 namespace Hexxsy\Vendors;
 
 /**
- * Adds three My Account tabs for approved vendors: My readings, Reading
+ * Adds three My Account tabs for approved vendors: Readings I offer, Reading
  * orders and Shop profile. Vendors never need wp-admin (WooCommerce already
  * keeps users without editing capabilities out of it).
  */
@@ -39,7 +39,7 @@ class Dashboard {
 	public static function init(): void {
 		add_filter( 'woocommerce_get_query_vars', array( __CLASS__, 'query_vars' ) );
 		add_filter( 'woocommerce_account_menu_items', array( __CLASS__, 'menu_items' ) );
-		add_filter( 'woocommerce_endpoint_' . self::READINGS . '_title', static fn() => __( 'My readings', 'hexxsy-vendors' ) );
+		add_filter( 'woocommerce_endpoint_' . self::READINGS . '_title', static fn() => __( 'Readings I offer', 'hexxsy-vendors' ) );
 		add_filter( 'woocommerce_endpoint_' . self::ORDERS . '_title', static fn() => __( 'Reading orders', 'hexxsy-vendors' ) );
 		add_filter( 'woocommerce_endpoint_' . self::SHOP . '_title', static fn() => __( 'Shop profile', 'hexxsy-vendors' ) );
 
@@ -64,11 +64,13 @@ class Dashboard {
 	}
 
 	/**
-	 * New endpoints need fresh rewrite rules once, after activation.
+	 * New endpoints need fresh rewrite rules once, after activation or an update.
 	 */
 	public static function maybe_flush_rewrites(): void {
-		if ( get_option( self::FLUSH_FLAG ) ) {
+		// Plugin updates can add endpoints too, and don't re-run activation.
+		if ( get_option( self::FLUSH_FLAG ) || HEXXSY_VENDORS_VERSION !== get_option( 'hexxsy_vendors_version' ) ) {
 			delete_option( self::FLUSH_FLAG );
+			update_option( 'hexxsy_vendors_version', HEXXSY_VENDORS_VERSION );
 			flush_rewrite_rules();
 		}
 	}
@@ -84,7 +86,7 @@ class Dashboard {
 		}
 
 		$vendor_items = array(
-			self::READINGS => __( 'My readings', 'hexxsy-vendors' ),
+			self::READINGS => __( 'Readings I offer', 'hexxsy-vendors' ),
 			self::ORDERS   => __( 'Reading orders', 'hexxsy-vendors' ),
 			self::SHOP     => __( 'Shop profile', 'hexxsy-vendors' ),
 		);

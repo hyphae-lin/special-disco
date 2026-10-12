@@ -172,13 +172,11 @@ class Delivery {
 			$item->get_name(),
 			self::shop_name( (int) $item->get_meta( Order_Split::VENDOR_META ) )
 		);
-		if ( $order->get_customer_id() ) {
-			$body .= "\n\n" . sprintf(
-				/* translators: %s: account orders URL */
-				__( 'You can also download it any time from your account: %s', 'hexxsy-vendors' ),
-				wc_get_account_endpoint_url( 'orders' )
-			);
-		}
+		$body .= "\n\n" . sprintf(
+			/* translators: %s: account readings URL */
+			__( 'All your readings are kept in your account, ready to download any time: %s', 'hexxsy-vendors' ),
+			wc_get_account_endpoint_url( Customer::ENDPOINT )
+		);
 		$body .= "\n\n" . __( 'Readings are for entertainment purposes only.', 'hexxsy-vendors' );
 
 		wp_mail(
