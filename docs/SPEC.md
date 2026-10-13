@@ -140,6 +140,39 @@ Wording (approved): *I understand I can cancel for a full refund up to 24 hours 
 
 The entertainment-only framing appears in three places: the vendor application checkbox, the delivery email, and the PDF footer. The application also mentions "vendor terms," but no terms page exists in the repo. A reader code of conduct is now drafted and will replace that wording.
 
+## Editable from the back end (decided Oct 13, 2026, not built)
+
+Every customer-facing word, image and label on the site must be editable from wp-admin. Nothing visible is hard-coded in theme or plugin templates. If a string appears on screen or in an email, there is a box in the admin that controls it.
+
+This applies to the custom theme (see "Theme" under gaps) and to everything the Hexxsy Vendors plugin outputs.
+
+**Context.** The site has a host character, Hexx, the Proprietress, whose voice runs through the site. Readers' pages are "rooms," and each room sorts its offerings onto 4 "shelves": Sittings (live readings), Letters (written or recorded readings, delivered later), Papers (digital goods) and Wares (physical goods). Design mockup: Hexxsy homepage canvas on claude.ai. The product side of Papers and Wares isn't specced yet; today the plugin only knows written readings and live calls.
+
+| Area | What must be editable | How |
+| --- | --- | --- |
+| Hexx's lines | Every line she speaks in templates: shelf intros, the empty-rooms note and ledger link, both ledger messages (rooms open / all rooms full), offering-page asides, 404, footer sign-off, booking and order confirmations | One admin settings screen ("Hexx's lines"), grouped by page, one labeled field per line. Advanced Custom Fields options page or equivalent |
+| Static pages | Homepage welcome, house notice (disclaimer), Hexx's page (portrait, bio, Rules of the House, contact box) | Block-editor pages built from locked block patterns, so words and images change without breaking layout |
+| Shelves | The 4 category names, Hexx's line for each, button labels ("Book," "Request," "Take a copy," "Add to basket") | Editable per category, e.g. product category name, description and term meta |
+| Readers | Everything a reader writes: door line (one sentence on their homepage card), introduction, "How I read," a note per shelf, product descriptions, "Before you buy" | Reader profile and product fields, through the approval queue below |
+| Hexx's note | One or 2 lines from Hexx about each reader, shown in their room | Admin-only field on the reader's profile. Readers can never see an edit box for it |
+| Navigation and footer | Menu items, footer text, both disclaimers (Hexx's in-world version and the plain one) | WordPress menus and editable footer content |
+| Images | Hexx's portrait, the crossroads woodcut, ornaments, reader portraits | Media library, swappable without code |
+| Look | Colors (ink, paper, oxblood accent) and fonts | Theme global styles (theme.json), so the accent is one setting |
+| Room settings | Room cap (12, see Invitations), whether empty rooms are hidden or shown | Admin options. Default: hide empty rooms and show Hexx's empty-rooms line with the ledger link |
+| Emails | Subject and body text of every customer and reader email, including the delivery email | Editable templates, so Hexx's voice can carry into the inbox |
+
+**Reader text approval**
+
+- Anything a reader writes or changes goes into a pending queue. Their live room keeps showing the last approved version until the admin approves.
+- Every edit goes back in the queue, not just the first version.
+- Each reader has a "trusted" switch, off by default. Trusted readers publish text straight to their room. The admin can still edit anything and switch trust off again.
+- Whether new products and prices also need review for trusted readers is open (see gap 5).
+- Multi-vendor plugins usually only moderate products, so the profile-text queue will likely need custom code.
+
+**Shelves only show when stocked.** A shelf, and its button in the room's shelf menu, only appears when that reader has at least 1 published, in-stock product in that category. The same rule drives the shelf list on each reader's homepage card.
+
+**Reader count drives copy.** The homepage room list, the empty-rooms line and the ledger messages all read the same count of approved readers, so they never disagree.
+
 ## Gaps and open decisions
 
 Three pieces are known to be missing. Reading the code turned up more, and a few of them can cost real money or a customer's trust before launch.
