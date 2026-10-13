@@ -130,6 +130,14 @@ The live call policy is written in the README but nothing in the code enforces i
 | Reader cancels, any time | Full refund |
 | Reader doesn't show | Full refund |
 
+**Policy acknowledgment (decided Oct 13, 2026, not built).** Customers must tick a required box agreeing to the live call policy before they can pay or book:
+
+- **At checkout**, only when the cart holds a live call. Checkout won't go through unticked.
+- **When booking a time**, as part of the scheduler (not built yet).
+- The tick is saved on the order with a date and time, so there's a record if a customer disputes a no-show charge.
+
+Wording (approved): *I understand I can cancel for a full refund up to 24 hours before my call. Cancellations inside 24 hours, and missed calls, are not refunded.*
+
 The entertainment-only framing appears in three places: the vendor application checkbox, the delivery email, and the PDF footer. The application also mentions "vendor terms," but no terms page exists in the repo. A reader code of conduct is now drafted and will replace that wording.
 
 ## Gaps and open decisions
