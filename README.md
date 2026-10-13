@@ -45,3 +45,7 @@ Upload `wp-content/plugins/hexxsy-vendors/` to the same path on the server (skip
 ## Spec
 
 `docs/SPEC.md` describes what the plugin does, what's decided but not built, and the open gaps. `docs/CODE_OF_CONDUCT_READERS.md` is the reader code of conduct the application links to. Read both before building a new feature.
+
+## Working on this repo
+
+`main` is the real, current version of the site. Start new work from `main`. Work on a branch if you like, but when Rebecca approves the change, merge it into `main` and push. Don't leave finished work sitting on a side branch.
