@@ -41,3 +41,7 @@ composer test
 ## Deploying to DreamHost
 
 Upload `wp-content/plugins/hexxsy-vendors/` to the same path on the server (skip `vendor/` and `tests/`), then activate it under Plugins. WooCommerce must be active first.
+
+## Spec
+
+`docs/SPEC.md` describes what the plugin does, what's decided but not built, and the open gaps. `docs/CODE_OF_CONDUCT_READERS.md` is the reader code of conduct the application links to. Read both before building a new feature.
