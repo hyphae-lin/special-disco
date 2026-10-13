@@ -8,7 +8,7 @@ Hexxsy is a multi-vendor marketplace where approved readers sell tarot readings 
 
 All the marketplace logic lives in one custom plugin, Hexxsy Vendors, version 0.4.0 (needs WordPress 6.5+, PHP 8.1+, WooCommerce active). This spec describes what that code does as of the last push on Oct 12, 2026, then flags what's missing or undecided.
 
-Source: [rebeccly/special-disco](https://github.com/rebeccly/special-disco). A second repo, [special-disco-wordpress](https://github.com/rebeccly/special-disco-wordpress), is an unmodified fork of WordPress core with no Hexxsy code in it.
+Source: [hyphae-lin/special-disco](https://github.com/hyphae-lin/special-disco). A second repo, [special-disco-wordpress](https://github.com/hyphae-lin/special-disco-wordpress), is an unmodified fork of WordPress core with no Hexxsy code in it.
 
 ## Roles and accounts
 
