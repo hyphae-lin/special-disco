@@ -21,7 +21,7 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 
 ## Not built yet
 
-- Automatic payouts through Stripe Connect (waiting on approval for this business type)
+- Automatic payouts through Stripe Connect (approved; onboarding and transfers not built yet)
 - Live-call availability, booking and the video provider
 - Custom theme
 

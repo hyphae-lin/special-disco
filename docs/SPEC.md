@@ -108,7 +108,7 @@ The customer's **My readings** tab (first in My Account) lists every reading bou
 
 ## Money
 
-The site keeps 20% of each reading by default; the reader gets the rest. Hexxsy holds the customer's payment and pays the reader later (decided Oct 14, 2026). Payouts are recorded by hand until Stripe Connect is approved.
+The site keeps 20% of each reading by default; the reader gets the rest. Hexxsy holds the customer's payment and pays the reader later (decided Oct 14, 2026). Stripe Connect is approved (Oct 14, 2026); until transfers are built, payouts are recorded by hand.
 
 - **Rate.** Default set on WooCommerce > Vendors (0 to 100%). The admin can override it per vendor on their user profile.
 - **Base.** Commission is taken on the line total after discounts, before tax.
@@ -135,7 +135,7 @@ The customer pays Hexxsy. Hexxsy keeps the money until the reading is delivered 
 - **Payouts.** WooCommerce > Payouts lists each reader's on-hold and ready-to-pay totals. The admin sends the money outside the site, then clicks Mark paid, which stamps each line with the date and amount and adds an order note. Only lines that were ready when the page loaded get marked.
 - **Refunded after payout.** If a customer is refunded after the reader was paid, the Payouts page lists the overpaid amount. Hexxsy has covered the refund and recovers it from the reader by hand.
 - **Revoked readers** still appear on the Payouts page, so money they earned before revoking is still paid.
-- **Stripe, later.** When Stripe Connect is approved, payouts become transfers from Hexxsy's balance to the reader's connected account (separate charges and transfers). The ledger states stay the same; Mark paid becomes Send transfer.
+- **Stripe, next.** Connect is approved and in sandbox. Payouts become transfers from Hexxsy's balance to the reader's connected account (separate charges and transfers). Readers onboard as Express accounts. The ledger states stay the same; Mark paid becomes Send transfer. Test the whole flow in sandbox before switching live.
 - **Hexxsy's own Stripe payouts** must not sweep readers' held money to Hexxsy's bank. With separate charges and transfers, the whole charge sits in Hexxsy's Stripe balance until the transfer, so an automatic monthly payout would take readers' money with it. Hexxsy's payouts go manual (or only pay out commission) before Connect transfers start.
 
 ## Policies
@@ -199,7 +199,7 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 
 ### Known, not built
 
-- **Paying readers automatically.** The payout ledger is built (see Money), but money is sent by hand. Waiting on Stripe Connect approval for this business type. If Stripe says no, manual payouts from the ledger are the fallback.
+- **Paying readers automatically.** The payout ledger is built (see Money), but money is sent by hand. Stripe Connect is approved for live (Oct 14, 2026); reader onboarding and transfers are next.
 - **Live calls.** No availability, booking, scheduling or video provider.
 - **Theme.** No custom design; the site runs on whatever theme is installed.
 
@@ -226,4 +226,3 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 - Some US states and cities have fortune-telling ordinances. The entertainment-only language helps, but it's worth checking where readers and customers are.
 - Readers are independent sellers, not Hexxsy's contractors (decided Oct 13, 2026). Hexxsy sets platform rules through the reader code of conduct but doesn't direct how readers read, price or schedule.
 - Holding payment (decided Oct 14, 2026) replaces the earlier plan of Stripe Connect direct charges. Hexxsy is the seller of record, so chargebacks and refunds land on Hexxsy first. Readers stay independent sellers. Stripe collects readers' tax details and files and mails their 1099s.
-- Until Connect is approved, Hexxsy pays readers by hand from its own account. Ask the accountant whether that's fine as a stopgap, since holding money for others is what Stripe Connect is licensed for.
