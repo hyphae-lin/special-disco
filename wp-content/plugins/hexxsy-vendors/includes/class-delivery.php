@@ -113,7 +113,9 @@ class Delivery {
 			return $back . '#reading-' . $item_id;
 		}
 
-		$item->update_meta_data( self::DELIVERED_META, time() );
+		$delivered = time();
+		$item->update_meta_data( self::DELIVERED_META, $delivered );
+		$item->update_meta_data( Payout::RELEASE_META, Payout::release_time( $delivered ) );
 		$item->save();
 
 		$order->add_order_note(

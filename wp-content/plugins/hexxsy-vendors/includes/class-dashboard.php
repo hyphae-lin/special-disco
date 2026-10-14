@@ -23,7 +23,7 @@ class Dashboard {
 	const ORDERS_SHOWN = 50;
 
 	/**
-	 * Order statuses a vendor sees, with whether they count toward earnings.
+	 * Order statuses a vendor sees in Reading orders.
 	 */
 	const VISIBLE_STATUSES = array(
 		'processing' => true,
@@ -495,29 +495,17 @@ class Dashboard {
 			)
 		);
 
-		$rows   = array();
-		$earned = 0.0;
+		$rows = array();
 		foreach ( $orders as $order ) {
 			foreach ( $order->get_items() as $item ) {
 				if ( (int) $item->get_meta( Order_Split::VENDOR_META ) !== $vendor_id ) {
 					continue;
 				}
-				$earnings = (float) $item->get_meta( Order_Split::EARNINGS_META );
-				if ( ! empty( self::VISIBLE_STATUSES[ $order->get_status() ] ) ) {
-					$earned += $earnings;
-				}
-				$rows[] = array( $order, $item, $earnings );
+				$rows[] = array( $order, $item, (float) $item->get_meta( Order_Split::EARNINGS_META ) );
 			}
 		}
 
-		echo '<p><strong>' . esc_html__( 'Earned so far:', 'hexxsy-vendors' ) . '</strong> ' . wp_kses_post( wc_price( $earned ) );
-		echo ' <small>' . esc_html(
-			sprintf(
-				/* translators: %d: number of orders */
-				__( '(paid and completed orders among your latest %d; payouts are not set up yet)', 'hexxsy-vendors' ),
-				self::ORDERS_SHOWN
-			)
-		) . '</small></p>';
+		self::render_payout_summary( $vendor_id );
 
 		if ( ! $rows ) {
 			echo '<p>' . esc_html__( 'No orders yet.', 'hexxsy-vendors' ) . '</p>';
@@ -551,6 +539,7 @@ class Dashboard {
 						wp_kses_post( wc_price( $earnings, array( 'currency' => $order->get_currency() ) ) )
 					);
 					?>
+					(<?php echo esc_html( self::payout_label( Payout::line_state( $order, $item ) ) ); ?>)
 				</p>
 				<?php if ( $details ) : ?>
 					<dl>
@@ -564,6 +553,58 @@ class Dashboard {
 			</div>
 			<?php
 		}
+	}
+
+	/**
+	 * What the reader is owed, across every order they've ever had.
+	 *
+	 * @param int $vendor_id Vendor.
+	 */
+	private static function render_payout_summary( int $vendor_id ): void {
+		$totals = array(
+			Payout::HELD    => 0,
+			Payout::PAYABLE => 0,
+			Payout::PAID    => 0,
+		);
+		foreach ( Payout::lines( $vendor_id ) as list( $order, $item ) ) {
+			$state = Payout::line_state( $order, $item );
+			if ( Payout::PAID === $state ) {
+				$totals[ $state ] += (int) round( (float) $item->get_meta( Payout::PAID_AMOUNT_META ) * ( 10 ** wc_get_price_decimals() ) );
+			} elseif ( isset( $totals[ $state ] ) ) {
+				$totals[ $state ] += Payout::line_share( $order, $item );
+			}
+		}
+		?>
+		<p>
+			<strong><?php esc_html_e( 'On hold:', 'hexxsy-vendors' ); ?></strong> <?php echo wp_kses_post( wc_price( Payout::to_decimal( $totals[ Payout::HELD ] ) ) ); ?><br>
+			<strong><?php esc_html_e( 'Ready to pay:', 'hexxsy-vendors' ); ?></strong> <?php echo wp_kses_post( wc_price( Payout::to_decimal( $totals[ Payout::PAYABLE ] ) ) ); ?><br>
+			<strong><?php esc_html_e( 'Paid to you:', 'hexxsy-vendors' ); ?></strong> <?php echo wp_kses_post( wc_price( Payout::to_decimal( $totals[ Payout::PAID ] ) ) ); ?>
+		</p>
+		<p><small>
+			<?php
+			printf(
+				/* translators: %d: number of days */
+				esc_html__( 'Hexxsy holds each payment until you deliver the reading, then for %d more days in case the customer needs a refund. Live calls stay on hold until booking is set up.', 'hexxsy-vendors' ),
+				(int) Payout::hold_days()
+			);
+			?>
+		</small></p>
+		<?php
+	}
+
+	/**
+	 * Reader-facing name for a payout state.
+	 *
+	 * @param string $state Payout state.
+	 */
+	private static function payout_label( string $state ): string {
+		$labels = array(
+			Payout::HELD    => __( 'on hold', 'hexxsy-vendors' ),
+			Payout::PAYABLE => __( 'ready to pay', 'hexxsy-vendors' ),
+			Payout::PAID    => __( 'paid to you', 'hexxsy-vendors' ),
+			Payout::VOID    => __( 'refunded or cancelled, nothing owed', 'hexxsy-vendors' ),
+		);
+		return $labels[ $state ] ?? '';
 	}
 
 	/**

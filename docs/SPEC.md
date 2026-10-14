@@ -108,15 +108,34 @@ The customer's **My readings** tab (first in My Account) lists every reading bou
 
 ## Money
 
-The site keeps 20% of each reading by default; the reader gets the rest. No money actually moves to readers yet.
+The site keeps 20% of each reading by default; the reader gets the rest. Hexxsy holds the customer's payment and pays the reader later (decided Oct 14, 2026). Payouts are recorded by hand until Stripe Connect is approved.
 
 - **Rate.** Default set on WooCommerce > Vendors (0 to 100%). The admin can override it per vendor on their user profile.
 - **Base.** Commission is taken on the line total after discounts, before tax.
 - **Rounding.** Math runs in cents. The commission is rounded and the reader gets exactly what's left, so no cent is lost or invented. On a $45.00 reading at 20%, the site keeps $9.00 and the reader earns $36.00.
 - **Records.** At checkout every order line is stamped with its vendor, the rate in force, the commission and the reader's earnings. A later rate change never rewrites past orders. Payouts will read these stamps.
-- **What readers see.** "Earned so far" in Reading orders adds up Processing and Completed orders among their latest 50, with a note that payouts aren't set up.
+- **What readers see.** Reading orders shows three totals across all their orders: on hold, ready to pay, and paid to them. Each order line shows its own payout state.
 
 A product with no approved vendor as its author is treated as the site's own: no split recorded, the site keeps it all.
+
+### Holding payment and payouts
+
+The customer pays Hexxsy. Hexxsy keeps the money until the reading is delivered and a hold period has passed, then pays the reader their share.
+
+| State | When |
+| --- | --- |
+| On hold | Order paid, reading not delivered yet. Or delivered, and the hold period hasn't ended |
+| Ready to pay | Delivered, and the hold period has ended |
+| Paid | The admin recorded the payout |
+| Nothing owed | Order refunded or cancelled before payout |
+
+- **Hold period.** 7 days after delivery by default, set on WooCommerce > Payouts. The release date is stamped on the order line at delivery, so changing the setting doesn't move earlier readings.
+- **Live calls** stay on hold until booking exists, since nothing marks them delivered.
+- **Refunds** come off the line before the split, at the rate stamped at purchase. A $15.00 refund on a $45.00 reading at 20% leaves the reader $24.00 and the site $6.00.
+- **Payouts.** WooCommerce > Payouts lists each reader's on-hold and ready-to-pay totals. The admin sends the money outside the site, then clicks Mark paid, which stamps each line with the date and amount and adds an order note. Only lines that were ready when the page loaded get marked.
+- **Refunded after payout.** If a customer is refunded after the reader was paid, the Payouts page lists the overpaid amount. Hexxsy has covered the refund and recovers it from the reader by hand.
+- **Revoked readers** still appear on the Payouts page, so money they earned before revoking is still paid.
+- **Stripe, later.** When Stripe Connect is approved, payouts become transfers from Hexxsy's balance to the reader's connected account (separate charges and transfers). The ledger states stay the same; Mark paid becomes Send transfer.
 
 ## Policies
 
@@ -179,7 +198,7 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 
 ### Known, not built
 
-- **Paying readers.** Splits are recorded but no money moves. Waiting on Stripe Connect approval for this business type. If Stripe says no, what's plan B?
+- **Paying readers automatically.** The payout ledger is built (see Money), but money is sent by hand. Waiting on Stripe Connect approval for this business type. If Stripe says no, manual payouts from the ledger are the fallback.
 - **Live calls.** No availability, booking, scheduling or video provider.
 - **Theme.** No custom design; the site runs on whatever theme is installed.
 
@@ -198,10 +217,11 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 | 9 | Terms pages don't exist | The application asks readers to agree to "vendor terms" that aren't written. No customer terms either | Write vendor terms, customer terms, refund policy |
 | 10 | Birth data has no privacy plan | Birth date, time and place are personal data, kept on orders indefinitely | Privacy policy, retention, deletion on request |
 | 11 | PDF can't show symbols | No ♈, ☽ or emoji, which astrology readers will want | Accept it, or add a font library |
-| 12 | Earnings view caps at 50 orders | Busy readers' "earned so far" will undercount | Fine until payouts; payouts must read all records |
+| 12 | ~~Earnings view caps at 50 orders~~ | Fixed: payout totals read every order. The order list itself still shows the latest 50 | None |
 | 13 | Thin test coverage | Tests cover commission math and the PDF only | Tests for checkout, delivery and permissions before launch |
 
 ### Outside the code
 
 - Some US states and cities have fortune-telling ordinances. The entertainment-only language helps, but it's worth checking where readers and customers are.
-- Readers are independent sellers, not Hexxsy's contractors (decided Oct 13, 2026). Hexxsy sets platform rules through the reader code of conduct but doesn't direct how readers read, price or schedule. With Stripe Connect direct charges, readers are paid into their own Stripe accounts and Stripe handles their 1099-Ks. Confirm with an accountant.
+- Readers are independent sellers, not Hexxsy's contractors (decided Oct 13, 2026). Hexxsy sets platform rules through the reader code of conduct but doesn't direct how readers read, price or schedule.
+- Holding payment (decided Oct 14, 2026) replaces the earlier plan of Stripe Connect direct charges. It makes Hexxsy the seller of record: chargebacks and refunds land on Hexxsy first, and Hexxsy is likely responsible for readers' 1099-Ks (Stripe Connect can file them for the platform). Holding money for others may also raise money-transmitter questions; Stripe Connect is designed to cover that, manual payouts may not be. Confirm all of this with an accountant, and check how it sits with the independent-seller stance.

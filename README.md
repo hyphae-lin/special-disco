@@ -17,10 +17,11 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 - **Customer reading library.** A My readings tab lists every reading the customer has bought, with its reader, date, due date, and a PDF download once delivered.
 - **Shop-page buttons.** Readings show "Request reading" or "Book a call" and link to the reading's page, where intake questions (and later, booking) happen.
 - **Split records.** Each order line stores its vendor, the rate at purchase, the site's commission and the vendor's earnings. Payouts will read these.
+- **Payout ledger.** Hexxsy holds each payment. A written reading's share becomes payable once it's delivered and a hold period (7 days by default) has passed. WooCommerce > Payouts shows what each reader is owed; send the money by hand, then click Mark paid. Readers see on-hold, ready-to-pay and paid totals in Reading orders.
 
 ## Not built yet
 
-- Payment splitting (waiting on Stripe Connect approval for this business type)
+- Automatic payouts through Stripe Connect (waiting on approval for this business type)
 - Live-call availability, booking and the video provider
 - Custom theme
 

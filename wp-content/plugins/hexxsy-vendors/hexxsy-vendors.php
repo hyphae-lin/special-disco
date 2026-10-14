@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Hexxsy Vendors
- * Description:       Multi-vendor marketplace for readings on Hexxsy: vendor applications and approval, reading offerings, intake questions and commission tracking.
+ * Description:       Multi-vendor marketplace for readings on Hexxsy: vendor applications and approval, reading offerings, intake questions, commission tracking and the payout ledger.
  * Version:           0.4.0
  * Requires at least: 6.5
  * Requires PHP:      8.1
@@ -26,6 +26,8 @@ require_once HEXXSY_VENDORS_DIR . 'includes/class-admin.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-readings.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-intake.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-order-split.php';
+require_once HEXXSY_VENDORS_DIR . 'includes/class-payout.php';
+require_once HEXXSY_VENDORS_DIR . 'includes/class-payouts-admin.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-dashboard.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-pdf.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-delivery.php';
@@ -52,6 +54,7 @@ add_action(
 		Hexxsy\Vendors\Readings::init();
 		Hexxsy\Vendors\Intake::init();
 		Hexxsy\Vendors\Order_Split::init();
+		Hexxsy\Vendors\Payouts_Admin::init();
 		Hexxsy\Vendors\Dashboard::init();
 		Hexxsy\Vendors\Delivery::init();
 		Hexxsy\Vendors\Customer::init();
