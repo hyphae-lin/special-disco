@@ -1,0 +1,95 @@
+# Tests the plugin, then copies it to DreamHost, on every push to main.
+#
+# Needs these repository secrets (Settings > Secrets and variables > Actions):
+#   DREAMHOST_HOST         e.g. pdx1-shared-a1-01.dreamhost.com
+#   DREAMHOST_USER         the SSH user that owns the site
+#   DREAMHOST_SSH_KEY      private key whose public half is in that user's ~/.ssh/authorized_keys
+#   DREAMHOST_KNOWN_HOSTS  output of `ssh-keyscan <host>`, checked once by hand
+#   DREAMHOST_PLUGIN_PATH  e.g. /home/<user>/hexxsy.com/wp-content/plugins/hexxsy-vendors
+
+name: Deploy to DreamHost
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: wp-content/plugins/hexxsy-vendors
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+      - run: composer install --no-interaction --no-progress
+      - run: composer test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check settings
+        env:
+          DREAMHOST_HOST: ${{ secrets.DREAMHOST_HOST }}
+          DREAMHOST_USER: ${{ secrets.DREAMHOST_USER }}
+          DREAMHOST_SSH_KEY: ${{ secrets.DREAMHOST_SSH_KEY }}
+          DREAMHOST_KNOWN_HOSTS: ${{ secrets.DREAMHOST_KNOWN_HOSTS }}
+          DREAMHOST_PLUGIN_PATH: ${{ secrets.DREAMHOST_PLUGIN_PATH }}
+        run: |
+          for name in DREAMHOST_HOST DREAMHOST_USER DREAMHOST_SSH_KEY DREAMHOST_KNOWN_HOSTS DREAMHOST_PLUGIN_PATH; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Secret $name is not set."
+              exit 1
+            fi
+          done
+          # rsync --delete clears anything at the target that isn't in the
+          # repo, so refuse any path that isn't the plugin's own folder.
+          case "$DREAMHOST_PLUGIN_PATH" in
+            */wp-content/plugins/hexxsy-vendors) ;;
+            *)
+              echo "::error::DREAMHOST_PLUGIN_PATH must end in /wp-content/plugins/hexxsy-vendors."
+              exit 1
+              ;;
+          esac
+
+      - name: Set up SSH
+        env:
+          KEY: ${{ secrets.DREAMHOST_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DREAMHOST_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Copy plugin
+        env:
+          SSH_HOST: ${{ secrets.DREAMHOST_HOST }}
+          SSH_USER: ${{ secrets.DREAMHOST_USER }}
+          PLUGIN_PATH: ${{ secrets.DREAMHOST_PLUGIN_PATH }}
+        run: |
+          rsync -rlvz --delete \
+            --exclude tests/ \
+            --exclude vendor/ \
+            --exclude composer.json \
+            --exclude composer.lock \
+            --exclude .phpunit.result.cache \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
+            wp-content/plugins/hexxsy-vendors/ \
+            "$SSH_USER@$SSH_HOST:$PLUGIN_PATH/"
+
+      - name: Remove key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

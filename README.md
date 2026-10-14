@@ -40,7 +40,22 @@ composer test
 
 ## Deploying to DreamHost
 
-Upload `wp-content/plugins/hexxsy-vendors/` to the same path on the server (skip `vendor/` and `tests/`), then activate it under Plugins. WooCommerce must be active first.
+Every push to `main` runs the tests, and if they pass, `.github/workflows/deploy.yml` copies the plugin to DreamHost over SSH. Tests, `vendor/` and Composer files stay behind. You can also run it by hand from the Actions tab.
+
+One-time setup:
+
+1. In the DreamHost panel, make the site's user an SSH user (Websites > Manage Websites, or Users).
+2. Make a key pair just for deploys, with no passphrase: `ssh-keygen -t ed25519 -f hexxsy-deploy -N ""`. Add the contents of `hexxsy-deploy.pub` to `~/.ssh/authorized_keys` on DreamHost.
+3. Run `ssh-keyscan <your DreamHost server>`, and check the fingerprint against what DreamHost shows when you first log in by SSH.
+4. In GitHub, go to Settings > Secrets and variables > Actions and add:
+   - `DREAMHOST_HOST`: the server name, e.g. `pdx1-shared-a1-01.dreamhost.com`
+   - `DREAMHOST_USER`: the SSH user
+   - `DREAMHOST_SSH_KEY`: the contents of `hexxsy-deploy` (the private key)
+   - `DREAMHOST_KNOWN_HOSTS`: the output from step 3
+   - `DREAMHOST_PLUGIN_PATH`: the full path to the plugin folder, e.g. `/home/<user>/staging.hexxsy.com/wp-content/plugins/hexxsy-vendors`
+5. Delete the key files from your computer once they're saved in GitHub and on DreamHost.
+
+The deploy replaces the plugin folder to match the repo exactly, so never edit plugin files on the server. It refuses any path that doesn't end in `/wp-content/plugins/hexxsy-vendors`, so a typo can't wipe the rest of the site. After the first deploy, activate the plugin under Plugins.
 
 ## Stripe
 
