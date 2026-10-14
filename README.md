@@ -17,11 +17,10 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 - **Customer reading library.** A My readings tab lists every reading the customer has bought, with its reader, date, due date, and a PDF download once delivered.
 - **Shop-page buttons.** Readings show "Request reading" or "Book a call" and link to the reading's page, where intake questions (and later, booking) happen.
 - **Split records.** Each order line stores its vendor, the rate at purchase, the site's commission and the vendor's earnings. Payouts will read these.
-- **Payout ledger.** Hexxsy holds each payment. A written reading's share becomes payable once it's delivered and a hold period (7 days by default) has passed. WooCommerce > Payouts shows what each reader is owed; send the money by hand, then click Mark paid. Readers see on-hold, ready-to-pay and paid totals in Reading orders.
+- **Payouts.** Hexxsy holds each payment. A written reading's share becomes payable once it's delivered and a hold period (7 days by default) has passed. Readers set up payouts from Reading orders, which creates a Stripe Express account. WooCommerce > Payouts sends what's owed by Stripe transfer, or records a payment made by hand, and can reverse a transfer after a refund.
 
 ## Not built yet
 
-- Automatic payouts through Stripe Connect (approved; onboarding and transfers not built yet)
 - Live-call availability, booking and the video provider
 - Custom theme
 
@@ -42,6 +41,12 @@ composer test
 ## Deploying to DreamHost
 
 Upload `wp-content/plugins/hexxsy-vendors/` to the same path on the server (skip `vendor/` and `tests/`), then activate it under Plugins. WooCommerce must be active first.
+
+## Stripe
+
+1. Install the WooCommerce Stripe Payment Gateway and enter your keys. Leave it in test mode until a full test run works: reader onboards, customer pays, reader delivers, hold ends, Send via Stripe, then a refund and Reverse transfer.
+2. Hexxsy Vendors reads the gateway's secret key. To use a different key, add `define( 'HEXXSY_STRIPE_SECRET_KEY', 'sk_...' );` to `wp-config.php`. Never commit a key to this repo.
+3. Before going live, set Hexxsy's own Stripe payouts to manual. Readers' shares sit in Hexxsy's Stripe balance until they're transferred, and an automatic payout would sweep them to Hexxsy's bank.
 
 ## Spec
 

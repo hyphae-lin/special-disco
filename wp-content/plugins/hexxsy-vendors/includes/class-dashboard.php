@@ -150,6 +150,12 @@ class Dashboard {
 			case 'deliver_reading':
 				$redirect = Delivery::save( $input );
 				break;
+			case 'stripe_onboard':
+				$redirect = self::stripe_redirect( Stripe::onboarding_url( get_current_user_id() ) );
+				break;
+			case 'stripe_dashboard':
+				$redirect = self::stripe_redirect( Stripe::dashboard_url( get_current_user_id() ) );
+				break;
 			default:
 				return;
 		}
@@ -158,6 +164,27 @@ class Dashboard {
 			wp_safe_redirect( $redirect );
 			exit;
 		}
+	}
+
+	/**
+	 * Where to send the reader for a Stripe link: the link itself, or back
+	 * to Reading orders with the error.
+	 *
+	 * @param string|\WP_Error $url Stripe-hosted URL.
+	 */
+	private static function stripe_redirect( $url ): string {
+		if ( is_wp_error( $url ) ) {
+			wc_add_notice(
+				sprintf(
+					/* translators: %s: error from Stripe */
+					__( 'Stripe could not be reached: %s', 'hexxsy-vendors' ),
+					$url->get_error_message()
+				),
+				'error'
+			);
+			return wc_get_account_endpoint_url( self::ORDERS );
+		}
+		return $url;
 	}
 
 	/**
@@ -506,6 +533,7 @@ class Dashboard {
 		}
 
 		self::render_payout_summary( $vendor_id );
+		self::render_payout_setup( $vendor_id );
 
 		if ( ! $rows ) {
 			echo '<p>' . esc_html__( 'No orders yet.', 'hexxsy-vendors' ) . '</p>';
@@ -569,7 +597,7 @@ class Dashboard {
 		foreach ( Payout::lines( $vendor_id ) as list( $order, $item ) ) {
 			$state = Payout::line_state( $order, $item );
 			if ( Payout::PAID === $state ) {
-				$totals[ $state ] += (int) round( (float) $item->get_meta( Payout::PAID_AMOUNT_META ) * ( 10 ** wc_get_price_decimals() ) );
+				$totals[ $state ] += Payout::to_minor( $item->get_meta( Payout::PAID_AMOUNT_META ) );
 			} elseif ( isset( $totals[ $state ] ) ) {
 				$totals[ $state ] += Payout::line_share( $order, $item );
 			}
@@ -589,6 +617,41 @@ class Dashboard {
 			);
 			?>
 		</small></p>
+		<?php
+	}
+
+	/**
+	 * Stripe payout setup: start, finish, or open the reader's Stripe
+	 * dashboard. Hidden until Stripe is connected on the site.
+	 *
+	 * @param int $vendor_id Vendor.
+	 */
+	private static function render_payout_setup( int $vendor_id ): void {
+		if ( ! Stripe::is_configured() ) {
+			return;
+		}
+		$has_account = '' !== Stripe::account_id( $vendor_id );
+		// Stripe may have finished verifying since the reader last looked.
+		$ready = Stripe::is_ready( $vendor_id ) || ( $has_account && Stripe::refresh( $vendor_id ) );
+		?>
+		<form method="post" style="margin-bottom:1em;">
+			<?php if ( $ready ) : ?>
+				<?php self::form_fields( 'stripe_dashboard' ); ?>
+				<p>
+					<?php esc_html_e( 'Your earnings are sent to your Stripe account once each hold ends.', 'hexxsy-vendors' ); ?>
+					<button type="submit" class="button"><?php esc_html_e( 'Open my Stripe dashboard', 'hexxsy-vendors' ); ?></button>
+				</p>
+			<?php else : ?>
+				<?php self::form_fields( 'stripe_onboard' ); ?>
+				<p>
+					<?php esc_html_e( 'To get paid, set up a free Stripe account. Stripe asks for your ID, bank details and tax information, and sends your 1099.', 'hexxsy-vendors' ); ?>
+					<button type="submit" class="button button-primary"><?php echo esc_html( $has_account ? __( 'Finish setting up payouts', 'hexxsy-vendors' ) : __( 'Set up payouts', 'hexxsy-vendors' ) ); ?></button>
+				</p>
+			<?php endif; ?>
+			<?php if ( 'test' === Stripe::mode() ) : ?>
+				<p><small><?php esc_html_e( 'Stripe is in test mode. No real money moves.', 'hexxsy-vendors' ); ?></small></p>
+			<?php endif; ?>
+		</form>
 		<?php
 	}
 

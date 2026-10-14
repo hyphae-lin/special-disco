@@ -43,6 +43,16 @@ final class PayoutTest extends TestCase {
 		$this->assertSame( 2400, Payout::share_after_refund( 4500, 1500, 20 ) );
 	}
 
+	public function test_owed_back_after_payout_counts_reversals(): void {
+		// Paid $36.00, then a full refund: all of it is owed back.
+		$this->assertSame( 3600, Payout::owed_back( 3600, 0, 0 ) );
+		// Partial refund leaves the line worth $24.00.
+		$this->assertSame( 1200, Payout::owed_back( 3600, 0, 2400 ) );
+		// Once reversed, nothing more is owed.
+		$this->assertSame( 0, Payout::owed_back( 3600, 1200, 2400 ) );
+		$this->assertSame( 0, Payout::owed_back( 3600, 0, 3600 ) );
+	}
+
 	public function test_full_or_excess_refund_leaves_nothing(): void {
 		$this->assertSame( 0, Payout::share_after_refund( 4500, 4500, 20 ) );
 		$this->assertSame( 0, Payout::share_after_refund( 4500, 9000, 20 ) );
