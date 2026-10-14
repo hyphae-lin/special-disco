@@ -136,6 +136,7 @@ The customer pays Hexxsy. Hexxsy keeps the money until the reading is delivered 
 - **Refunded after payout.** If a customer is refunded after the reader was paid, the Payouts page lists the overpaid amount. Hexxsy has covered the refund and recovers it from the reader by hand.
 - **Revoked readers** still appear on the Payouts page, so money they earned before revoking is still paid.
 - **Stripe, later.** When Stripe Connect is approved, payouts become transfers from Hexxsy's balance to the reader's connected account (separate charges and transfers). The ledger states stay the same; Mark paid becomes Send transfer.
+- **Hexxsy's own Stripe payouts** must not sweep readers' held money to Hexxsy's bank. With separate charges and transfers, the whole charge sits in Hexxsy's Stripe balance until the transfer, so an automatic monthly payout would take readers' money with it. Hexxsy's payouts go manual (or only pay out commission) before Connect transfers start.
 
 ## Policies
 
@@ -224,4 +225,5 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 
 - Some US states and cities have fortune-telling ordinances. The entertainment-only language helps, but it's worth checking where readers and customers are.
 - Readers are independent sellers, not Hexxsy's contractors (decided Oct 13, 2026). Hexxsy sets platform rules through the reader code of conduct but doesn't direct how readers read, price or schedule.
-- Holding payment (decided Oct 14, 2026) replaces the earlier plan of Stripe Connect direct charges. It makes Hexxsy the seller of record: chargebacks and refunds land on Hexxsy first, and Hexxsy is likely responsible for readers' 1099-Ks (Stripe Connect can file them for the platform). Holding money for others may also raise money-transmitter questions; Stripe Connect is designed to cover that, manual payouts may not be. Confirm all of this with an accountant, and check how it sits with the independent-seller stance.
+- Holding payment (decided Oct 14, 2026) replaces the earlier plan of Stripe Connect direct charges. Hexxsy is the seller of record, so chargebacks and refunds land on Hexxsy first. Readers stay independent sellers. Stripe collects readers' tax details and files and mails their 1099s.
+- Until Connect is approved, Hexxsy pays readers by hand from its own account. Ask the accountant whether that's fine as a stopgap, since holding money for others is what Stripe Connect is licensed for.
