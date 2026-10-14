@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Hexxsy Vendors
- * Description:       Multi-vendor marketplace for readings on Hexxsy: vendor applications and approval, reading offerings, intake questions and commission tracking.
- * Version:           0.4.0
+ * Description:       Multi-vendor marketplace for readings on Hexxsy: vendor applications and approval, reading offerings, intake questions, written reading delivery, and Stripe Connect payments and payouts.
+ * Version:           0.5.0
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Requires Plugins:  woocommerce
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'HEXXSY_VENDORS_VERSION', '0.4.0' );
+define( 'HEXXSY_VENDORS_VERSION', '0.5.0' );
 define( 'HEXXSY_VENDORS_FILE', __FILE__ );
 define( 'HEXXSY_VENDORS_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -30,6 +30,9 @@ require_once HEXXSY_VENDORS_DIR . 'includes/class-dashboard.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-pdf.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-delivery.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-customer.php';
+require_once HEXXSY_VENDORS_DIR . 'includes/class-stripe-api.php';
+require_once HEXXSY_VENDORS_DIR . 'includes/class-payouts.php';
+require_once HEXXSY_VENDORS_DIR . 'includes/class-webhook.php';
 
 register_activation_hook( __FILE__, array( 'Hexxsy\Vendors\Roles', 'install' ) );
 register_deactivation_hook( __FILE__, array( 'Hexxsy\Vendors\Roles', 'uninstall' ) );
@@ -55,5 +58,19 @@ add_action(
 		Hexxsy\Vendors\Dashboard::init();
 		Hexxsy\Vendors\Delivery::init();
 		Hexxsy\Vendors\Customer::init();
+		Hexxsy\Vendors\Payouts::init();
+		Hexxsy\Vendors\Webhook::init();
+
+		// These extend WooCommerce classes, so load them only once it's active.
+		require_once HEXXSY_VENDORS_DIR . 'includes/class-gateway.php';
+		Hexxsy\Vendors\Gateway::init();
+
+		add_action(
+			'woocommerce_blocks_payment_method_type_registration',
+			static function ( $registry ) {
+				require_once HEXXSY_VENDORS_DIR . 'includes/class-gateway-blocks.php';
+				$registry->register( new Hexxsy\Vendors\Gateway_Blocks() );
+			}
+		);
 	}
 );

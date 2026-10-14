@@ -8,8 +8,8 @@
 namespace Hexxsy\Vendors;
 
 /**
- * Adds three My Account tabs for approved vendors: Readings I offer, Reading
- * orders and Shop profile. Vendors never need wp-admin (WooCommerce already
+ * Adds four My Account tabs for approved vendors: Readings I offer, Reading
+ * orders, Shop profile and Payouts. Vendors never need wp-admin (WooCommerce already
  * keeps users without editing capabilities out of it).
  */
 class Dashboard {
@@ -17,6 +17,7 @@ class Dashboard {
 	const READINGS = 'vendor-readings';
 	const ORDERS   = 'vendor-orders';
 	const SHOP     = 'vendor-shop';
+	const PAYOUTS  = 'vendor-payouts';
 
 	const NONCE        = 'hexxsy_dashboard';
 	const FLUSH_FLAG   = 'hexxsy_flush_rewrites';
@@ -42,10 +43,12 @@ class Dashboard {
 		add_filter( 'woocommerce_endpoint_' . self::READINGS . '_title', static fn() => __( 'Readings I offer', 'hexxsy-vendors' ) );
 		add_filter( 'woocommerce_endpoint_' . self::ORDERS . '_title', static fn() => __( 'Reading orders', 'hexxsy-vendors' ) );
 		add_filter( 'woocommerce_endpoint_' . self::SHOP . '_title', static fn() => __( 'Shop profile', 'hexxsy-vendors' ) );
+		add_filter( 'woocommerce_endpoint_' . self::PAYOUTS . '_title', static fn() => __( 'Payouts', 'hexxsy-vendors' ) );
 
 		add_action( 'woocommerce_account_' . self::READINGS . '_endpoint', array( __CLASS__, 'render_readings' ) );
 		add_action( 'woocommerce_account_' . self::ORDERS . '_endpoint', array( __CLASS__, 'render_orders' ) );
 		add_action( 'woocommerce_account_' . self::SHOP . '_endpoint', array( __CLASS__, 'render_shop' ) );
+		add_action( 'woocommerce_account_' . self::PAYOUTS . '_endpoint', array( __CLASS__, 'render_payouts' ) );
 
 		add_action( 'template_redirect', array( __CLASS__, 'handle_post' ) );
 		add_action( 'init', array( __CLASS__, 'maybe_flush_rewrites' ), 99 );
@@ -57,7 +60,7 @@ class Dashboard {
 	 * @param array $vars Query vars.
 	 */
 	public static function query_vars( $vars ) {
-		foreach ( array( self::READINGS, self::ORDERS, self::SHOP ) as $endpoint ) {
+		foreach ( array( self::READINGS, self::ORDERS, self::SHOP, self::PAYOUTS ) as $endpoint ) {
 			$vars[ $endpoint ] = $endpoint;
 		}
 		return $vars;
@@ -89,6 +92,7 @@ class Dashboard {
 			self::READINGS => __( 'Readings I offer', 'hexxsy-vendors' ),
 			self::ORDERS   => __( 'Reading orders', 'hexxsy-vendors' ),
 			self::SHOP     => __( 'Shop profile', 'hexxsy-vendors' ),
+			self::PAYOUTS  => __( 'Payouts', 'hexxsy-vendors' ),
 		);
 
 		$first = array_slice( $items, 0, 1, true );
@@ -150,6 +154,14 @@ class Dashboard {
 			case 'deliver_reading':
 				$redirect = Delivery::save( $input );
 				break;
+			case 'stripe_onboard':
+			case 'stripe_dashboard':
+				$url = 'stripe_onboard' === $action ? Payouts::onboarding_url() : Payouts::dashboard_url();
+				if ( '' !== $url ) {
+					wp_redirect( $url ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Stripe-hosted page.
+					exit;
+				}
+				return;
 			default:
 				return;
 		}
@@ -551,6 +563,7 @@ class Dashboard {
 						wp_kses_post( wc_price( $earnings, array( 'currency' => $order->get_currency() ) ) )
 					);
 					?>
+					<br><small><?php echo esc_html( Payouts::status_label( $item ) ); ?></small>
 				</p>
 				<?php if ( $details ) : ?>
 					<dl>
@@ -563,6 +576,15 @@ class Dashboard {
 				<?php Delivery::render_vendor_panel( $order, $item ); ?>
 			</div>
 			<?php
+		}
+	}
+
+	/**
+	 * Payouts tab.
+	 */
+	public static function render_payouts(): void {
+		if ( self::guard() ) {
+			Payouts::render();
 		}
 	}
 

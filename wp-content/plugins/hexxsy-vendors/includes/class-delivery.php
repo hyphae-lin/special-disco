@@ -126,6 +126,7 @@ class Delivery {
 		);
 
 		self::email_customer( $order, $item );
+		Payouts::transfer_item( $order, $item );
 		self::maybe_complete( $order );
 
 		wc_add_notice( __( 'Reading delivered. The customer has been emailed a PDF copy.', 'hexxsy-vendors' ) );
