@@ -46,11 +46,13 @@ The admin can also make readings in the normal WooCommerce product editor, which
 
 ## Invitations and waitlist (decided, not built)
 
-Hexxsy will have at most 12 readers, and readers join by invitation only. Decided Oct 13, 2026. This replaces the open application in step 1 above.
+Readers join by invitation only, and the number of readers is capped by a setting. Decided Oct 13, 2026. This replaces the open application in step 1 above.
+
+The cap starts at 12 to keep administration manageable at launch. It is a starting point, not a permanent limit: the admin will raise it as Hexxsy grows (clarified Oct 25, 2026). Nothing in code or copy may assume 12.
 
 **Cap**
 
-- A "Reader seats" setting on WooCommerce > Vendors, set to 12.
+- A "Reader seats" setting on WooCommerce > Vendors, set to 12 at launch. Any whole number from 1 up; raising it opens new rooms immediately.
 - Approved readers plus unused invites can't exceed the cap, so you never invite more people than you have room for.
 - Revoking a reader, or an invite expiring, frees a seat.
 - The Approve button is disabled when every seat is taken.
@@ -186,7 +188,7 @@ This applies to the custom theme (see "Theme" under gaps) and to everything the 
 | Navigation and footer | Menu items, footer text, both disclaimers (Hexx's in-world version and the plain one) | WordPress menus and editable footer content |
 | Images | Every picture slot: the homepage hero (the crossroads woodcut in the mockup), Hexx's portrait, ornaments, reader portraits, product photos | Each slot is an image field filled from the media library, with alt text. The mockup's drawn art (inline SVG) is placeholder only and must not be hard-coded into templates; the admin can upload a PNG, JPG, WebP or SVG in its place. Slots keep their frame and size and crop the upload to fit, with a focal point the admin can set. If a slot is left empty, the default art shows |
 | Look | Colors (ink, paper, oxblood accent) and fonts | Theme global styles (theme.json), so the accent is one setting |
-| Room settings | Room cap (12, see Invitations), whether empty rooms are hidden or shown | Admin options. Default: hide empty rooms and show Hexx's empty-rooms line with the ledger link |
+| Room settings | Room cap (starts at 12, adjustable; see Invitations), whether empty rooms are hidden or shown. Any customer-facing text that mentions the number of rooms reads it from this setting | Admin options. Default: hide empty rooms and show Hexx's empty-rooms line with the ledger link |
 | Emails | Subject and body text of every customer and reader email, including the delivery email | Editable templates, so Hexx's voice can carry into the inbox |
 
 **Reader text approval**
