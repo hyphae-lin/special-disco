@@ -158,20 +158,33 @@ New customers can sign up by email from the homepage and get a discount on their
 - An autoresponder sends a welcome email with a unique, single-use WooCommerce coupon code. The email's subject and body are editable.
 - One welcome code per customer account and per email address. A code can't be combined with other coupons.
 
+**Tool: MailPoet (decided Oct 25, 2026)**
+
+MailPoet runs inside WordPress, handles the signup form, the welcome automation and the coupon. Its coupon block, in an automation email with "Create new" selected, generates a unique code for each subscriber ([MailPoet docs](https://kb.mailpoet.com/article/how-to-add-a-generated-woocommerce-coupon-to-emails-in-the-block-email-editor)).
+
+- **Requirements.** WooCommerce 10.8 or later, coupons enabled in WooCommerce settings, and MailPoet's block-based email editor.
+- **Coupon settings to use.** Usage limit per coupon: 1. Usage limit per user: 1. Individual use only: on. Limit to recipient's email: on. Expiry in days and category restrictions as decided (see Open).
+- **Sending.** Not through DreamHost's own mail, which tends to land in spam. Use MailPoet's sending service or an outside sending service such as Amazon SES.
+- **Confirm before building.** Whether MailPoet's free plan (up to 1,000 subscribers) includes the coupon block and the sending service, and its sending limits.
+
+MailPoet does not know about Hexxsy's commission split. Two pieces are Hexxsy plugin work:
+
+- **Recognize welcome coupons.** MailPoet's codes are random. The plugin needs a reliable way to tell a welcome coupon from any other coupon at checkout, so it can stamp the line as a welcome-offer line and pay the reader on the undiscounted price. How (a marker on the coupon, its creator, or a code prefix) is for the builder to find.
+- **Guard the cap.** MailPoet allows any percentage up to 100 and any flat amount. The plugin must check each welcome coupon line and never let the discount exceed the site's commission on that line (see Money).
+
 **Money**
 
 - The reader's earnings on a welcome-coupon line are figured on the price before the discount, at the rate in force. The site's commission is what's left of what the customer actually paid.
 - Example at 20%: a $40.00 reading with 15% off. The customer pays $34.00. The reader earns $32.00, as with no coupon. The site keeps $2.00.
 - The line is stamped as a welcome-offer line, with both the undiscounted and paid amounts, so payouts and reports can tell them apart.
-- **The discount must not exceed the commission rate.** Above it, the site owes the reader more than the customer paid (25% off a $40.00 reading: customer pays $30.00, reader is owed $32.00). Stripe transfers tied to a charge can't send more than that charge, so the admin setting for the discount is capped at the current default commission rate.
+- **The discount must never exceed the site's commission on the line.** Above it, the site owes the reader more than the customer paid (25% off a $40.00 reading: customer pays $30.00, reader is owed $32.00). Stripe transfers tied to a charge can't send more than that charge. For a percentage, that means no more than the commission rate. For a flat amount, the amount must be no more than the commission on the cheapest discounted item ($5 off is safe on readings of $25 or more at 20%). The plugin caps the discount on any line where it would go over, so the house never takes less than nothing.
 - Refunds on a welcome-coupon line: open. Simplest is to treat the reader's share of a refund as a share of the undiscounted price.
 
 **Open**
 
-- Discount amount (percentage, up to the commission rate).
-- Which shelves it applies to: all offerings, or readings only (Sittings and Letters). Discounting Wares eats into what readers spend on materials and shipping, even when the house absorbs the discount.
+- Discount type and amount: a percentage (up to the commission rate) or a flat amount on one reading (leaning flat, for example $5 off a reading).
+- Which shelves it applies to: all offerings, or readings only (Sittings and Letters). Discounting Wares eats into what readers spend on materials and shipping, even when the house absorbs the discount. For readings only, the coupon lists both shelves' categories, or a parent "Readings" category; test whether WooCommerce coupons match a parent category on its own.
 - Expiry for unused codes.
-- Which email service sends the autoresponder (MailerLite, Kit, Mailchimp or similar), and whether it connects to WooCommerce for the codes.
 - Signup email addresses are personal data and belong in the privacy policy (gap 10).
 
 ## Policies
