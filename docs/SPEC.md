@@ -113,7 +113,7 @@ The customer's **My readings** tab (first in My Account) lists every reading bou
 The site keeps 20% of each reading by default; the reader gets the rest. Hexxsy holds the customer's payment and pays the reader later (decided Oct 14, 2026). Stripe Connect is approved (Oct 14, 2026). Readers who set up payouts are paid by Stripe transfer; anyone else is paid by hand.
 
 - **Rate.** Default set on WooCommerce > Vendors (0 to 100%). The admin can override it per vendor on their user profile.
-- **Base.** Commission is taken on the line total after discounts, before tax.
+- **Base.** Commission is taken on the line total after discounts, before tax. Exception: the welcome offer, which the house absorbs (see Welcome offer below).
 - **Rounding.** Math runs in cents. The commission is rounded and the reader gets exactly what's left, so no cent is lost or invented. On a $45.00 reading at 20%, the site keeps $9.00 and the reader earns $36.00.
 - **Records.** At checkout every order line is stamped with its vendor, the rate in force, the commission and the reader's earnings. A later rate change never rewrites past orders. Payouts will read these stamps.
 - **What readers see.** Reading orders shows three totals across all their orders: on hold, ready to pay, and paid to them. Each order line shows its own payout state.
@@ -146,6 +146,33 @@ The customer pays Hexxsy. Hexxsy keeps the money until the reading is delivered 
 - **Transfers.** Each transfer is tied to the customer's charge, so it can go out before that money has settled. Every transfer has an idempotency key per order line and amount, so a double click or a retry never pays twice. If Stripe refuses partway through, lines already sent stay recorded and the button sends the rest.
 - **Not built.** No webhooks: reader status is checked when they return from Stripe or open Reading orders. Readers' own bank payouts run on Stripe's default schedule.
 - **Hexxsy's own Stripe payouts** must not sweep readers' held money to Hexxsy's bank. With separate charges and transfers, the whole charge sits in Hexxsy's Stripe balance until the transfer, so an automatic monthly payout would take readers' money with it. Hexxsy's payouts go manual (or only pay out commission) before Connect transfers start.
+
+### Welcome offer (decided Oct 25, 2026, not built)
+
+New customers can sign up by email from the homepage and get a discount on their first purchase. The house absorbs the whole discount: readers are paid as if no discount was used.
+
+**Signup and code**
+
+- A short email signup sits in the homepage hero, below the main "Walk the rooms" button. It does not replace it. Wording is Hexx's and editable (see Editable from the back end).
+- Signup needs a clear consent checkbox for marketing email. Every email carries an unsubscribe link.
+- An autoresponder sends a welcome email with a unique, single-use WooCommerce coupon code. The email's subject and body are editable.
+- One welcome code per customer account and per email address. A code can't be combined with other coupons.
+
+**Money**
+
+- The reader's earnings on a welcome-coupon line are figured on the price before the discount, at the rate in force. The site's commission is what's left of what the customer actually paid.
+- Example at 20%: a $40.00 reading with 15% off. The customer pays $34.00. The reader earns $32.00, as with no coupon. The site keeps $2.00.
+- The line is stamped as a welcome-offer line, with both the undiscounted and paid amounts, so payouts and reports can tell them apart.
+- **The discount must not exceed the commission rate.** Above it, the site owes the reader more than the customer paid (25% off a $40.00 reading: customer pays $30.00, reader is owed $32.00). Stripe transfers tied to a charge can't send more than that charge, so the admin setting for the discount is capped at the current default commission rate.
+- Refunds on a welcome-coupon line: open. Simplest is to treat the reader's share of a refund as a share of the undiscounted price.
+
+**Open**
+
+- Discount amount (percentage, up to the commission rate).
+- Which shelves it applies to: all offerings, or readings only (Sittings and Letters). Discounting Wares eats into what readers spend on materials and shipping, even when the house absorbs the discount.
+- Expiry for unused codes.
+- Which email service sends the autoresponder (MailerLite, Kit, Mailchimp or similar), and whether it connects to WooCommerce for the codes.
+- Signup email addresses are personal data and belong in the privacy policy (gap 10).
 
 ## Policies
 
