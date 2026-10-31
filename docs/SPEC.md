@@ -163,9 +163,9 @@ New customers can sign up by email from the homepage and get a discount on their
 MailPoet runs inside WordPress, handles the signup form, the welcome automation and the coupon. Its coupon block, in an automation email with "Create new" selected, generates a unique code for each subscriber ([MailPoet docs](https://kb.mailpoet.com/article/how-to-add-a-generated-woocommerce-coupon-to-emails-in-the-block-email-editor)).
 
 - **Requirements.** WooCommerce 10.8 or later, coupons enabled in WooCommerce settings, and MailPoet's block-based email editor.
-- **Coupon settings to use.** Usage limit per coupon: 1. Usage limit per user: 1. Individual use only: on. Limit to recipient's email: on. Expiry in days and category restrictions as decided (see Open).
+- **Coupon settings to use.** Discount type: Fixed cart discount (not Fixed product, which takes the amount off every item). Minimum spend: see Minimum spend below. Usage limit per coupon: 1. Usage limit per user: 1. Individual use only: on. Limit to recipient's email: on. Expiry in days and category restrictions as decided (see Open).
 - **Sending.** Not through DreamHost's own mail, which tends to land in spam. Use MailPoet's sending service or an outside sending service such as Amazon SES.
-- **Confirm before building.** Whether MailPoet's free plan (up to 1,000 subscribers) includes the coupon block and the sending service, and its sending limits.
+- **Confirm before building.** Whether MailPoet's free plan (up to 1,000 subscribers) includes the coupon block and the sending service, and its sending limits. Whether the coupon block exposes Minimum spend.
 
 MailPoet does not know about Hexxsy's commission split. Two pieces are Hexxsy plugin work:
 
@@ -180,9 +180,23 @@ MailPoet does not know about Hexxsy's commission split. Two pieces are Hexxsy pl
 - **The discount must never exceed the site's commission on the line.** Above it, the site owes the reader more than the customer paid (25% off a $40.00 reading: customer pays $30.00, reader is owed $32.00). Stripe transfers tied to a charge can't send more than that charge. For a percentage, that means no more than the commission rate. For a flat amount, the amount must be no more than the commission on the cheapest discounted item ($5 off is safe on readings of $25 or more at 20%). The plugin caps the discount on any line where it would go over, so the house never takes less than nothing.
 - Refunds on a welcome-coupon line: open. Simplest is to treat the reader's share of a refund as a share of the undiscounted price.
 
+**Minimum spend (decided Oct 31, 2026)**
+
+The coupon only works on carts over a minimum spend. With a Fixed cart discount, WooCommerce spreads the discount across the cart in proportion to each item's price, so a high enough minimum keeps every line's discount under its commission.
+
+- **The rule.** Minimum spend is at least the discount divided by the commission rate. At 20%, that's 5 times the discount: $5 off needs a $25 minimum, $10 off needs $50. Example: two $15 readings, $30 cart, $5 off. Each line takes $2.50 off, the commission on each is $3.00, and the house keeps $0.50 per line.
+- **Both numbers are changeable.** The discount amount and the minimum spend are admin settings, not fixed values. They live in MailPoet's coupon block, and a change applies to codes sent after it; codes already sent keep the terms they went out with. Nothing in code, emails or Hexx's lines may assume a particular amount. Any text that names the discount or the minimum reads it from the setting, or is edited along with it.
+- **Help the admin get it right.** The Vendors settings page shows the safe minimum for a given discount, figured at the lowest commission rate in force (the site default or any reader's override, whichever is lower), and warns if the welcome coupon's minimum is below it.
+- **The plugin guard stays.** Minimum spend alone doesn't cover every case. The guard (see Recognize welcome coupons and Guard the cap above) still caps any line that would go over. Cases it catches:
+  - A reader whose commission override is lower than the rate the minimum was set for. A $25 reading at 10% has $2.50 commission, less than $5 off.
+  - A readings-only coupon with Wares in the cart. Minimum spend counts the whole cart, but the discount lands only on readings: a $10 reading plus a $20 Ware clears $25, and the full $5 comes off the $10 reading, where the commission is $2.00.
+  - Rounding to the cent when the discount is split across lines.
+  - Someone changing the coupon to Fixed product, or raising the discount without raising the minimum.
+- When the guard caps a line, the customer gets a smaller discount on it. The house never pays out of pocket.
+
 **Open**
 
-- Discount type and amount: a percentage (up to the commission rate) or a flat amount on one reading (leaning flat, for example $5 off a reading).
+- Starting discount amount and minimum spend (leaning $5 off, $25 minimum). Both stay adjustable.
 - Which shelves it applies to: all offerings, or readings only (Sittings and Letters). Discounting Wares eats into what readers spend on materials and shipping, even when the house absorbs the discount. For readings only, the coupon lists both shelves' categories, or a parent "Readings" category; test whether WooCommerce coupons match a parent category on its own.
 - Expiry for unused codes.
 - Signup email addresses are personal data and belong in the privacy policy (gap 10).
@@ -229,6 +243,7 @@ This applies to the custom theme (see "Theme" under gaps) and to everything the 
 | Images | Every picture slot: the homepage hero (the crossroads woodcut in the mockup), Hexx's portrait, ornaments, reader portraits, product photos | Each slot is an image field filled from the media library, with alt text. The mockup's drawn art (inline SVG) is placeholder only and must not be hard-coded into templates; the admin can upload a PNG, JPG, WebP or SVG in its place. Slots keep their frame and size and crop the upload to fit, with a focal point the admin can set. If a slot is left empty, the default art shows |
 | Look | Colors (ink, paper, oxblood accent) and fonts | Theme global styles (theme.json), so the accent is one setting |
 | Room settings | Room cap (starts at 12, adjustable; see Invitations), whether empty rooms are hidden or shown. Any customer-facing text that mentions the number of rooms reads it from this setting | Admin options. Default: hide empty rooms and show Hexx's empty-rooms line with the ledger link |
+| Welcome offer | Discount amount and minimum spend (see Welcome offer), plus the signup wording and welcome email | Set in MailPoet's signup form, automation email and coupon block. The Vendors settings page shows the safe minimum and warns when the coupon's minimum is too low |
 | Emails | Subject and body text of every customer and reader email, including the delivery email | Editable templates, so Hexx's voice can carry into the inbox |
 
 **Reader text approval**
