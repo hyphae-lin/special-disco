@@ -243,10 +243,29 @@ This applies to the custom theme (see "Theme" under gaps) and to everything the 
 | Masthead | The "Hexxsy" title at the top of the homepage (and the smaller one on inner pages) | An admin setting with 3 modes: (1) styled text, the default; (2) a logo image in place of the text; (3) the text over a background image. The image modes take uploads from the media library. Mode 3 adds a darkening overlay with an adjustable strength (0 to 80%) so the title stays readable over any picture. The site name stays in the page's code as the main heading even when a logo image replaces it, for screen readers and search engines |
 | Navigation and footer | Menu items, footer text, both disclaimers (Hexx's in-world version and the plain one) | WordPress menus and editable footer content |
 | Images | Every picture slot: the homepage hero (the crossroads woodcut in the mockup), Hexx's portrait, ornaments, reader portraits, product photos | Each slot is an image field filled from the media library, with alt text. The mockup's drawn art (inline SVG) is placeholder only and must not be hard-coded into templates; the admin can upload a PNG, JPG, WebP or SVG in its place. Slots keep their frame and size and crop the upload to fit, with a focal point the admin can set. If a slot is left empty, the default art shows |
-| Look | Colors (ink, paper, oxblood accent) and fonts | Theme global styles (theme.json), so the accent is one setting |
+| Look | Colors (ink, paper, oxblood accent) and fonts (see Brand below) | Theme global styles (theme.json), so the accent is one setting |
 | Room settings | Room cap (starts at 12, adjustable; see Invitations), whether empty rooms are hidden or shown. Any customer-facing text that mentions the number of rooms reads it from this setting | Admin options. Default: hide empty rooms and show Hexx's empty-rooms line with the ledger link |
 | Welcome offer | Discount amount and minimum spend (see Welcome offer), plus the signup wording and welcome email | Set in MailPoet's signup form, automation email and coupon block. The Vendors settings page shows the safe minimum and warns when the coupon's minimum is too low |
 | Emails | Subject and body text of every customer and reader email, including the delivery email | Editable templates, so Hexx's voice can carry into the inbox |
+
+**Brand (decided Oct 31, 2026)**
+
+The light direction from the homepage mockup ("Homepage" board on the Hexxsy homepage canvas) is the brand. The dark boards (brass lamp, brass with a second accent, Victorian parlor, midnight zodiac) are set aside.
+
+| Role | Value |
+| --- | --- |
+| Paper (page background) | #F1E9D8 |
+| Ink (text, rules, borders) | #1B1714 |
+| Oxblood (accent: main button, links on hover, room numerals, focus ring) | #6E1B17 |
+| Muted ink (secondary text, captions) | #4A3F37 |
+| Band (alternate section background) | #EAE0CB |
+| Card (raised panels, notice box) | #F6F0E3 |
+| Hatch (image placeholder ground) | #E6DCC6 |
+
+- **Type.** IM Fell English SC for the masthead, headings, navigation and buttons. IM Fell English (roman and italic) for Hexx's lines and display text. Libre Caslon Text for body copy. All 3 are Google Fonts. Fallback: Georgia, then serif.
+- **Ornament.** Thin ink rules, 4px double rules between sections, a double-bordered notice box, the ❦ fleuron, line-drawn woodcut art. Square corners throughout.
+- **Buttons.** Main: oxblood fill, paper text, small caps, square, at least 48px tall. Secondary: ink outline, no fill, at least 44px tall.
+- **Email.** Same palette. Most inboxes (Gmail, Outlook) ignore web fonts, so emails name the Fell and Caslon fonts first and fall back to Georgia. The "Hexxsy" masthead goes in as an image so it looks right everywhere, with "Hexxsy" as its alt text. Light background only; no dark-mode-specific design.
 
 **Reader text approval**
 
