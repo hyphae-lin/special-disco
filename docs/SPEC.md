@@ -165,7 +165,9 @@ MailPoet runs inside WordPress, handles the signup form, the welcome automation 
 - **Requirements.** WooCommerce 10.8 or later, coupons enabled in WooCommerce settings, and MailPoet's block-based email editor.
 - **Coupon settings to use.** Discount type: Fixed cart discount (not Fixed product, which takes the amount off every item). Minimum spend: see Minimum spend below. Usage limit per coupon: 1. Usage limit per user: 1. Individual use only: on. Limit to recipient's email: on. Expiry in days and category restrictions as decided (see Open).
 - **Sending.** Not through DreamHost's own mail, which tends to land in spam. Use MailPoet's sending service or an outside sending service such as Amazon SES.
-- **Confirm before building.** Whether MailPoet's free plan (up to 1,000 subscribers) includes the coupon block and the sending service, and its sending limits. Whether the coupon block exposes Minimum spend.
+- **Plan: MailPoet Business (bought Oct 31, 2026).** Installed on the site. Confirmed in the editor: the Coupon block is available in automation emails, and its Usage restriction panel has Minimum spend.
+- **Where to find it.** WooCommerce coupons must be enabled (WooCommerce > Settings > General). Then MailPoet > Automations, the "Welcome new subscribers" automation, its Send email step, and the Coupon block in the email editor, set to "Create new." It's a block, not a shortcode.
+- **Still to check.** The Business plan's subscriber and monthly sending limits.
 
 MailPoet does not know about Hexxsy's commission split. Two pieces are Hexxsy plugin work:
 
