@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Hexxsy Vendors
- * Description:       Multi-vendor marketplace for readings on Hexxsy: vendor applications and approval, reading offerings, intake questions, commission tracking, the welcome offer and the payout ledger.
- * Version:           0.5.0
+ * Description:       Multi-vendor marketplace for readings on Hexxsy: invitations, the reader waitlist, vendor applications and approval, reading offerings, intake questions, commission tracking, the welcome offer and the payout ledger.
+ * Version:           0.6.0
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Requires Plugins:  woocommerce
@@ -14,13 +14,14 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'HEXXSY_VENDORS_VERSION', '0.5.0' );
+define( 'HEXXSY_VENDORS_VERSION', '0.6.0' );
 define( 'HEXXSY_VENDORS_FILE', __FILE__ );
 define( 'HEXXSY_VENDORS_DIR', plugin_dir_path( __FILE__ ) );
 
 require_once HEXXSY_VENDORS_DIR . 'includes/class-commission.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-vendor.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-roles.php';
+require_once HEXXSY_VENDORS_DIR . 'includes/class-ledger.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-application.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-admin.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-readings.php';
@@ -51,6 +52,7 @@ add_action(
 			return;
 		}
 
+		Hexxsy\Vendors\Ledger::init();
 		Hexxsy\Vendors\Application::init();
 		Hexxsy\Vendors\Admin::init();
 		Hexxsy\Vendors\Readings::init();

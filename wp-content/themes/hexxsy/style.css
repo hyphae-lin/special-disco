@@ -2,7 +2,7 @@
 Theme Name:        Hexxsy
 Theme URI:         https://hexxsy.com
 Description:       The house theme for Hexxsy: ink, paper and oxblood, set in IM Fell English and Libre Caslon Text.
-Version:           0.1.0
+Version:           0.2.0
 Requires at least: 6.6
 Requires PHP:      8.1
 Author:            Hexxsy
@@ -110,4 +110,165 @@ p.is-style-fleuron {
 
 .hexxsy-footer {
 	border-top: var(--wp--custom--rule--double);
+}
+
+/* ------------------------------------------------------------------
+ * Forms: the Hexxsy plugin's forms (.hexxsy-form) and WooCommerce's
+ * account forms. Matches the Ledger mockup: a card, small-caps labels,
+ * underlined fields, an oxblood button. WooCommerce's block checkout
+ * keeps its own field styles.
+ * ------------------------------------------------------------------ */
+.hexxsy-form {
+	background: var(--wp--preset--color--card);
+	border: 1.5px solid var(--wp--preset--color--ink);
+	padding: clamp(1.25rem, 4vw, 1.875rem);
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+	max-width: 560px;
+}
+
+.hexxsy-form-message p {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--fell);
+	font-size: var(--wp--preset--font-size--large);
+	line-height: 1.5;
+}
+
+.hexxsy-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.375rem;
+}
+
+.hexxsy-form label,
+.woocommerce-form label,
+.woocommerce-EditAccountForm label {
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 1rem;
+	letter-spacing: 0.08em;
+	line-height: 1.3;
+}
+
+.hexxsy-hint {
+	font-size: var(--wp--preset--font-size--small);
+	font-style: italic;
+	color: var(--wp--preset--color--muted-ink);
+}
+
+.hexxsy-form input[type="text"],
+.hexxsy-form input[type="email"],
+.hexxsy-form input[type="url"],
+.hexxsy-form input[type="tel"],
+.hexxsy-form input[type="number"],
+.hexxsy-form input[type="password"],
+.hexxsy-form input[type="date"],
+.hexxsy-form input[type="time"],
+.hexxsy-form select,
+.woocommerce-form .input-text,
+.woocommerce-EditAccountForm .input-text {
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 46px;
+	padding: 0 0.75rem;
+	border: 0;
+	border-bottom: 1.5px solid var(--wp--preset--color--ink);
+	border-radius: 0;
+	background: transparent;
+	color: var(--wp--preset--color--ink);
+	font-family: var(--wp--preset--font-family--caslon);
+	font-size: 1.0625rem;
+}
+
+.hexxsy-form textarea,
+.woocommerce-form textarea {
+	box-sizing: border-box;
+	width: 100%;
+	padding: 0.625rem 0.75rem;
+	border: 1px solid var(--wp--preset--color--ink);
+	border-radius: 0;
+	background: transparent;
+	color: var(--wp--preset--color--ink);
+	font-family: var(--wp--preset--font-family--caslon);
+	font-size: 1.0625rem;
+	line-height: 1.6;
+	resize: vertical;
+}
+
+.hexxsy-form input:focus-visible,
+.hexxsy-form textarea:focus-visible,
+.hexxsy-form select:focus-visible,
+.woocommerce-form .input-text:focus-visible,
+.woocommerce-EditAccountForm .input-text:focus-visible {
+	outline: 2px solid var(--wp--preset--color--oxblood);
+	outline-offset: 3px;
+}
+
+.hexxsy-form input[type="checkbox"],
+.woocommerce-form input[type="checkbox"] {
+	accent-color: var(--wp--preset--color--oxblood);
+	width: 1.125rem;
+	height: 1.125rem;
+	margin: 0.2rem 0 0;
+	flex: none;
+}
+
+.hexxsy-check {
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 0.75rem;
+}
+
+.hexxsy-check label {
+	font-family: var(--wp--preset--font-family--caslon);
+	font-size: 0.9375rem;
+	letter-spacing: 0;
+	line-height: 1.6;
+}
+
+.hexxsy-form .wp-element-button,
+.woocommerce-form .button,
+.woocommerce-EditAccountForm .button {
+	min-height: 50px;
+	margin-top: 0.375rem;
+	border: 0;
+	border-radius: 0;
+	background: var(--wp--preset--color--oxblood);
+	color: var(--wp--preset--color--paper);
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 1.1875rem;
+	letter-spacing: 0.08em;
+	cursor: pointer;
+}
+
+.hexxsy-form .wp-element-button:hover,
+.woocommerce-form .button:hover,
+.woocommerce-EditAccountForm .button:hover {
+	background: var(--wp--preset--color--ink);
+	color: var(--wp--preset--color--paper);
+}
+
+/* Error and info notices printed above plugin forms. */
+.woocommerce-error,
+.woocommerce-message,
+.woocommerce-info {
+	list-style: none;
+	margin: 0 0 1.25rem;
+	padding: 0.875rem 1.125rem;
+	border: 1.5px solid var(--wp--preset--color--ink);
+	background: var(--wp--preset--color--card);
+}
+
+.woocommerce-error {
+	border-color: var(--wp--preset--color--oxblood);
+	color: var(--wp--preset--color--oxblood);
+}
+
+/* Spam trap on the waitlist form. */
+.hexxsy-trap {
+	position: absolute;
+	left: -9999px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
 }

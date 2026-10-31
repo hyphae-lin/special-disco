@@ -60,6 +60,26 @@ class Admin {
 		);
 		register_setting(
 			self::PAGE,
+			Ledger::SEATS_OPTION,
+			array(
+				'type'              => 'integer',
+				'default'           => Ledger::DEFAULT_SEATS,
+				'sanitize_callback' => static fn( $value ) => max( 1, absint( $value ) ),
+			)
+		);
+		foreach ( array( Ledger::APPLY_PAGE_OPTION, Ledger::LEDGER_PAGE_OPTION, Ledger::CONDUCT_OPTION ) as $option ) {
+			register_setting(
+				self::PAGE,
+				$option,
+				array(
+					'type'              => 'integer',
+					'default'           => 0,
+					'sanitize_callback' => 'absint',
+				)
+			);
+		}
+		register_setting(
+			self::PAGE,
 			Welcome_Offer::EMAILS_OPTION,
 			array(
 				'type'              => 'string',
@@ -169,6 +189,39 @@ class Admin {
 						</td>
 					</tr>
 					<tr>
+						<th scope="row"><label for="hexxsy_reader_seats"><?php esc_html_e( 'Reader seats', 'hexxsy-vendors' ); ?></label></th>
+						<td>
+							<input type="number" id="hexxsy_reader_seats" name="<?php echo esc_attr( Ledger::SEATS_OPTION ); ?>" value="<?php echo esc_attr( (string) Ledger::seats() ); ?>" min="1" step="1" class="small-text">
+							<p class="description"><?php esc_html_e( 'How many readers Hexxsy has room for. Raising it opens new rooms right away.', 'hexxsy-vendors' ); ?></p>
+						</td>
+					</tr>
+					<?php
+					$pages = array(
+						Ledger::APPLY_PAGE_OPTION  => array( __( 'Application page', 'hexxsy-vendors' ), __( 'The page with [hexxsy_vendor_application]. Invite links point here.', 'hexxsy-vendors' ) ),
+						Ledger::LEDGER_PAGE_OPTION => array( __( 'Ledger page', 'hexxsy-vendors' ), __( 'The page with [hexxsy_waitlist]. People without an invite are sent here.', 'hexxsy-vendors' ) ),
+						Ledger::CONDUCT_OPTION     => array( __( 'Code of conduct page', 'hexxsy-vendors' ), __( 'Linked from the application\'s agreement checkbox.', 'hexxsy-vendors' ) ),
+					);
+					foreach ( $pages as $option => $text ) :
+						?>
+						<tr>
+							<th scope="row"><label for="<?php echo esc_attr( $option ); ?>"><?php echo esc_html( $text[0] ); ?></label></th>
+							<td>
+								<?php
+								wp_dropdown_pages(
+									array(
+										'name'              => esc_attr( $option ),
+										'id'                => esc_attr( $option ),
+										'selected'          => (int) get_option( $option, 0 ),
+										'show_option_none'  => esc_html__( '(Choose a page)', 'hexxsy-vendors' ),
+										'option_none_value' => '0',
+									)
+								);
+								?>
+								<p class="description"><?php echo esc_html( $text[1] ); ?></p>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+					<tr>
 						<th scope="row"><label for="hexxsy_welcome_email_ids"><?php esc_html_e( 'Welcome offer emails', 'hexxsy-vendors' ); ?></label></th>
 						<td>
 							<input type="text" id="hexxsy_welcome_email_ids" name="<?php echo esc_attr( Welcome_Offer::EMAILS_OPTION ); ?>" value="<?php echo esc_attr( implode( ', ', Welcome_Offer::email_ids() ) ); ?>" class="regular-text">
@@ -178,6 +231,8 @@ class Admin {
 				</table>
 				<?php submit_button( __( 'Save settings', 'hexxsy-vendors' ) ); ?>
 			</form>
+
+			<?php Ledger::render_admin(); ?>
 
 			<?php self::render_welcome_check(); ?>
 
@@ -223,8 +278,10 @@ class Admin {
 							</td>
 							<td><?php echo esc_html( Commission::rate_for_vendor( $user->ID ) . '%' ); ?></td>
 							<td>
-								<?php if ( Vendor::APPROVED !== $status ) : ?>
+								<?php if ( Vendor::APPROVED !== $status && Ledger::can_approve() ) : ?>
 									<a class="button button-primary" href="<?php echo esc_url( self::review_url( $user->ID, 'approve' ) ); ?>"><?php esc_html_e( 'Approve', 'hexxsy-vendors' ); ?></a>
+								<?php elseif ( Vendor::APPROVED !== $status ) : ?>
+									<button type="button" class="button button-primary" disabled title="<?php esc_attr_e( 'Every seat is taken. Raise Reader seats to approve.', 'hexxsy-vendors' ); ?>"><?php esc_html_e( 'Approve', 'hexxsy-vendors' ); ?></button>
 								<?php endif; ?>
 								<?php if ( Vendor::REJECTED !== $status ) : ?>
 									<a class="button" href="<?php echo esc_url( self::review_url( $user->ID, 'reject' ) ); ?>" onclick="return confirm('<?php echo esc_js( __( 'Reject this vendor? They will be emailed.', 'hexxsy-vendors' ) ); ?>');">
@@ -274,6 +331,9 @@ class Admin {
 
 		$decision = isset( $_GET['decision'] ) ? sanitize_key( $_GET['decision'] ) : '';
 		if ( 'approve' === $decision ) {
+			if ( ! Ledger::can_approve() ) {
+				wp_die( esc_html__( 'Every seat is taken. Raise Reader seats on the Vendors page to approve another reader.', 'hexxsy-vendors' ) );
+			}
 			Vendor::approve( $user_id );
 		} elseif ( 'reject' === $decision ) {
 			Vendor::reject( $user_id );

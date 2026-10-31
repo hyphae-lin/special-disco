@@ -44,7 +44,7 @@ A new reading goes live the moment it's saved. Nobody reviews it first.
 
 The admin can also make readings in the normal WooCommerce product editor, which has the same reading fields.
 
-## Invitations and waitlist (decided, not built)
+## Invitations and waitlist (decided Oct 13, built Oct 31, 2026 in 0.6.0, untested on a live site)
 
 Readers join by invitation only, and the number of readers is capped by a setting. Decided Oct 13, 2026. This replaces the open application in step 1 above.
 
@@ -56,6 +56,7 @@ The cap starts at 12 to keep administration manageable at launch. It is a starti
 - Approved readers plus unused invites can't exceed the cap, so you never invite more people than you have room for.
 - Revoking a reader, or an invite expiring, frees a seat.
 - The Approve button is disabled when every seat is taken.
+- As built: applications waiting for review also hold a seat, alongside approved readers and open invites. Otherwise an invite turning into an application would free its seat and you could over-invite. Approve is only blocked by approved readers reaching the cap.
 
 **Invites**
 
@@ -77,6 +78,16 @@ The cap starts at 12 to keep administration manageable at launch. It is a starti
 - The person gets a short confirmation email. One entry per email address.
 - The Vendors page lists the waitlist, oldest first, each with an Invite button and a Remove button.
 - Waitlist entries are personal data, so they belong in the privacy policy (gap 10).
+
+**As built (Oct 31, 2026)**
+
+- WooCommerce > Vendors has Reader seats, plus 3 page choices: the application page (invite links point there), the Ledger page (people without an invite are sent there) and the code of conduct page (linked from the agreement checkbox). The Ledger section lists seats, open invites (with Cancel) and the waitlist (with Invite and Remove).
+- An invite link survives a trip to log in or sign up: the site remembers it in a cookie for 14 days.
+- Only a hash of each invite token is stored, so a copy of the database can't be used to open applications.
+- The waitlist form has a hidden spam trap and gives the same reply whether or not the email is already on the list, so it doesn't reveal who's signed.
+- Using an invite removes that person's waitlist entry.
+- Theme patterns: "Become a reader" (application page) and "The Ledger" (waitlist page), each with Hexx's lines beside the form.
+- Wording in the forms and emails is still in the plugin code. It moves to the Hexx's lines screen when that's built.
 
 ## Readings and intake
 

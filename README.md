@@ -4,9 +4,10 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 
 ## What's here
 
-`wp-content/plugins/hexxsy-vendors/` is the custom vendor plugin. Version 0.5.0 covers:
+`wp-content/plugins/hexxsy-vendors/` is the custom vendor plugin. Version 0.6.0 covers:
 
-- **Vendor applications.** Put `[hexxsy_vendor_application]` on a page. Applicants need an account first (WooCommerce's My Account page handles sign-up).
+- **Invitations and the Ledger.** Readers join by invitation. Put `[hexxsy_waitlist]` on the Ledger page so anyone can sign the waitlist, no account needed. On WooCommerce > Vendors, set Reader seats and choose the application, Ledger and code of conduct pages, then invite people from the waitlist or by email. Invites last 14 days and work once, for the account with that email.
+- **Vendor applications.** Put `[hexxsy_vendor_application]` on a page. It opens only for someone holding a valid invite, logged in with the invited email (WooCommerce's My Account page handles sign-up).
 - **Manual approval.** WooCommerce > Vendors lists applications. Approving grants the `hexxsy_vendor` role; both decisions email the applicant.
 - **Commission.** Site default is 20%, set on the Vendors page. Override per vendor on their user profile.
 - **Reading offerings.** Any product can be marked a written reading or a live call, with turnaround days or call length. The product's author is its vendor.
@@ -20,12 +21,13 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 - **Welcome offer.** Coupons MailPoet generates from the welcome email are recognized at checkout. The discount on each reader's line is capped at the site's commission, and readers are paid on the full price; the house absorbs the discount. Set which MailPoet emails count on WooCommerce > Vendors, where the Welcome offer check also warns if the coupon's minimum spend is too low. Any coupon can be marked by hand with the Welcome offer checkbox in WooCommerce > Coupons.
 - **Payouts.** Hexxsy holds each payment. A written reading's share becomes payable once it's delivered and a hold period (7 days by default) has passed. Readers set up payouts from Reading orders, which creates a Stripe Express account. WooCommerce > Payouts sends what's owed by Stripe transfer, or records a payment made by hand, and can reverse a transfer after a refund.
 
-`wp-content/themes/hexxsy/` is the house theme, a block theme. Version 0.1.0 is the foundation:
+`wp-content/themes/hexxsy/` is the house theme, a block theme. Version 0.2.0 is the foundation:
 
 - **Brand as global styles.** The palette, fonts and sizes live in `theme.json`, so changing the accent is one setting in Appearance > Editor > Styles. The fonts (IM Fell English, IM Fell English SC, Libre Caslon Text) are served from the theme, not from Google.
 - **Header and footer.** The masthead with the site title and tagline, navigation, and both disclaimers. Edit them in Appearance > Editor > Patterns > Template parts.
 - **Templates.** Page, full-width page, post, archive, search and 404. WooCommerce supplies its own shop, product, cart and checkout templates, which pick up the header, footer and styles.
 - **House styles.** Block styles the editor offers by name: Double rule and Thin rule (separators), Notice, Card and Band (groups), and Hexx speaks, Small caps label and Fleuron heading (paragraphs).
+- **Forms.** The plugin's forms and WooCommerce's account forms match the Ledger mockup. Patterns "Become a reader" and "The Ledger" lay out those pages.
 - **Your own patterns.** Make them in Appearance > Editor > Patterns. Four Hexxsy categories are there to file them under. Patterns you make are kept in the database, so deploys never touch them.
 
 ## Not built yet
