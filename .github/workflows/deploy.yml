@@ -1,4 +1,4 @@
-# Tests the plugin, then copies it to DreamHost, on every push to main.
+# Tests the plugin, then copies it and the theme to DreamHost, on every push to main.
 #
 # Needs these repository secrets (Settings > Secrets and variables > Actions):
 #   DREAMHOST_HOST         e.g. pdx1-shared-a1-01.dreamhost.com
@@ -6,6 +6,8 @@
 #   DREAMHOST_SSH_KEY      private key whose public half is in that user's ~/.ssh/authorized_keys
 #   DREAMHOST_KNOWN_HOSTS  output of `ssh-keyscan <host>`, checked once by hand
 #   DREAMHOST_PLUGIN_PATH  e.g. /home/<user>/hexxsy.com/wp-content/plugins/hexxsy-vendors
+#   DREAMHOST_THEME_PATH   e.g. /home/<user>/hexxsy.com/wp-content/themes/hexxsy
+#                          Optional: without it, the theme isn't deployed.
 
 name: Deploy to DreamHost
 
@@ -46,6 +48,7 @@ jobs:
           DREAMHOST_SSH_KEY: ${{ secrets.DREAMHOST_SSH_KEY }}
           DREAMHOST_KNOWN_HOSTS: ${{ secrets.DREAMHOST_KNOWN_HOSTS }}
           DREAMHOST_PLUGIN_PATH: ${{ secrets.DREAMHOST_PLUGIN_PATH }}
+          DREAMHOST_THEME_PATH: ${{ secrets.DREAMHOST_THEME_PATH }}
         run: |
           for name in DREAMHOST_HOST DREAMHOST_USER DREAMHOST_SSH_KEY DREAMHOST_KNOWN_HOSTS DREAMHOST_PLUGIN_PATH; do
             if [ -z "${!name}" ]; then
@@ -59,6 +62,14 @@ jobs:
             */wp-content/plugins/hexxsy-vendors) ;;
             *)
               echo "::error::DREAMHOST_PLUGIN_PATH must end in /wp-content/plugins/hexxsy-vendors."
+              exit 1
+              ;;
+          esac
+          case "$DREAMHOST_THEME_PATH" in
+            '') echo "::warning::DREAMHOST_THEME_PATH is not set, so the theme won't be deployed." ;;
+            */wp-content/themes/hexxsy) ;;
+            *)
+              echo "::error::DREAMHOST_THEME_PATH must end in /wp-content/themes/hexxsy."
               exit 1
               ;;
           esac
@@ -89,6 +100,21 @@ jobs:
             -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
             wp-content/plugins/hexxsy-vendors/ \
             "$SSH_USER@$SSH_HOST:$PLUGIN_PATH/"
+
+      - name: Copy theme
+        env:
+          SSH_HOST: ${{ secrets.DREAMHOST_HOST }}
+          SSH_USER: ${{ secrets.DREAMHOST_USER }}
+          THEME_PATH: ${{ secrets.DREAMHOST_THEME_PATH }}
+        run: |
+          if [ -z "$THEME_PATH" ]; then
+            echo "Skipping: DREAMHOST_THEME_PATH is not set."
+            exit 0
+          fi
+          rsync -rlvz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
+            wp-content/themes/hexxsy/ \
+            "$SSH_USER@$SSH_HOST:$THEME_PATH/"
 
       - name: Remove key
         if: always()

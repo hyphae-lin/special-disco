@@ -271,6 +271,15 @@ The light direction from the homepage mockup ("Homepage" board on the Hexxsy hom
 - **Buttons.** Main: oxblood fill, paper text, small caps, square, at least 48px tall. Secondary: ink outline, no fill, at least 44px tall.
 - **Email.** Same palette. Most inboxes (Gmail, Outlook) ignore web fonts, so emails name the Fell and Caslon fonts first and fall back to Georgia. The "Hexxsy" masthead goes in as an image so it looks right everywhere, with "Hexxsy" as its alt text. Light background only; no dark-mode-specific design.
 
+**Your own block patterns (decided Oct 31, 2026)**
+
+The admin can make new block patterns at any time in Appearance > Editor > Patterns, synced or not, and use them on any page. The theme supports this:
+
+- The editor's color and font choices are the brand palette and fonts (see Brand), so new patterns stay on brand. Custom colors stay available in Styles for the rare exception.
+- The theme registers Hexxsy pattern categories so the admin's patterns sort alongside the theme's.
+- Only the theme's structural pieces are locked. Admin-made patterns are never locked.
+- Admin-made patterns, and any template or template part edited in the Site Editor, are stored in the database. Deploys replace the theme folder but never touch them. The catch: once a template is edited in the Site Editor, later changes to that template in the theme files don't show until the edit is reset ("Reset" in the Site Editor).
+
 **Reader text approval**
 
 - Anything a reader writes or changes goes into a pending queue. Their live room keeps showing the last approved version until the admin approves.
@@ -291,7 +300,7 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 
 - **Paying readers automatically.** The payout ledger is built (see Money). Stripe Connect is approved for live (Oct 14, 2026) and reader onboarding and transfers are built, but untested against real Stripe. Run the whole flow in test mode before going live.
 - **Live calls.** No availability, booking, scheduling or video provider.
-- **Theme.** No custom design; the site runs on whatever theme is installed.
+- **Theme.** Foundation built Oct 31, 2026 (theme 0.1.0, untested on a live site): brand styles, fonts, header, footer, basic templates, house block styles, pattern categories. Still to build: the homepage (with a rooms block in the plugin, see gap 7), reader room, offering page, Hexx's page, the ledger, the masthead's logo modes, and the Hexx's lines admin screen.
 
 ### Found in the code
 

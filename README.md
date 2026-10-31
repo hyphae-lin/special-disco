@@ -20,10 +20,18 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 - **Welcome offer.** Coupons MailPoet generates from the welcome email are recognized at checkout. The discount on each reader's line is capped at the site's commission, and readers are paid on the full price; the house absorbs the discount. Set which MailPoet emails count on WooCommerce > Vendors, where the Welcome offer check also warns if the coupon's minimum spend is too low. Any coupon can be marked by hand with the Welcome offer checkbox in WooCommerce > Coupons.
 - **Payouts.** Hexxsy holds each payment. A written reading's share becomes payable once it's delivered and a hold period (7 days by default) has passed. Readers set up payouts from Reading orders, which creates a Stripe Express account. WooCommerce > Payouts sends what's owed by Stripe transfer, or records a payment made by hand, and can reverse a transfer after a refund.
 
+`wp-content/themes/hexxsy/` is the house theme, a block theme. Version 0.1.0 is the foundation:
+
+- **Brand as global styles.** The palette, fonts and sizes live in `theme.json`, so changing the accent is one setting in Appearance > Editor > Styles. The fonts (IM Fell English, IM Fell English SC, Libre Caslon Text) are served from the theme, not from Google.
+- **Header and footer.** The masthead with the site title and tagline, navigation, and both disclaimers. Edit them in Appearance > Editor > Patterns > Template parts.
+- **Templates.** Page, full-width page, post, archive, search and 404. WooCommerce supplies its own shop, product, cart and checkout templates, which pick up the header, footer and styles.
+- **House styles.** Block styles the editor offers by name: Double rule and Thin rule (separators), Notice, Card and Band (groups), and Hexx speaks, Small caps label and Fleuron heading (paragraphs).
+- **Your own patterns.** Make them in Appearance > Editor > Patterns. Four Hexxsy categories are there to file them under. Patterns you make are kept in the database, so deploys never touch them.
+
 ## Not built yet
 
 - Live-call availability, booking and the video provider
-- Custom theme
+- Theme: homepage, reader room, offering, Hexx's page and ledger designs; the masthead's logo modes
 
 ## Live call policy
 
@@ -41,7 +49,7 @@ composer test
 
 ## Deploying to DreamHost
 
-Every push to `main` runs the tests, and if they pass, `.github/workflows/deploy.yml` copies the plugin to DreamHost over SSH. Tests, `vendor/` and Composer files stay behind. You can also run it by hand from the Actions tab.
+Every push to `main` runs the tests, and if they pass, `.github/workflows/deploy.yml` copies the plugin and the theme to DreamHost over SSH. Tests, `vendor/` and Composer files stay behind. You can also run it by hand from the Actions tab.
 
 One-time setup:
 
@@ -54,9 +62,10 @@ One-time setup:
    - `DREAMHOST_SSH_KEY`: the contents of `hexxsy-deploy` (the private key)
    - `DREAMHOST_KNOWN_HOSTS`: the output from step 3
    - `DREAMHOST_PLUGIN_PATH`: the full path to the plugin folder, e.g. `/home/<user>/staging.hexxsy.com/wp-content/plugins/hexxsy-vendors`
+   - `DREAMHOST_THEME_PATH`: the full path to the theme folder, e.g. `/home/<user>/staging.hexxsy.com/wp-content/themes/hexxsy`. Optional; without it the theme isn't deployed.
 5. Delete the key files from your computer once they're saved in GitHub and on DreamHost.
 
-The deploy replaces the plugin folder to match the repo exactly, so never edit plugin files on the server. It refuses any path that doesn't end in `/wp-content/plugins/hexxsy-vendors`, so a typo can't wipe the rest of the site. After the first deploy, activate the plugin under Plugins.
+The deploy replaces the plugin folder to match the repo exactly, so never edit plugin files on the server. It refuses any path that doesn't end in `/wp-content/plugins/hexxsy-vendors`, so a typo can't wipe the rest of the site. After the first deploy, activate the plugin under Plugins and the theme under Appearance > Themes. The theme path must end in `/wp-content/themes/hexxsy`, for the same reason.
 
 ## Stripe
 

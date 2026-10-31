@@ -1,0 +1,113 @@
+/*
+Theme Name:        Hexxsy
+Theme URI:         https://hexxsy.com
+Description:       The house theme for Hexxsy: ink, paper and oxblood, set in IM Fell English and Libre Caslon Text.
+Version:           0.1.0
+Requires at least: 6.6
+Requires PHP:      8.1
+Author:            Hexxsy
+License:           GPL-2.0-or-later
+License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain:       hexxsy
+Tags:              block-themes, full-site-editing
+
+Fonts: IM Fell English and IM Fell English SC (Igino Marini), Libre Caslon
+Text (Pablo Impallari), all under the SIL Open Font License 1.1. See
+assets/fonts/.
+
+Colors, fonts and sizes live in theme.json. This file only holds what
+theme.json can't express: the house's rules, ornaments and boxes, as block
+styles the editor offers by name.
+*/
+
+/* Separator styles: "Double rule" and "Thin rule". */
+.wp-block-separator.is-style-double-rule {
+	border: 0;
+	border-top: var(--wp--custom--rule--double);
+	height: 0;
+	opacity: 1;
+}
+
+.wp-block-separator.is-style-thin-rule {
+	border: 0;
+	border-top: var(--wp--custom--rule--thin);
+	height: 0;
+	opacity: 1;
+}
+
+/* Group style "Notice": the double-bordered box from the house notice. */
+.wp-block-group.is-style-notice {
+	background: var(--wp--preset--color--card);
+	border: 1.5px solid var(--wp--preset--color--ink);
+	outline: 1px solid var(--wp--preset--color--ink);
+	outline-offset: 5px;
+	padding: 1.875rem 2.25rem;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 680px;
+}
+
+/* Group style "Card": a raised panel with an ink border. */
+.wp-block-group.is-style-card {
+	background: var(--wp--preset--color--card);
+	border: 1.5px solid var(--wp--preset--color--ink);
+	padding: 1rem;
+}
+
+/* Group style "Band": a full-width section between double rules. */
+.wp-block-group.is-style-band {
+	background: var(--wp--preset--color--band);
+	border-top: var(--wp--custom--rule--double);
+	border-bottom: var(--wp--custom--rule--double);
+}
+
+/* Paragraph style "Hexx speaks": her voice, in Fell italic. */
+p.is-style-hexx {
+	font-family: var(--wp--preset--font-family--fell);
+	font-style: italic;
+	font-size: var(--wp--preset--font-size--large);
+	line-height: 1.5;
+}
+
+/* Paragraph style "Small caps label", e.g. "Hexx, Proprietress". */
+p.is-style-label {
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 0.9375rem;
+	letter-spacing: 0.12em;
+}
+
+/* Paragraph style "Fleuron heading", e.g. ❦ Notice ❦. */
+p.is-style-fleuron {
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 1.375rem;
+	letter-spacing: 0.2em;
+	color: var(--wp--preset--color--oxblood);
+	text-align: center;
+}
+
+/* Buttons are at least 48px tall (44px for outline), per the brand. */
+.wp-element-button,
+.wp-block-button__link {
+	min-height: 48px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.wp-block-button.is-style-outline .wp-block-button__link {
+	min-height: 44px;
+}
+
+/* Masthead rule under the header. */
+.hexxsy-masthead {
+	border-bottom: var(--wp--custom--rule--double);
+}
+
+.hexxsy-topline {
+	border-bottom: var(--wp--custom--rule--thin);
+}
+
+.hexxsy-footer {
+	border-top: var(--wp--custom--rule--double);
+}
