@@ -6,7 +6,7 @@ Bracketed items are settings, not fixed values. Fill them from the coupon block'
 
 - `[DISCOUNT]`: the coupon amount, e.g. $5
 - `[MINIMUM]`: the coupon's minimum spend, $25 at launch
-- `[DAYS]`: days until the code expires
+- `[DAYS]`: days until the code expires, 30 at launch
 
 ## Subject line
 

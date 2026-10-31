@@ -184,6 +184,8 @@ MailPoet does not know about Hexxsy's commission split. Two pieces are Hexxsy pl
 
 **Shelves (decided Oct 31, 2026).** The welcome code is good on everything, on any cart of $25 or more. No category restrictions on the coupon. Readers whose Wares are discounted are still paid in full, since the house absorbs the discount.
 
+**Expiry (decided Oct 31, 2026).** Codes expire 30 days after they're sent. Set in the coupon block, adjustable like the amount.
+
 **Minimum spend (decided Oct 31, 2026)**
 
 The coupon only works on carts over a minimum spend. With a Fixed cart discount, WooCommerce spreads the discount across the cart in proportion to each item's price, so a high enough minimum keeps every line's discount under its commission.
@@ -201,7 +203,6 @@ The coupon only works on carts over a minimum spend. With a Fixed cart discount,
 **Open**
 
 - Starting discount amount (leaning $5). Minimum spend starts at $25 (decided Oct 31, 2026), which supports up to $5 off at a 20% commission. Both stay adjustable.
-- Expiry for unused codes.
 - Signup email addresses are personal data and belong in the privacy policy (gap 10).
 
 ## Policies
