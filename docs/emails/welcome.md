@@ -29,9 +29,7 @@ Pick one:
 
 **Hexx, Proprietress**
 
-You signed the book at the door. Most people don't bother.
-
-So here's something for your first visit: [DISCOUNT] off anything in the house, on any order of [MINIMUM] or more. A sitting, a letter, a paper, a ware. Whatever you came for.
+Welcome in. Here's something for your first visit: [DISCOUNT] off anything in the house, on any order of [MINIMUM] or more. A sitting, a letter, a paper, a ware. Whatever you came for.
 
 *[Coupon block: Create new]*
 
