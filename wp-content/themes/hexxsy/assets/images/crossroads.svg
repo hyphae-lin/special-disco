@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 360" width="640" height="720" fill="none" stroke="#1B1714" stroke-width="2">
+  <title>Two roads crossing beneath a lamp</title>
+  <rect width="320" height="360" fill="#F1E9D8" stroke="none"/>
+  <rect x="6" y="6" width="308" height="348"/>
+  <rect x="14" y="14" width="292" height="332" stroke-width="1"/>
+  <path d="M14 240 L306 240"/>
+  <path d="M120 346 L150 240 M200 346 L170 240"/>
+  <path d="M14 270 L150 248 M14 300 L140 256 M306 270 L170 248 M306 300 L180 256" stroke-width="1"/>
+  <path d="M128 330 L136 300 M192 330 L184 300 M140 290 L144 274 M180 290 L176 274" stroke-width="1"/>
+  <path d="M230 240 L230 96"/>
+  <path d="M222 96 L238 96 L244 82 L216 82 Z"/>
+  <path d="M218 82 L230 66 L242 82"/>
+  <circle cx="230" cy="89" r="3" fill="#6E1B17" stroke="none"/>
+  <path d="M230 89 m-22 0 l-10 0 M230 89 m22 0 l10 0 M230 89 m-16 -16 l-7 -7 M230 89 m16 -16 l7 -7" stroke-width="1"/>
+  <path d="M60 240 L60 150"/>
+  <path d="M60 160 L108 156 L116 166 L108 176 L60 172 Z"/>
+  <path d="M60 186 L16 182 L22 194 L16 206 L60 202 Z" stroke-width="1.5"/>
+  <path d="M40 40 q30 -10 60 0 q30 10 60 0" stroke-width="1"/>
+  <circle cx="262" cy="44" r="14"/>
+  <path d="M268 32 a14 14 0 0 0 0 24" stroke-width="1"/>
+</svg>

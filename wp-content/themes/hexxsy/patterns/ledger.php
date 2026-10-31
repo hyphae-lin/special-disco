@@ -3,7 +3,7 @@
  * Title: The Ledger (reader waitlist)
  * Slug: hexxsy/ledger
  * Categories: hexxsy-sections, hexxsy-rooms
- * Description: Hexx on the left, the waitlist form on the right, as in the Ledger mockup. Use on the Ledger page with the Full width page template.
+ * Description: Hexx on the left (her lines change on their own when every room is taken), the waitlist form on the right, as in the Ledger mockup. Use on the Ledger page with the Full width page template.
  * Keywords: ledger, waitlist, reader, invitation
  */
 ?>
@@ -21,13 +21,9 @@
 			<h1 class="wp-block-heading" style="line-height:1">The Ledger</h1>
 			<!-- /wp:heading -->
 
-			<!-- wp:paragraph {"fontFamily":"fell","style":{"typography":{"fontSize":"1.75rem","lineHeight":"1.35"}}} -->
-			<p class="has-fell-font-family" style="font-size:1.75rem;line-height:1.35">There are rooms open, but I don’t hand out keys.</p>
-			<!-- /wp:paragraph -->
-
-			<!-- wp:paragraph -->
-			<p>Leave your name and I’ll come find you if it fits. I go through the list on Sundays.</p>
-			<!-- /wp:paragraph -->
+			<!-- wp:shortcode -->
+[hexxsy_line key="ledger"]
+			<!-- /wp:shortcode -->
 
 			<!-- wp:paragraph {"textColor":"muted-ink","fontSize":"small"} -->
 			<p class="has-muted-ink-color has-text-color has-small-font-size">Rooms open by invitation only. Invited readers fill in the full application and agree to the house code of conduct before taking a room.</p>

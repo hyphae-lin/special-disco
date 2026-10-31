@@ -280,12 +280,13 @@ class Ledger {
 		$link = add_query_arg( self::QUERY_ARG, rawurlencode( $token ), $apply );
 		wp_mail(
 			$email,
-			__( 'A key to a room at Hexxsy', 'hexxsy-vendors' ),
-			sprintf(
-				/* translators: 1: application link, 2: days the link lasts */
-				__( "I've kept a room aside for you at Hexxsy.\n\nThis link opens the reader application. It works once, for an account with this email address, and it goes stale in %2\$d days:\n\n%1\$s\n\nIf you don't have an account yet, the page will show you where to make one.\n\nHexx", 'hexxsy-vendors' ),
-				$link,
-				self::INVITE_DAYS
+			Lines::text( 'invite_subject' ),
+			Lines::text(
+				'invite_body',
+				array(
+					'link_url' => $link,
+					'days'     => (string) self::INVITE_DAYS,
+				)
 			)
 		);
 
@@ -436,7 +437,7 @@ class Ledger {
 	public static function render_waitlist(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['signed'] ) ) {
-			return '<div class="hexxsy-form hexxsy-form-message"><p>' . esc_html__( 'Your name is in the ledger. I go through it on Sundays. If it fits, I\'ll find you.', 'hexxsy-vendors' ) . '</p></div>';
+			return '<div class="hexxsy-form hexxsy-form-message"><p>' . Lines::html( 'ledger_thanks' ) . '</p></div>';
 		}
 
 		ob_start();
@@ -517,11 +518,7 @@ class Ledger {
 				update_post_meta( $id, '_hexxsy_practice', isset( $_POST['hexxsy_ledger_practice'] ) ? sanitize_text_field( wp_unslash( $_POST['hexxsy_ledger_practice'] ) ) : '' );
 				update_post_meta( $id, '_hexxsy_note', isset( $_POST['hexxsy_ledger_note'] ) ? sanitize_textarea_field( wp_unslash( $_POST['hexxsy_ledger_note'] ) ) : '' );
 
-				wp_mail(
-					$email,
-					__( 'Your name is in the ledger', 'hexxsy-vendors' ),
-					__( "You signed the reader ledger at Hexxsy. I go through it on Sundays, and if it fits, I'll write to you with an invitation.\n\nIf you didn't sign it, ignore this and nothing more will come.\n\nHexx", 'hexxsy-vendors' )
-				);
+				wp_mail( $email, Lines::text( 'ledger_email_subject' ), Lines::text( 'ledger_email_body' ) );
 				do_action( 'hexxsy_waitlist_signed', $id );
 			}
 		}

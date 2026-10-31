@@ -324,6 +324,14 @@ class Dashboard {
 		update_user_meta( $user_id, 'hexxsy_shop_name', $shop_name );
 		update_user_meta( $user_id, 'hexxsy_bio', sanitize_textarea_field( $input['hexxsy_bio'] ?? '' ) );
 		update_user_meta( $user_id, 'hexxsy_specialties', sanitize_text_field( $input['hexxsy_specialties'] ?? '' ) );
+		update_user_meta( $user_id, Rooms::DOOR_META, mb_substr( sanitize_text_field( $input['hexxsy_door_line'] ?? '' ), 0, 140 ) );
+
+		$portrait = self::handle_image_upload();
+		if ( $portrait ) {
+			update_user_meta( $user_id, Rooms::PORTRAIT_META, $portrait );
+		} elseif ( ! empty( $input['hexxsy_remove_portrait'] ) ) {
+			delete_user_meta( $user_id, Rooms::PORTRAIT_META );
+		}
 
 		wc_add_notice( __( 'Shop profile saved.', 'hexxsy-vendors' ) );
 		return wc_get_account_endpoint_url( self::SHOP );
@@ -677,9 +685,10 @@ class Dashboard {
 		if ( ! self::guard() ) {
 			return;
 		}
-		$user_id = get_current_user_id();
+		$user_id  = get_current_user_id();
+		$portrait = (int) get_user_meta( $user_id, Rooms::PORTRAIT_META, true );
 		?>
-		<form method="post">
+		<form method="post" enctype="multipart/form-data">
 			<?php self::form_fields( 'save_shop' ); ?>
 			<p class="form-row">
 				<label for="hexxsy_shop_name"><?php esc_html_e( 'Shop name', 'hexxsy-vendors' ); ?></label>
@@ -692,6 +701,20 @@ class Dashboard {
 			<p class="form-row">
 				<label for="hexxsy_specialties"><?php esc_html_e( 'Specialties', 'hexxsy-vendors' ); ?></label>
 				<input type="text" class="input-text" id="hexxsy_specialties" name="hexxsy_specialties" maxlength="200" value="<?php echo esc_attr( (string) get_user_meta( $user_id, 'hexxsy_specialties', true ) ); ?>">
+			</p>
+			<p class="form-row">
+				<label for="hexxsy_door_line"><?php esc_html_e( 'Door line', 'hexxsy-vendors' ); ?></label>
+				<input type="text" class="input-text" id="hexxsy_door_line" name="hexxsy_door_line" maxlength="140" aria-describedby="hexxsy_door_line_hint" value="<?php echo esc_attr( (string) get_user_meta( $user_id, Rooms::DOOR_META, true ) ); ?>">
+				<span class="hexxsy-hint" id="hexxsy_door_line_hint"><?php esc_html_e( 'One sentence on your room\'s card on the homepage. 140 characters at most.', 'hexxsy-vendors' ); ?></span>
+			</p>
+			<p class="form-row">
+				<label for="hexxsy_portrait"><?php esc_html_e( 'Portrait', 'hexxsy-vendors' ); ?></label>
+				<?php if ( $portrait && wp_attachment_is_image( $portrait ) ) : ?>
+					<?php echo wp_get_attachment_image( $portrait, 'thumbnail', false, array( 'alt' => '' ) ); ?><br>
+					<label><input type="checkbox" name="hexxsy_remove_portrait" value="1"> <?php esc_html_e( 'Remove this portrait', 'hexxsy-vendors' ); ?></label><br>
+				<?php endif; ?>
+				<input type="file" id="hexxsy_portrait" name="image" accept="image/jpeg,image/png,image/webp" aria-describedby="hexxsy_portrait_hint">
+				<span class="hexxsy-hint" id="hexxsy_portrait_hint"><?php esc_html_e( 'Shown on your room\'s card. A JPG, PNG or WebP, at least 600 pixels wide. Taller than wide crops best.', 'hexxsy-vendors' ); ?></span>
 			</p>
 			<p><button type="submit" class="button"><?php esc_html_e( 'Save profile', 'hexxsy-vendors' ); ?></button></p>
 		</form>

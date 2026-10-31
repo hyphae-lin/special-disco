@@ -291,6 +291,21 @@ The admin can make new block patterns at any time in Appearance > Editor > Patte
 - Only the theme's structural pieces are locked. Admin-made patterns are never locked.
 - Admin-made patterns, and any template or template part edited in the Site Editor, are stored in the database. Deploys replace the theme folder but never touch them. The catch: once a template is edited in the Site Editor, later changes to that template in the theme files don't show until the edit is reset ("Reset" in the Site Editor).
 
+**Hexx's lines (built Oct 31, 2026, plugin 0.7.0)**
+
+- WooCommerce > Hexx's lines holds every line the plugin speaks: the rooms list, the Ledger, the application and invite messages, and the invite and waitlist emails. Each box shows its default; an empty box uses it.
+- {placeholders} are filled in automatically, and {link}…{/link} marks the words that become a link.
+- [hexxsy_line key="…"] places any line on a page. [hexxsy_line key="ledger"] shows the "rooms open" or "every room taken" pair, whichever is true.
+- Lines in the theme (homepage hero, footer, 404) are edited in the Site Editor.
+- Still in code: reader dashboard text, order and delivery emails, and admin screens.
+
+**Rooms list (built Oct 31, 2026)**
+
+- [hexxsy_rooms] shows approved readers in the order they applied, numbered I, II, III.
+- Each card: portrait, shop name, specialties, door line, the shelves they have in stock, lowest price, Knock.
+- Readers set the door line (140 characters) and portrait in My Account > Shop profile. These go live straight away for now; the approval queue below isn't built.
+- Empty rooms: hidden with Hexx's empty-rooms line and the Ledger link (default), or shown as unlit. Set on WooCommerce > Vendors.
+
 **Reader text approval**
 
 - Anything a reader writes or changes goes into a pending queue. Their live room keeps showing the last approved version until the admin approves.
@@ -311,7 +326,7 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 
 - **Paying readers automatically.** The payout ledger is built (see Money). Stripe Connect is approved for live (Oct 14, 2026) and reader onboarding and transfers are built, but untested against real Stripe. Run the whole flow in test mode before going live.
 - **Live calls.** No availability, booking, scheduling or video provider.
-- **Theme.** Foundation built Oct 31, 2026 (theme 0.1.0, untested on a live site): brand styles, fonts, header, footer, basic templates, house block styles, pattern categories. Still to build: the homepage (with a rooms block in the plugin, see gap 7), reader room, offering page, Hexx's page, the ledger, the masthead's logo modes, and the Hexx's lines admin screen.
+- **Theme.** Foundation built Oct 31, 2026 (theme 0.1.0, untested on a live site): brand styles, fonts, header, footer, basic templates, house block styles, pattern categories. Pass 2 built Oct 31, 2026 (theme 0.3.0, plugin 0.7.0): homepage patterns (hero with the woodcut as a replaceable image, Readers' Rooms band, house notice), the rooms list ([hexxsy_rooms]), and the Hexx's lines screen. Still to build: reader room pages, the offering page, Hexx's page, and the masthead's logo modes.
 
 ### Found in the code
 
@@ -323,7 +338,7 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 | 4 | No refund or cancellation policy for written readings | Only live calls have one | Can a customer cancel before delivery? After? |
 | 5 | Readings go live with no review | A new reader's first offering is public instantly | Approve each reading, or just the first few? |
 | 6 | Rejected applicants can never reapply | The code says an admin can reset status, but there's no button for it | Allow reapplying after a wait? Add a reset? |
-| 7 | Reader profiles are invisible | Shop name, bio and specialties are collected but never shown to customers. No reader page, no directory | How do customers choose a reader? |
+| 7 | Reader profiles are invisible (partly fixed Oct 31, 2026: the homepage rooms list shows shop name, specialties, door line, portrait, shelves and lowest price; Knock opens the shop filtered to that reader until room pages exist) | Shop name, bio and specialties are collected but never shown to customers. No reader page, no directory | How do customers choose a reader? |
 | 8 | No messaging | A reader can't ask a follow-up about a vague question; the customer can't reach the reader | In-site messages, email relay, or none? |
 | 9 | Terms pages don't exist | The application asks readers to agree to "vendor terms" that aren't written. No customer terms either | Write vendor terms, customer terms, refund policy |
 | 10 | Birth data has no privacy plan | Birth date, time and place are personal data, kept on orders indefinitely | Privacy policy, retention, deletion on request |

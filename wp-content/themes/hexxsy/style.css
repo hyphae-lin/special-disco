@@ -2,7 +2,7 @@
 Theme Name:        Hexxsy
 Theme URI:         https://hexxsy.com
 Description:       The house theme for Hexxsy: ink, paper and oxblood, set in IM Fell English and Libre Caslon Text.
-Version:           0.2.0
+Version:           0.3.0
 Requires at least: 6.6
 Requires PHP:      8.1
 Author:            Hexxsy
@@ -271,4 +271,197 @@ p.is-style-fleuron {
 	width: 1px;
 	height: 1px;
 	overflow: hidden;
+}
+
+/* ------------------------------------------------------------------
+ * Rooms list ([hexxsy_rooms]) from the homepage mockup.
+ * ------------------------------------------------------------------ */
+.hexxsy-rooms-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+	gap: 1.75rem;
+}
+
+.hexxsy-room {
+	display: flex;
+	flex-direction: column;
+	background: var(--wp--preset--color--card);
+	border: 1.5px solid var(--wp--preset--color--ink);
+}
+
+.hexxsy-room-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	padding: 0.625rem 0.875rem;
+	border-bottom: 1px solid var(--wp--preset--color--ink);
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 0.9375rem;
+	letter-spacing: 0.1em;
+}
+
+.hexxsy-room-numeral {
+	color: var(--wp--preset--color--oxblood);
+	font-size: 1.25rem;
+}
+
+.hexxsy-room-portrait {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 180px;
+	overflow: hidden;
+	border-bottom: 1px solid var(--wp--preset--color--ink);
+	background-color: var(--wp--preset--color--hatch);
+	background-image: repeating-linear-gradient(135deg, rgba(27, 23, 20, 0.18) 0 1px, transparent 1px 7px);
+	text-decoration: none;
+}
+
+.hexxsy-room-portrait img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.hexxsy-room-initial {
+	background: var(--wp--preset--color--card);
+	padding: 0.25rem 0.875rem;
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 2.25rem;
+	line-height: 1.2;
+}
+
+.hexxsy-room-body {
+	display: flex;
+	flex-direction: column;
+	gap: 0.375rem;
+	flex-grow: 1;
+	padding: 1rem 1rem 1.125rem;
+}
+
+.hexxsy-room-body p {
+	margin: 0;
+}
+
+.hexxsy-room-name {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--fell);
+	font-size: 1.5rem;
+	font-weight: 400;
+	letter-spacing: 0;
+	line-height: 1.2;
+}
+
+.hexxsy-room-specialties {
+	font-size: 0.9375rem;
+	font-style: italic;
+	color: var(--wp--preset--color--muted-ink);
+}
+
+.hexxsy-room-door {
+	font-family: var(--wp--preset--font-family--fell);
+	font-size: 1.0625rem;
+	line-height: 1.4;
+}
+
+.hexxsy-room-shelves {
+	margin-top: 0.25rem !important;
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 0.875rem;
+	letter-spacing: 0.08em;
+	color: var(--wp--preset--color--oxblood);
+}
+
+.hexxsy-room-foot {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.75rem;
+	margin-top: auto;
+	padding-top: 0.875rem;
+	font-size: 0.9375rem;
+}
+
+.hexxsy-room-knock {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 0 1rem;
+	border: 1.5px solid var(--wp--preset--color--ink);
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 1rem;
+	letter-spacing: 0.06em;
+	text-decoration: none;
+	color: var(--wp--preset--color--ink);
+}
+
+.hexxsy-room-knock:hover {
+	background: var(--wp--preset--color--ink);
+	color: var(--wp--preset--color--paper);
+}
+
+.hexxsy-room.is-unlit {
+	border-style: dashed;
+	background: #E2D7C0;
+	color: var(--wp--preset--color--muted-ink);
+}
+
+.hexxsy-room.is-unlit .hexxsy-room-head {
+	border-bottom-style: dashed;
+}
+
+.hexxsy-room-unlit {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.625rem;
+	flex-grow: 1;
+	padding: 2rem 1.125rem;
+	text-align: center;
+}
+
+.hexxsy-room-unlit p {
+	margin: 0;
+}
+
+.hexxsy-room-unlit-label {
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 1.25rem;
+	letter-spacing: 0.1em;
+}
+
+.hexxsy-room-unlit-line {
+	font-family: var(--wp--preset--font-family--fell);
+	font-style: italic;
+	font-size: 1.0625rem;
+	line-height: 1.4;
+}
+
+.hexxsy-rooms-note,
+.hexxsy-rooms-ledger {
+	text-align: center;
+	font-family: var(--wp--preset--font-family--fell);
+	font-size: 1.1875rem;
+	color: var(--wp--preset--color--muted-ink);
+	margin: 2rem auto 0;
+	max-width: 600px;
+}
+
+.hexxsy-rooms-ledger {
+	font-style: italic;
+	line-height: 1.5;
+	margin-top: 0.625rem;
+}
+
+.hexxsy-rooms-ledger a {
+	color: var(--wp--preset--color--oxblood);
+}
+
+/* [hexxsy_line key="ledger"]: Hexx's pair of lines on the Ledger page. */
+.hexxsy-line-title {
+	font-family: var(--wp--preset--font-family--fell);
+	font-size: 1.75rem;
+	line-height: 1.35;
 }

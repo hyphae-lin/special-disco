@@ -35,24 +35,17 @@ class Application {
 			if ( Ledger::MISSING === $check['state'] ) {
 				return self::invitation_only();
 			}
-			return self::message(
-				sprintf(
-					/* translators: 1: invited email, 2: account page URL */
-					wp_kses_post( __( 'This invite is for %1$s. <a href="%2$s">Log in or make an account</a> with that email address, then come back to this page.', 'hexxsy-vendors' ) ),
-					esc_html( $check['email'] ),
-					esc_url( wc_get_page_permalink( 'myaccount' ) )
-				)
-			);
+			return self::message( Lines::html( 'apply_log_in', array( 'email' => $check['email'] ), (string) wc_get_page_permalink( 'myaccount' ) ) );
 		}
 
 		$user_id = get_current_user_id();
 		$status  = Vendor::status( $user_id );
 
 		if ( Vendor::PENDING === $status ) {
-			return self::message( esc_html__( 'Your application is in. I read every one myself, and I\'ll write to you once I\'ve decided.', 'hexxsy-vendors' ) );
+			return self::message( Lines::html( 'apply_pending' ) );
 		}
 		if ( Vendor::APPROVED === $status ) {
-			return self::message( esc_html__( 'You already have a room here. Your reader tabs are in My Account.', 'hexxsy-vendors' ) );
+			return self::message( Lines::html( 'apply_approved' ) );
 		}
 
 		$check = Ledger::check( $token, $user_id );
@@ -60,21 +53,15 @@ class Application {
 			case Ledger::VALID:
 				break;
 			case Ledger::WRONG_EMAIL:
-				return self::message(
-					sprintf(
-						/* translators: %s: invited email */
-						esc_html__( 'This invite is for %s, and you\'re logged in with a different email address. Log out and log in with that one, or ask me to send the invite somewhere else.', 'hexxsy-vendors' ),
-						esc_html( $check['email'] )
-					)
-				);
+				return self::message( Lines::html( 'apply_wrong_email', array( 'email' => $check['email'] ) ) );
 			case Ledger::EXPIRED:
-				return self::message( esc_html__( 'This invite has gone stale. Write to me if you still want the room, and I\'ll send a fresh one.', 'hexxsy-vendors' ) );
+				return self::message( Lines::html( 'apply_expired' ) );
 			case Ledger::USED:
 			case Ledger::CANCELLED:
-				return self::message( esc_html__( 'This invite has already been used up. Write to me if that\'s a surprise.', 'hexxsy-vendors' ) );
+				return self::message( Lines::html( 'apply_used' ) );
 			default:
 				if ( Vendor::REJECTED === $status ) {
-					return self::message( esc_html__( 'Your application wasn\'t accepted this time. If you think I got it wrong, write to me.', 'hexxsy-vendors' ) );
+					return self::message( Lines::html( 'apply_rejected' ) );
 				}
 				return self::invitation_only();
 		}
@@ -136,17 +123,7 @@ class Application {
 	 * Shown to anyone without an invite.
 	 */
 	private static function invitation_only(): string {
-		$ledger = Ledger::page_url( Ledger::LEDGER_PAGE_OPTION );
-		if ( '' === $ledger ) {
-			return self::message( esc_html__( 'Hexxsy readers join by invitation. I don\'t hand out keys to just anyone.', 'hexxsy-vendors' ) );
-		}
-		return self::message(
-			sprintf(
-				/* translators: %s: ledger page URL */
-				wp_kses_post( __( 'Hexxsy readers join by invitation. If you read and want a room, <a href="%s">put your name in the ledger</a>. I\'ll come find you if it fits.', 'hexxsy-vendors' ) ),
-				esc_url( $ledger )
-			)
-		);
+		return self::message( Lines::html( 'apply_invitation', array(), Ledger::page_url( Ledger::LEDGER_PAGE_OPTION ) ) );
 	}
 
 	/**

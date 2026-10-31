@@ -67,6 +67,15 @@ class Admin {
 				'sanitize_callback' => static fn( $value ) => max( 1, absint( $value ) ),
 			)
 		);
+		register_setting(
+			self::PAGE,
+			Rooms::EMPTY_OPTION,
+			array(
+				'type'              => 'string',
+				'default'           => Rooms::HIDDEN,
+				'sanitize_callback' => static fn( $value ) => Rooms::UNLIT === $value ? Rooms::UNLIT : Rooms::HIDDEN,
+			)
+		);
 		foreach ( array( Ledger::APPLY_PAGE_OPTION, Ledger::LEDGER_PAGE_OPTION, Ledger::CONDUCT_OPTION ) as $option ) {
 			register_setting(
 				self::PAGE,
@@ -193,6 +202,15 @@ class Admin {
 						<td>
 							<input type="number" id="hexxsy_reader_seats" name="<?php echo esc_attr( Ledger::SEATS_OPTION ); ?>" value="<?php echo esc_attr( (string) Ledger::seats() ); ?>" min="1" step="1" class="small-text">
 							<p class="description"><?php esc_html_e( 'How many readers Hexxsy has room for. Raising it opens new rooms right away.', 'hexxsy-vendors' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Empty rooms', 'hexxsy-vendors' ); ?></th>
+						<td>
+							<fieldset>
+								<label><input type="radio" name="<?php echo esc_attr( Rooms::EMPTY_OPTION ); ?>" value="<?php echo esc_attr( Rooms::HIDDEN ); ?>" <?php checked( Rooms::empty_mode(), Rooms::HIDDEN ); ?>> <?php esc_html_e( 'Hide them, and show Hexx\'s empty-rooms line with a link to the Ledger', 'hexxsy-vendors' ); ?></label><br>
+								<label><input type="radio" name="<?php echo esc_attr( Rooms::EMPTY_OPTION ); ?>" value="<?php echo esc_attr( Rooms::UNLIT ); ?>" <?php checked( Rooms::empty_mode(), Rooms::UNLIT ); ?>> <?php esc_html_e( 'Show them as unlit rooms', 'hexxsy-vendors' ); ?></label>
+							</fieldset>
 						</td>
 					</tr>
 					<?php
