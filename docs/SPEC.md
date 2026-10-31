@@ -182,6 +182,8 @@ MailPoet does not know about Hexxsy's commission split. Two pieces are Hexxsy pl
 - **The discount must never exceed the site's commission on the line.** Above it, the site owes the reader more than the customer paid (25% off a $40.00 reading: customer pays $30.00, reader is owed $32.00). Stripe transfers tied to a charge can't send more than that charge. For a percentage, that means no more than the commission rate. For a flat amount, the amount must be no more than the commission on the cheapest discounted item ($5 off is safe on readings of $25 or more at 20%). The plugin caps the discount on any line where it would go over, so the house never takes less than nothing.
 - Refunds on a welcome-coupon line: open. Simplest is to treat the reader's share of a refund as a share of the undiscounted price.
 
+**Shelves (decided Oct 31, 2026).** The welcome code is good on everything, on any cart of $25 or more. No category restrictions on the coupon. Readers whose Wares are discounted are still paid in full, since the house absorbs the discount.
+
 **Minimum spend (decided Oct 31, 2026)**
 
 The coupon only works on carts over a minimum spend. With a Fixed cart discount, WooCommerce spreads the discount across the cart in proportion to each item's price, so a high enough minimum keeps every line's discount under its commission.
@@ -191,15 +193,14 @@ The coupon only works on carts over a minimum spend. With a Fixed cart discount,
 - **Help the admin get it right.** The Vendors settings page shows the safe minimum for a given discount, figured at the lowest commission rate in force (the site default or any reader's override, whichever is lower), and warns if the welcome coupon's minimum is below it.
 - **The plugin guard stays.** Minimum spend alone doesn't cover every case. The guard (see Recognize welcome coupons and Guard the cap above) still caps any line that would go over. Cases it catches:
   - A reader whose commission override is lower than the rate the minimum was set for. A $25 reading at 10% has $2.50 commission, less than $5 off.
-  - A readings-only coupon with Wares in the cart. Minimum spend counts the whole cart, but the discount lands only on readings: a $10 reading plus a $20 Ware clears $25, and the full $5 comes off the $10 reading, where the commission is $2.00.
+  - A coupon restricted to some shelves (not the plan now, but possible if the settings change) with other items in the cart. Minimum spend counts the whole cart, but the discount lands only on readings: a $10 reading plus a $20 Ware clears $25, and the full $5 comes off the $10 reading, where the commission is $2.00.
   - Rounding to the cent when the discount is split across lines.
   - Someone changing the coupon to Fixed product, or raising the discount without raising the minimum.
 - When the guard caps a line, the customer gets a smaller discount on it. The house never pays out of pocket.
 
 **Open**
 
-- Starting discount amount and minimum spend (leaning $5 off, $25 minimum). Both stay adjustable.
-- Which shelves it applies to: all offerings, or readings only (Sittings and Letters). Discounting Wares eats into what readers spend on materials and shipping, even when the house absorbs the discount. For readings only, the coupon lists both shelves' categories, or a parent "Readings" category; test whether WooCommerce coupons match a parent category on its own.
+- Starting discount amount (leaning $5). Minimum spend starts at $25 (decided Oct 31, 2026), which supports up to $5 off at a 20% commission. Both stay adjustable.
 - Expiry for unused codes.
 - Signup email addresses are personal data and belong in the privacy policy (gap 10).
 
