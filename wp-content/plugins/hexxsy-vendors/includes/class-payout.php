@@ -18,6 +18,7 @@ namespace Hexxsy\Vendors;
  *
  * Refunds come off the line before the split, at the rate stamped at
  * purchase, so a partial refund shrinks both the commission and the share.
+ * Welcome-offer lines are split on the undiscounted price (see Welcome_Offer).
  */
 class Payout {
 
@@ -124,8 +125,15 @@ class Payout {
 		$factor   = 10 ** wc_get_price_decimals();
 		$line     = (int) round( (float) $item->get_total() * $factor );
 		$refunded = (int) round( abs( (float) $order->get_total_refunded_for_item( $item->get_id() ) ) * $factor );
+		$rate     = (float) $item->get_meta( Order_Split::RATE_META );
 
-		return self::share_after_refund( $line, $refunded, (float) $item->get_meta( Order_Split::RATE_META ) );
+		if ( 'yes' === $item->get_meta( Welcome_Offer::LINE_META ) ) {
+			// The house absorbed the discount: the reader's share comes from the full price.
+			$undiscounted = (int) round( (float) $item->get_meta( Welcome_Offer::UNDISCOUNTED_META ) * $factor );
+			return Welcome_Offer::share_after_refund( $undiscounted, $line, $refunded, $rate );
+		}
+
+		return self::share_after_refund( $line, $refunded, $rate );
 	}
 
 	/**

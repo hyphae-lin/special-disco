@@ -58,6 +58,87 @@ class Admin {
 				'sanitize_callback' => static fn( $value ) => Commission::clamp_rate( (float) $value ),
 			)
 		);
+		register_setting(
+			self::PAGE,
+			Welcome_Offer::EMAILS_OPTION,
+			array(
+				'type'              => 'string',
+				'default'           => '',
+				'sanitize_callback' => static fn( $value ) => implode( ', ', Welcome_Offer::parse_ids( (string) $value ) ),
+			)
+		);
+	}
+
+	/**
+	 * Show whether the welcome coupon's minimum spend keeps its discount
+	 * inside the commission.
+	 */
+	private static function render_welcome_check(): void {
+		$rate   = Welcome_Offer::lowest_rate();
+		$coupon = Welcome_Offer::latest_coupon();
+		?>
+		<h2><?php esc_html_e( 'Welcome offer check', 'hexxsy-vendors' ); ?></h2>
+		<p>
+			<?php
+			printf(
+				/* translators: %s: commission percentage */
+				esc_html__( 'Lowest commission in force: %s%%. A fixed welcome discount fits inside the commission when the minimum spend is at least the discount divided by this rate.', 'hexxsy-vendors' ),
+				esc_html( wc_format_localized_decimal( $rate ) )
+			);
+			?>
+		</p>
+		<?php
+		if ( ! $coupon ) {
+			echo '<p>' . esc_html__( 'No welcome coupon has been generated yet. Send yourself the welcome email, then check back here.', 'hexxsy-vendors' ) . '</p>';
+			return;
+		}
+
+		$factor   = 10 ** wc_get_price_decimals();
+		$amount   = (float) $coupon->get_amount();
+		$minimum  = (float) $coupon->get_minimum_amount();
+		$type     = $coupon->get_discount_type();
+		$problems = array();
+
+		if ( 'percent' === $type ) {
+			if ( $amount > $rate ) {
+				/* translators: 1: discount percentage, 2: commission percentage */
+				$problems[] = sprintf( __( 'The discount (%1$s%%) is more than the lowest commission (%2$s%%). Some lines will get a smaller discount.', 'hexxsy-vendors' ), wc_format_localized_decimal( $amount ), wc_format_localized_decimal( $rate ) );
+			}
+		} else {
+			if ( 'fixed_cart' !== $type ) {
+				$problems[] = __( 'The coupon is not a "Fixed cart discount". Set the coupon block\'s discount type to Fixed cart discount.', 'hexxsy-vendors' );
+			}
+			$safe = Welcome_Offer::safe_minimum( (int) round( $amount * $factor ), $rate );
+			if ( null === $safe ) {
+				$problems[] = __( 'A commission of 0% leaves no room for any welcome discount.', 'hexxsy-vendors' );
+			} elseif ( (int) round( $minimum * $factor ) < $safe ) {
+				/* translators: 1: current minimum spend, 2: safe minimum spend */
+				$problems[] = sprintf( __( 'The minimum spend (%1$s) is below the safe minimum (%2$s). Some customers will get less than the full discount.', 'hexxsy-vendors' ), wp_strip_all_tags( wc_price( $minimum ) ), wp_strip_all_tags( wc_price( $safe / $factor ) ) );
+			}
+		}
+
+		printf(
+			'<p>%s</p>',
+			esc_html(
+				sprintf(
+					/* translators: 1: coupon code, 2: amount, 3: minimum spend */
+					__( 'Latest welcome coupon: %1$s, %2$s off, minimum spend %3$s.', 'hexxsy-vendors' ),
+					$coupon->get_code(),
+					'percent' === $type ? wc_format_localized_decimal( $amount ) . '%' : wp_strip_all_tags( wc_price( $amount ) ),
+					$minimum > 0 ? wp_strip_all_tags( wc_price( $minimum ) ) : __( 'none', 'hexxsy-vendors' )
+				)
+			)
+		);
+
+		if ( $problems ) {
+			echo '<div class="notice notice-warning inline">';
+			foreach ( $problems as $problem ) {
+				echo '<p>' . esc_html( $problem ) . '</p>';
+			}
+			echo '<p>' . esc_html__( 'Fix it in MailPoet\'s coupon block. Codes already sent keep their old settings.', 'hexxsy-vendors' ) . '</p></div>';
+		} else {
+			echo '<p>' . esc_html__( 'Settings are safe.', 'hexxsy-vendors' ) . '</p>';
+		}
 	}
 
 	/**
@@ -87,9 +168,18 @@ class Admin {
 							<p class="description"><?php esc_html_e( 'The site keeps this share of each sale. You can override it per vendor on their user profile.', 'hexxsy-vendors' ); ?></p>
 						</td>
 					</tr>
+					<tr>
+						<th scope="row"><label for="hexxsy_welcome_email_ids"><?php esc_html_e( 'Welcome offer emails', 'hexxsy-vendors' ); ?></label></th>
+						<td>
+							<input type="text" id="hexxsy_welcome_email_ids" name="<?php echo esc_attr( Welcome_Offer::EMAILS_OPTION ); ?>" value="<?php echo esc_attr( implode( ', ', Welcome_Offer::email_ids() ) ); ?>" class="regular-text">
+							<p class="description"><?php esc_html_e( 'MailPoet email IDs whose generated coupons are welcome offers, separated by commas. The ID is the number in the email\'s address in MailPoet. Leave empty to treat every coupon MailPoet generates as a welcome offer.', 'hexxsy-vendors' ); ?></p>
+						</td>
+					</tr>
 				</table>
-				<?php submit_button( __( 'Save commission', 'hexxsy-vendors' ) ); ?>
+				<?php submit_button( __( 'Save settings', 'hexxsy-vendors' ) ); ?>
 			</form>
+
+			<?php self::render_welcome_check(); ?>
 
 			<?php foreach ( $groups as $status => $heading ) : ?>
 				<?php

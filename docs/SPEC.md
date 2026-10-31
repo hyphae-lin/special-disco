@@ -147,7 +147,7 @@ The customer pays Hexxsy. Hexxsy keeps the money until the reading is delivered 
 - **Not built.** No webhooks: reader status is checked when they return from Stripe or open Reading orders. Readers' own bank payouts run on Stripe's default schedule.
 - **Hexxsy's own Stripe payouts** must not sweep readers' held money to Hexxsy's bank. With separate charges and transfers, the whole charge sits in Hexxsy's Stripe balance until the transfer, so an automatic monthly payout would take readers' money with it. Hexxsy's payouts go manual (or only pay out commission) before Connect transfers start.
 
-### Welcome offer (decided Oct 25, 2026, not built)
+### Welcome offer (decided Oct 25, 2026, built Oct 31, 2026 in 0.5.0, untested on a live site)
 
 New customers can sign up by email from the homepage and get a discount on their first purchase. The house absorbs the whole discount: readers are paid as if no discount was used.
 
@@ -171,8 +171,8 @@ MailPoet runs inside WordPress, handles the signup form, the welcome automation 
 
 MailPoet does not know about Hexxsy's commission split. Two pieces are Hexxsy plugin work:
 
-- **Recognize welcome coupons.** MailPoet's codes are random. The plugin needs a reliable way to tell a welcome coupon from any other coupon at checkout, so it can stamp the line as a welcome-offer line and pay the reader on the undiscounted price. How (a marker on the coupon, its creator, or a code prefix) is for the builder to find.
-- **Guard the cap.** MailPoet allows any percentage up to 100 and any flat amount. The plugin must check each welcome coupon line and never let the discount exceed the site's commission on that line (see Money).
+- **Recognize welcome coupons (built).** MailPoet adds no marker of its own. It writes a description on each coupon it generates: "Auto-generated coupon by MailPoet for email: 12", where 12 is the MailPoet email's ID. The plugin reads that description. On WooCommerce > Vendors, "Welcome offer emails" lists the email IDs that count; left empty, every coupon MailPoet generates counts. Fill it in before sending any other MailPoet email with a coupon, or that coupon will be house-absorbed too. Any coupon can also be marked or unmarked by hand with the "Welcome offer" checkbox on its edit screen in WooCommerce > Coupons, and the checkbox wins.
+- **Guard the cap (built).** MailPoet allows any percentage up to 100 and any flat amount. At checkout the plugin caps the welcome discount on each reader's line at the site's commission on that line (see Money). Products the site sells itself have no cap.
 
 **Money**
 
@@ -180,7 +180,7 @@ MailPoet does not know about Hexxsy's commission split. Two pieces are Hexxsy pl
 - Example at 20%: a $40.00 reading with 15% off. The customer pays $34.00. The reader earns $32.00, as with no coupon. The site keeps $2.00.
 - The line is stamped as a welcome-offer line, with both the undiscounted and paid amounts, so payouts and reports can tell them apart.
 - **The discount must never exceed the site's commission on the line.** Above it, the site owes the reader more than the customer paid (25% off a $40.00 reading: customer pays $30.00, reader is owed $32.00). Stripe transfers tied to a charge can't send more than that charge. For a percentage, that means no more than the commission rate. For a flat amount, the amount must be no more than the commission on the cheapest discounted item ($5 off is safe on readings of $25 or more at 20%). The plugin caps the discount on any line where it would go over, so the house never takes less than nothing.
-- Refunds on a welcome-coupon line: open. Simplest is to treat the reader's share of a refund as a share of the undiscounted price.
+- Refunds on a welcome-coupon line (built Oct 31, 2026, awaiting Rebecca's confirmation): a refund takes the same fraction off the reader's share as it took off what the customer paid. Half the paid amount refunded, the reader loses half their share; a full refund leaves them nothing. Example: $40.00 reading, $5 off, customer paid $35.00, reader's share $32.00. A $17.50 refund leaves the reader $16.00.
 
 **Shelves (decided Oct 31, 2026).** The welcome code is good on everything, on any cart of $25 or more. No category restrictions on the coupon. Readers whose Wares are discounted are still paid in full, since the house absorbs the discount.
 
@@ -188,17 +188,19 @@ MailPoet does not know about Hexxsy's commission split. Two pieces are Hexxsy pl
 
 **Minimum spend (decided Oct 31, 2026)**
 
-The coupon only works on carts over a minimum spend. With a Fixed cart discount, WooCommerce spreads the discount across the cart in proportion to each item's price, so a high enough minimum keeps every line's discount under its commission.
+The coupon only works on carts over a minimum spend. WooCommerce splits a Fixed cart discount evenly across items, not in proportion to price (corrected Oct 31, 2026, from the WooCommerce source). So a cheap item can be handed more discount than its commission: $5 off a $20 reading and a $5 Ware puts $2.50 on each, and the Ware's commission is $1.00. The plugin guard caps the Ware at $1.00, and WooCommerce moves the other $1.50 to the reading, which has room. The customer still gets the full $5.
 
-- **The rule.** Minimum spend is at least the discount divided by the commission rate. At 20%, that's 5 times the discount: $5 off needs a $25 minimum, $10 off needs $50. Example: two $15 readings, $30 cart, $5 off. Each line takes $2.50 off, the commission on each is $3.00, and the house keeps $0.50 per line.
+- **The rule.** Minimum spend is at least the discount divided by the commission rate. At 20%, that's 5 times the discount: $5 off needs a $25 minimum, $10 off needs $50. Then the cart's total commission always covers the discount, and with the guard moving it between lines, the customer always gets all of it.
 - **Both numbers are changeable.** The discount amount and the minimum spend are admin settings, not fixed values. They live in MailPoet's coupon block, and a change applies to codes sent after it; codes already sent keep the terms they went out with. Nothing in code, emails or Hexx's lines may assume a particular amount. Any text that names the discount or the minimum reads it from the setting, or is edited along with it.
-- **Help the admin get it right.** The Vendors settings page shows the safe minimum for a given discount, figured at the lowest commission rate in force (the site default or any reader's override, whichever is lower), and warns if the welcome coupon's minimum is below it.
-- **The plugin guard stays.** Minimum spend alone doesn't cover every case. The guard (see Recognize welcome coupons and Guard the cap above) still caps any line that would go over. Cases it catches:
+- **Help the admin get it right (built).** The Vendors page has a "Welcome offer check". It shows the lowest commission rate in force (the site default or any approved reader's override, whichever is lower) and the latest welcome coupon generated. It warns if that coupon's minimum spend is below the safe minimum, if its type isn't Fixed cart, or if a percentage discount is above the lowest rate. It can only check a coupon after MailPoet has generated one, so send yourself the welcome email first.
+- **The plugin guard does the real work.** Minimum spend alone doesn't keep each line safe; it only makes sure there's enough room in the cart overall. The guard caps any line that would go over. Cases it catches:
+  - A cheap item in the cart, which WooCommerce's even split would push past its commission.
   - A reader whose commission override is lower than the rate the minimum was set for. A $25 reading at 10% has $2.50 commission, less than $5 off.
   - A coupon restricted to some shelves (not the plan now, but possible if the settings change) with other items in the cart. Minimum spend counts the whole cart, but the discount lands only on readings: a $10 reading plus a $20 Ware clears $25, and the full $5 comes off the $10 reading, where the commission is $2.00.
-  - Rounding to the cent when the discount is split across lines.
+  - Rounding to the cent. WooCommerce hands out the last few cents of a split one at a time, past the guard, so a line can go over by a cent. On that line the reader's share is capped at what the customer paid, so the house never goes below zero.
   - Someone changing the coupon to Fixed product, or raising the discount without raising the minimum.
-- When the guard caps a line, the customer gets a smaller discount on it. The house never pays out of pocket.
+- When the guard caps a line and no other line has room, the customer gets a smaller discount. The house never pays out of pocket.
+- **Limits of the build.** The guard works on the cart and checkout. A coupon an admin applies to an order by hand in wp-admin isn't capped. The cap assumes prices are entered without tax (WooCommerce > Settings > Tax).
 
 **Open**
 
