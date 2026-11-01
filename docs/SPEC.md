@@ -155,14 +155,7 @@ No intake questions. Wares can go in the cart straight from the shop page.
 
 ### Returns and problems
 
-Open decision. A proposal to react to:
-
-| Case | Outcome |
-| --- | --- |
-| Lost in the mail, with tracking showing no delivery | Full refund. Reader's share comes back unless they bought insurance or a claim succeeds |
-| Arrived broken (photo required) | Full refund or replacement, reader's choice |
-| Changed mind, unopened | Reader's own return policy, shown on the listing |
-| Opened deck or burned candle | No return |
+Each reader sets their own return policy (decided Nov 1, 2026). It's written in their Shop profile and shown on every ware listing and in the order email. Hexxsy doesn't set a house policy for wares.
 
 ### Rules for what readers may ship
 
