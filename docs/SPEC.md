@@ -119,6 +119,64 @@ Only the customer, that reading's vendor, or an admin can download a PDF, and on
 
 The customer's **My readings** tab (first in My Account) lists every reading bought, with reader, order date and status: "Waiting for payment," "In progress, due \[date\]," a Download PDF button, or "Live call."
 
+## Wares (draft Nov 1, 2026, not decided, not built)
+
+Wares is the shelf for physical goods a reader ships themselves. The first things readers expect to sell are tarot and oracle decks and candles, plus similar small items. Hexxsy stays the seller of record, as with readings.
+
+Design note: Dokan Lite 5.3.3 was studied as a reference (Nov 1, 2026). Running it alongside this plugin isn't workable: it splits multi-vendor orders into suborders, keeps its own vendor balance ledger, and rejects Fixed cart coupons on carts with 2 or more vendors, which breaks the welcome offer. Its cart split by vendor (`includes/Shipping/Hooks.php`, GPL) is small and is the model for the shipping split below.
+
+### Listing a ware
+
+A ware is a WooCommerce simple product that isn't virtual, added from Readings I offer (the tab may need a new name). The reader sets:
+
+| Field | Notes |
+| --- | --- |
+| Name, description, price, image | As for readings |
+| Stock | A number, or "made to order" |
+| Ships within | Days from payment to posting (1 or more) |
+| Weight | Optional at first; needed if rates ever go by weight |
+| Kind | Deck, candle, or other. Drives the conduct rules below |
+
+No intake questions. Wares can go in the cart straight from the shop page.
+
+### Shipping
+
+- **One package per reader.** At checkout the cart's wares are grouped by reader, one shipping choice each, labelled with the reader's shop name. Readings are virtual and never get a package.
+- **Rates the reader sets** in Shop profile: a flat rate for the first item, an amount for each extra item, and optional free shipping over an amount. Domestic US only at first.
+- **Ship.** In Reading orders, the reader marks each ware line shipped with a carrier and tracking number. The customer gets an email with the tracking link, and My readings (or a new tab) shows it.
+- **Order completion.** The order completes once every line is either a delivered reading or a shipped ware.
+
+### Money for wares
+
+- **Commission** applies to the ware's price, as for readings.
+- **Shipping charges.** Open decision: pass the whole amount to the reader (recommended; they pay the postage) or take commission on it too. Either way the split record stores the shipping amount and who gets it, so refunds can treat it separately.
+- **Hold.** A ware's share becomes payable a set number of days after it's marked shipped. Open decision: same as readings (7 days) or longer to cover transit and damage claims (14 days suggested).
+- **Late shipping.** If a ware isn't marked shipped within its Ships within days plus a grace period, the admin is notified. Auto-refund is open.
+
+### Returns and problems
+
+Open decision. A proposal to react to:
+
+| Case | Outcome |
+| --- | --- |
+| Lost in the mail, with tracking showing no delivery | Full refund. Reader's share comes back unless they bought insurance or a claim succeeds |
+| Arrived broken (photo required) | Full refund or replacement, reader's choice |
+| Changed mind, unopened | Reader's own return policy, shown on the listing |
+| Opened deck or burned candle | No return |
+
+### Rules for what readers may ship
+
+Additions to the reader code of conduct:
+
+- **Decks.** Only real, licensed decks: the reader's own work, or a published deck they bought to resell. No knockoffs or unlicensed copies of other creators' decks. Listings say which.
+- **Candles.** Allowed. Labelled with burn-safety instructions. Packed for heat, and readers can pause candle sales in summer. No candles sold as treating illness.
+- **Not allowed at first.** Anything to eat, drink, smoke or put on skin (teas, herbs for ingestion, oils, bath salts), loose botanicals, liquids, and anything flammable beyond a finished candle.
+- **No upselling.** The existing rule stands: a reading or message never pushes a reader's wares.
+
+### Tax
+
+Decks and candles are taxable in most US states. As seller of record, Hexxsy is likely responsible for collecting and remitting sales tax on wares as a marketplace facilitator once it passes a state's threshold. Get an accountant's view before wares go live, and pick a tax calculation service (WooCommerce Tax or similar).
+
 ## Money
 
 The site keeps 20% of each reading by default; the reader gets the rest. Hexxsy holds the customer's payment and pays the reader later (decided Oct 14, 2026). Stripe Connect is approved (Oct 14, 2026). Readers who set up payouts are paid by Stripe transfer; anyone else is paid by hand.
