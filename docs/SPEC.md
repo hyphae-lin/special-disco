@@ -148,9 +148,19 @@ No intake questions. Wares can go in the cart straight from the shop page.
 
 ### Money for wares
 
-- **Commission** applies to the ware's price, as for readings.
-- **Shipping charges (decided Nov 1, 2026).** The whole shipping charge goes to the reader, with no commission, since they pay the postage. The split record stores the shipping amount on its own, so refunds can treat it separately. The welcome offer never discounts shipping, so the house never covers postage.
-- **Hold.** A ware's share becomes payable a set number of days after it's marked shipped. Open decision: same as readings (7 days) or longer to cover transit and damage claims (14 days suggested).
+**Not decided.** The leaning (Nov 1, 2026) is that wares carry no commission and the reader is responsible for every part of shipping them. Commission stays on readings only. How the payment moves is open, and it decides who carries fees, refunds, chargebacks and sales tax:
+
+| Option | Who takes the payment | Hexxsy carries | Build size |
+| --- | --- | --- | --- |
+| Link out | The reader, in their own shop (Etsy, Shopify, their site). The Wares shelf links to it | Nothing | Small: a link field and listing card |
+| Etsy-lite | Hexxsy, in the same cart as readings. Reader pays the card fee (about 3% + $0.25), paid when marked shipped, reserve only for readers with refund or chargeback problems | Sales tax as marketplace facilitator, some chargeback risk | Medium |
+| Reader's own Stripe | The reader's Stripe account, direct charge. Needs a checkout separate from readings | Little | Large |
+| Pass-through | Hexxsy, 0% commission, paid at once | Card fees on every ware, refunds and chargebacks after the money is gone, sales tax | Small, not recommended |
+
+If wares sell through Hexxsy's cart:
+
+- **Shipping charges (decided Nov 1, 2026).** The whole shipping charge goes to the reader, since they pay the postage. The split record stores it on its own, so refunds can treat it separately. The welcome offer never discounts shipping or wares (a 0% commission caps the discount at $0), so the house never covers either.
+- **Hold.** 14 days after marked shipped was chosen (Nov 1, 2026) when wares carried commission. Under Etsy-lite it would be replaced by payment on shipment.
 - **Late shipping.** If a ware isn't marked shipped within its Ships within days plus a grace period, the admin is notified. Auto-refund is open.
 
 ### Returns and problems
