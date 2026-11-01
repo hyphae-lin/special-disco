@@ -149,7 +149,7 @@ No intake questions. Wares can go in the cart straight from the shop page.
 ### Money for wares
 
 - **Commission** applies to the ware's price, as for readings.
-- **Shipping charges.** Open decision: pass the whole amount to the reader (recommended; they pay the postage) or take commission on it too. Either way the split record stores the shipping amount and who gets it, so refunds can treat it separately.
+- **Shipping charges (decided Nov 1, 2026).** The whole shipping charge goes to the reader, with no commission, since they pay the postage. The split record stores the shipping amount on its own, so refunds can treat it separately. The welcome offer never discounts shipping, so the house never covers postage.
 - **Hold.** A ware's share becomes payable a set number of days after it's marked shipped. Open decision: same as readings (7 days) or longer to cover transit and damage claims (14 days suggested).
 - **Late shipping.** If a ware isn't marked shipped within its Ships within days plus a grace period, the admin is notified. Auto-refund is open.
 
