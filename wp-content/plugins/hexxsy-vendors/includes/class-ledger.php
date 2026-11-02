@@ -132,7 +132,7 @@ class Ledger {
 
 	/**
 	 * Register the private waitlist post type. Entries show only on the
-	 * Vendors page.
+	 * Readers page.
 	 */
 	public static function register_type(): void {
 		register_post_type(
@@ -552,7 +552,7 @@ class Ledger {
 	}
 
 	/**
-	 * Handle invite, cancel, and waitlist actions from the Vendors page.
+	 * Handle invite, cancel, and waitlist actions from the Readers page.
 	 */
 	public static function handle_admin(): void {
 		if ( ! current_user_can( Admin::CAPABILITY ) ) {
@@ -602,7 +602,7 @@ class Ledger {
 	}
 
 	/**
-	 * The Ledger section of the Vendors page.
+	 * The Ledger section of the Readers page.
 	 */
 	public static function render_admin(): void {
 		$free    = self::free();

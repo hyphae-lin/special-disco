@@ -8,7 +8,7 @@
 namespace Hexxsy\Vendors;
 
 /**
- * Adds WooCommerce > Vendors, where the site owner reviews applications and
+ * Adds Hexxsy > Readers, where the site owner reviews applications and
  * sets the default commission, plus a per-vendor override on the user profile.
  */
 class Admin {
@@ -32,13 +32,23 @@ class Admin {
 	}
 
 	/**
-	 * Register the submenu.
+	 * The Hexxsy menu. Readers (this page) comes first; Payouts and Hexx's
+	 * lines add themselves under it.
 	 */
 	public static function menu(): void {
+		add_menu_page(
+			__( 'Readers', 'hexxsy-vendors' ),
+			__( 'Hexxsy', 'hexxsy-vendors' ),
+			self::CAPABILITY,
+			self::PAGE,
+			array( __CLASS__, 'render_page' ),
+			'dashicons-star-filled',
+			56
+		);
 		add_submenu_page(
-			'woocommerce',
-			__( 'Vendors', 'hexxsy-vendors' ),
-			__( 'Vendors', 'hexxsy-vendors' ),
+			self::PAGE,
+			__( 'Readers', 'hexxsy-vendors' ),
+			__( 'Readers', 'hexxsy-vendors' ),
 			self::CAPABILITY,
 			self::PAGE,
 			array( __CLASS__, 'render_page' )
@@ -171,7 +181,7 @@ class Admin {
 	}
 
 	/**
-	 * Render the Vendors page.
+	 * Render the Readers page.
 	 */
 	public static function render_page(): void {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
@@ -185,7 +195,7 @@ class Admin {
 		);
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Vendors', 'hexxsy-vendors' ); ?></h1>
+			<h1><?php esc_html_e( 'Readers', 'hexxsy-vendors' ); ?></h1>
 
 			<form method="post" action="options.php">
 				<?php settings_fields( self::PAGE ); ?>
@@ -350,7 +360,7 @@ class Admin {
 		$decision = isset( $_GET['decision'] ) ? sanitize_key( $_GET['decision'] ) : '';
 		if ( 'approve' === $decision ) {
 			if ( ! Ledger::can_approve() ) {
-				wp_die( esc_html__( 'Every seat is taken. Raise Reader seats on the Vendors page to approve another reader.', 'hexxsy-vendors' ) );
+				wp_die( esc_html__( 'Every seat is taken. Raise Reader seats on Hexxsy > Readers to approve another reader.', 'hexxsy-vendors' ) );
 			}
 			Vendor::approve( $user_id );
 		} elseif ( 'reject' === $decision ) {

@@ -16,7 +16,7 @@ namespace Hexxsy\Vendors;
  * 1. A coupon marked "Welcome offer" (or explicitly unmarked) on its edit
  *    screen in WooCommerce > Coupons.
  * 2. A coupon MailPoet generated, judged by the description MailPoet gives
- *    it. If the admin lists MailPoet email IDs on the Vendors page, only
+ *    it. If the admin lists MailPoet email IDs on the Readers page, only
  *    coupons from those emails count. If the list is empty, any coupon
  *    MailPoet generates counts.
  *
@@ -305,7 +305,7 @@ class Welcome_Offer {
 
 	/**
 	 * Mark coupons MailPoet generates from a welcome email as they're made,
-	 * so the Vendors page can find the latest one.
+	 * so the Readers page can find the latest one.
 	 *
 	 * @param int        $coupon_id Coupon ID.
 	 * @param \WC_Coupon $coupon    Coupon.

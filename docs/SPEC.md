@@ -30,7 +30,7 @@ Deactivating the plugin removes the vendor role but keeps each person's status, 
 A reader goes from account to selling in four steps, and only the admin's approval opens the door.
 
 1. **Apply.** The `[hexxsy_vendor_application]` shortcode shows a form to logged-in users only. Fields: shop name (required, 80 characters), about you (required), specialties, experience, and a required checkbox agreeing that readings are for entertainment only and to the vendor terms.
-2. **Wait.** Status becomes pending. The admin gets an email linking to WooCommerce > Vendors. One application per account; a second submit is ignored.
+2. **Wait.** Status becomes pending. The admin gets an email linking to Hexxsy > Readers. One application per account; a second submit is ignored.
 3. **Decision.** The admin approves (grants the vendor role) or rejects. Either way the applicant gets a short email. An approved vendor can later be revoked, which is the same action as reject.
 4. **Sell.** Approved vendors get three tabs in My Account.
 
@@ -52,7 +52,7 @@ The cap starts at 12 to keep administration manageable at launch. It is a starti
 
 **Cap**
 
-- A "Reader seats" setting on WooCommerce > Vendors, set to 12 at launch. Any whole number from 1 up; raising it opens new rooms immediately.
+- A "Reader seats" setting on Hexxsy > Readers, set to 12 at launch. Any whole number from 1 up; raising it opens new rooms immediately.
 - Approved readers plus unused invites can't exceed the cap, so you never invite more people than you have room for.
 - Revoking a reader, or an invite expiring, frees a seat.
 - The Approve button is disabled when every seat is taken.
@@ -60,7 +60,7 @@ The cap starts at 12 to keep administration manageable at launch. It is a starti
 
 **Invites**
 
-- You enter an email on the Vendors page. The site emails that person a single-use link.
+- You enter an email on the Readers page. The site emails that person a single-use link.
 - Links expire after 14 days.
 - The link only works for an account with the same email address. The person creates one if they don't have it.
 - An invite also works for someone previously rejected, so you can bring them back.
@@ -76,12 +76,12 @@ The cap starts at 12 to keep administration manageable at launch. It is a starti
 
 - A public waitlist form (its own shortcode) asks for name, email, specialties and a short note. No account needed.
 - The person gets a short confirmation email. One entry per email address.
-- The Vendors page lists the waitlist, oldest first, each with an Invite button and a Remove button.
+- The Readers page lists the waitlist, oldest first, each with an Invite button and a Remove button.
 - Waitlist entries are personal data, so they belong in the privacy policy (gap 10).
 
 **As built (Oct 31, 2026)**
 
-- WooCommerce > Vendors has Reader seats, plus 3 page choices: the application page (invite links point there), the Ledger page (people without an invite are sent there) and the code of conduct page (linked from the agreement checkbox). The Ledger section lists seats, open invites (with Cancel) and the waitlist (with Invite and Remove).
+- Hexxsy > Readers has Reader seats, plus 3 page choices: the application page (invite links point there), the Ledger page (people without an invite are sent there) and the code of conduct page (linked from the agreement checkbox). The Ledger section lists seats, open invites (with Cancel) and the waitlist (with Invite and Remove).
 - An invite link survives a trip to log in or sign up: the site remembers it in a cookie for 14 days.
 - Only a hash of each invite token is stored, so a copy of the database can't be used to open applications.
 - The waitlist form has a hidden spam trap and gives the same reply whether or not the email is already on the list, so it doesn't reveal who's signed.
@@ -152,7 +152,7 @@ No intake questions. Wares can go in the cart straight from the shop page.
 
 - **What the reader gets.** Ware price plus shipping, minus the card fee. Nothing else comes off.
 - **Card fee.** A percentage of the reader's ware total (wares plus shipping) and a fixed amount once per reader per order. Starting values should match Hexxsy's actual Stripe rate (US standard was 2.9% + $0.30; check the account). Example: a $30.00 deck with $6.00 shipping is $36.00. The fee is $1.04 + $0.30 = $1.34, and the reader gets $34.66.
-- **The fee structure is editable in the back end (decided Nov 2, 2026).** Nothing about ware fees is fixed in code. A "Wares fees" box on WooCommerce > Vendors holds:
+- **The fee structure is editable in the back end (decided Nov 2, 2026).** Nothing about ware fees is fixed in code. A "Wares fees" box on Hexxsy > Readers holds:
   - card fee percentage (0 or more) and fixed amount per reader per order (0 or more)
   - commission on wares, 0% by default, so a commission can be added later without new code
   - whether fees and commission are taken on shipping too (off by default)
@@ -189,7 +189,7 @@ Decks and candles are taxable in most US states. As seller of record, Hexxsy is 
 
 The site keeps 20% of each reading by default; the reader gets the rest. Hexxsy holds the customer's payment and pays the reader later (decided Oct 14, 2026). Stripe Connect is approved (Oct 14, 2026). Readers who set up payouts are paid by Stripe transfer; anyone else is paid by hand.
 
-- **Rate.** Default set on WooCommerce > Vendors (0 to 100%). The admin can override it per vendor on their user profile.
+- **Rate.** Default set on Hexxsy > Readers (0 to 100%). The admin can override it per vendor on their user profile.
 - **Base.** Commission is taken on the line total after discounts, before tax. Exception: the welcome offer, which the house absorbs (see Welcome offer below).
 - **Rounding.** Math runs in cents. The commission is rounded and the reader gets exactly what's left, so no cent is lost or invented. On a $45.00 reading at 20%, the site keeps $9.00 and the reader earns $36.00.
 - **Records.** At checkout every order line is stamped with its vendor, the rate in force, the commission and the reader's earnings. A later rate change never rewrites past orders. Payouts will read these stamps.
@@ -208,10 +208,10 @@ The customer pays Hexxsy. Hexxsy keeps the money until the reading is delivered 
 | Paid | The admin recorded the payout |
 | Nothing owed | Order refunded or cancelled before payout |
 
-- **Hold period.** 7 days after delivery by default, set on WooCommerce > Payouts. The release date is stamped on the order line at delivery, so changing the setting doesn't move earlier readings.
+- **Hold period.** 7 days after delivery by default, set on Hexxsy > Payouts. The release date is stamped on the order line at delivery, so changing the setting doesn't move earlier readings.
 - **Live calls** stay on hold until booking exists, since nothing marks them delivered.
 - **Refunds** come off the line before the split, at the rate stamped at purchase. A $15.00 refund on a $45.00 reading at 20% leaves the reader $24.00 and the site $6.00.
-- **Payouts.** WooCommerce > Payouts lists each reader's Stripe status and their on-hold and ready-to-pay totals. For a reader set up on Stripe, Send via Stripe makes one transfer per order line, tied to the customer's charge. For anyone else, the admin sends the money outside the site and clicks Mark paid. Either way each line is stamped with the date and amount, and an order note is added. Only lines that were ready when the page loaded are paid.
+- **Payouts.** Hexxsy > Payouts lists each reader's Stripe status and their on-hold and ready-to-pay totals. For a reader set up on Stripe, Send via Stripe makes one transfer per order line, tied to the customer's charge. For anyone else, the admin sends the money outside the site and clicks Mark paid. Either way each line is stamped with the date and amount, and an order note is added. Only lines that were ready when the page loaded are paid.
 - **Refunded after payout.** If a customer is refunded after the reader was paid, the Payouts page lists the overpaid amount. Hexxsy has covered the refund. Reverse transfer takes it back from the reader's Stripe account; hand payments are recovered by hand.
 - **Revoked readers** still appear on the Payouts page, so money they earned before revoking is still paid.
 
@@ -248,7 +248,7 @@ MailPoet runs inside WordPress, handles the signup form, the welcome automation 
 
 MailPoet does not know about Hexxsy's commission split. Two pieces are Hexxsy plugin work:
 
-- **Recognize welcome coupons (built).** MailPoet adds no marker of its own. It writes a description on each coupon it generates: "Auto-generated coupon by MailPoet for email: 12", where 12 is the MailPoet email's ID. The plugin reads that description. On WooCommerce > Vendors, "Welcome offer emails" lists the email IDs that count; left empty, every coupon MailPoet generates counts. Fill it in before sending any other MailPoet email with a coupon, or that coupon will be house-absorbed too. Any coupon can also be marked or unmarked by hand with the "Welcome offer" checkbox on its edit screen in WooCommerce > Coupons, and the checkbox wins.
+- **Recognize welcome coupons (built).** MailPoet adds no marker of its own. It writes a description on each coupon it generates: "Auto-generated coupon by MailPoet for email: 12", where 12 is the MailPoet email's ID. The plugin reads that description. On Hexxsy > Readers, "Welcome offer emails" lists the email IDs that count; left empty, every coupon MailPoet generates counts. Fill it in before sending any other MailPoet email with a coupon, or that coupon will be house-absorbed too. Any coupon can also be marked or unmarked by hand with the "Welcome offer" checkbox on its edit screen in WooCommerce > Coupons, and the checkbox wins.
 - **Guard the cap (built).** MailPoet allows any percentage up to 100 and any flat amount. At checkout the plugin caps the welcome discount on each reader's line at the site's commission on that line (see Money). Products the site sells itself have no cap.
 
 **Money**
@@ -269,7 +269,7 @@ The coupon only works on carts over a minimum spend. WooCommerce splits a Fixed 
 
 - **The rule.** Minimum spend is at least the discount divided by the commission rate. At 20%, that's 5 times the discount: $5 off needs a $25 minimum, $10 off needs $50. Then the cart's total commission always covers the discount, and with the guard moving it between lines, the customer always gets all of it.
 - **Both numbers are changeable.** The discount amount and the minimum spend are admin settings, not fixed values. They live in MailPoet's coupon block, and a change applies to codes sent after it; codes already sent keep the terms they went out with. Nothing in code, emails or Hexx's lines may assume a particular amount. Any text that names the discount or the minimum reads it from the setting, or is edited along with it.
-- **Help the admin get it right (built).** The Vendors page has a "Welcome offer check". It shows the lowest commission rate in force (the site default or any approved reader's override, whichever is lower) and the latest welcome coupon generated. It warns if that coupon's minimum spend is below the safe minimum, if its type isn't Fixed cart, or if a percentage discount is above the lowest rate. It can only check a coupon after MailPoet has generated one, so send yourself the welcome email first.
+- **Help the admin get it right (built).** The Readers page has a "Welcome offer check". It shows the lowest commission rate in force (the site default or any approved reader's override, whichever is lower) and the latest welcome coupon generated. It warns if that coupon's minimum spend is below the safe minimum, if its type isn't Fixed cart, or if a percentage discount is above the lowest rate. It can only check a coupon after MailPoet has generated one, so send yourself the welcome email first.
 - **The plugin guard does the real work.** Minimum spend alone doesn't keep each line safe; it only makes sure there's enough room in the cart overall. The guard caps any line that would go over. Cases it catches:
   - A cheap item in the cart, which WooCommerce's even split would push past its commission.
   - A reader whose commission override is lower than the rate the minimum was set for. A $25 reading at 10% has $2.50 commission, less than $5 off.
@@ -359,7 +359,8 @@ The admin can make new block patterns at any time in Appearance > Editor > Patte
 
 **Hexx's lines (built Oct 31, 2026, plugin 0.7.0)**
 
-- WooCommerce > Hexx's lines holds every line the plugin speaks: the rooms list, the Ledger, the application and invite messages, and the invite and waitlist emails. Each box shows its default; an empty box uses it.
+- Hexxsy > Hexx's lines holds every line the plugin speaks: the rooms list, the Ledger, the application and invite messages, and the invite and waitlist emails. Reworked Nov 2, 2026 (0.8.0) to work like other plugins: one tab per section, each box filled with the line as it reads now, a Reset to default link on changed lines, and a list under each box of the {placeholders} it fills in and where its link goes. A line saved as its default, or emptied, isn't stored, so later improvements to a default still reach the site.
+- The plugin's admin pages live under their own Hexxsy menu (0.8.0): Readers (formerly WooCommerce > Vendors), Payouts and Hexx's lines.
 - {placeholders} are filled in automatically, and {link}…{/link} marks the words that become a link.
 - [hexxsy_line key="…"] places any line on a page. [hexxsy_line key="ledger"] shows the "rooms open" or "every room taken" pair, whichever is true.
 - Lines in the theme (homepage hero, footer, 404) are edited in the Site Editor.
@@ -370,7 +371,7 @@ The admin can make new block patterns at any time in Appearance > Editor > Patte
 - [hexxsy_rooms] shows approved readers in the order they applied, numbered I, II, III.
 - Each card: portrait, shop name, specialties, door line, the shelves they have in stock, lowest price, Knock.
 - Readers set the door line (140 characters) and portrait in My Account > Shop profile. These go live straight away for now; the approval queue below isn't built.
-- Empty rooms: hidden with Hexx's empty-rooms line and the Ledger link (default), or shown as unlit. Set on WooCommerce > Vendors.
+- Empty rooms: hidden with Hexx's empty-rooms line and the Ledger link (default), or shown as unlit. Set on Hexxsy > Readers.
 
 **Reader text approval**
 

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Hexxsy Vendors
  * Description:       Multi-vendor marketplace for readings on Hexxsy: invitations, the reader waitlist, the rooms list, Hexx's lines, vendor applications and approval, reading offerings, intake questions, commission tracking, the welcome offer and the payout ledger.
- * Version:           0.7.0
+ * Version:           0.8.0
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Requires Plugins:  woocommerce
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'HEXXSY_VENDORS_VERSION', '0.7.0' );
+define( 'HEXXSY_VENDORS_VERSION', '0.8.0' );
 define( 'HEXXSY_VENDORS_FILE', __FILE__ );
 define( 'HEXXSY_VENDORS_DIR', plugin_dir_path( __FILE__ ) );
 

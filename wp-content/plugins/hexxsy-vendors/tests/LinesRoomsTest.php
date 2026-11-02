@@ -9,6 +9,12 @@ use Hexxsy\Vendors\Lines;
 use Hexxsy\Vendors\Rooms;
 use PHPUnit\Framework\TestCase;
 
+if ( ! function_exists( '__' ) ) {
+	function __( $text ) { // phpcs:ignore -- WordPress stub for tests.
+		return $text;
+	}
+}
+
 require_once dirname( __DIR__ ) . '/includes/class-lines.php';
 require_once dirname( __DIR__ ) . '/includes/class-rooms.php';
 
@@ -37,6 +43,61 @@ final class LinesRoomsTest extends TestCase {
 			$this->assertNotSame( '', $line[1], $key );
 			$this->assertNotSame( '', $line[2], $key );
 		}
+	}
+
+	public function test_saving_one_tab_keeps_the_other_tabs(): void {
+		$saved = array(
+			'rooms_knock'   => 'Enter',
+			'apply_expired' => 'Too late.',
+		);
+		$out   = Lines::merge( $saved, array( 'rooms_knock' => 'Come in' ), 'trim' );
+		$this->assertSame( 'Come in', $out['rooms_knock'] );
+		$this->assertSame( 'Too late.', $out['apply_expired'] );
+	}
+
+	public function test_a_line_saved_as_its_default_is_not_stored(): void {
+		$default = Lines::defaults()['rooms_knock'][2];
+		$out     = Lines::merge( array( 'rooms_knock' => 'Enter' ), array( 'rooms_knock' => $default ), 'trim' );
+		$this->assertArrayNotHasKey( 'rooms_knock', $out );
+	}
+
+	public function test_an_emptied_box_goes_back_to_the_default(): void {
+		$out = Lines::merge( array( 'rooms_knock' => 'Enter' ), array( 'rooms_knock' => '   ' ), 'trim' );
+		$this->assertArrayNotHasKey( 'rooms_knock', $out );
+	}
+
+	public function test_browser_line_endings_still_match_the_default(): void {
+		$default = Lines::defaults()['ledger_email_body'][2];
+		$out     = Lines::merge( array(), array( 'ledger_email_body' => str_replace( "\n", "\r\n", $default ) ), static fn( $s ) => $s );
+		$this->assertArrayNotHasKey( 'ledger_email_body', $out );
+	}
+
+	public function test_unknown_keys_are_dropped(): void {
+		$out = Lines::merge( array( 'nope' => 'x' ), array( 'also_nope' => 'y' ), 'trim' );
+		$this->assertSame( array(), $out );
+	}
+
+	public function test_placeholders_in_a_line(): void {
+		$this->assertSame( array( 'email' ), Lines::placeholders_in( 'This invite is for {email}. {link}Log in{/link}.' ) );
+		$this->assertSame( array( 'link_url', 'days' ), Lines::placeholders_in( 'Go to {link_url} within {days} days, {days}.' ) );
+	}
+
+	public function test_every_placeholder_and_link_is_explained(): void {
+		$help  = Lines::placeholder_help();
+		$links = Lines::link_targets();
+		foreach ( Lines::defaults() as $key => $line ) {
+			foreach ( Lines::placeholders_in( $line[2] ) as $name ) {
+				$this->assertArrayHasKey( $name, $help, $key . ' uses {' . $name . '}' );
+			}
+			$this->assertSame( str_contains( $line[2], '{link}' ), isset( $links[ $key ] ), $key . ' link target' );
+		}
+	}
+
+	public function test_box_height_fits_the_line(): void {
+		$this->assertSame( 1, Lines::rows_for( 'Knock' ) );
+		$this->assertSame( 3, Lines::rows_for( str_repeat( 'a', 130 ) ) );
+		$this->assertSame( 3, Lines::rows_for( "One\n\nTwo" ) );
+		$this->assertSame( 12, Lines::rows_for( str_repeat( "x\n", 40 ) ) );
 	}
 
 	public function test_room_numerals(): void {

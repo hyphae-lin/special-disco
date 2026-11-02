@@ -8,7 +8,7 @@
 namespace Hexxsy\Vendors;
 
 /**
- * Adds WooCommerce > Payouts: the hold period, what each reader is owed,
+ * Adds Hexxsy > Payouts: the hold period, what each reader is owed,
  * and buttons to send it by Stripe transfer or record a payment made by
  * hand, plus reversals when a customer is refunded after a payout.
  */
@@ -33,7 +33,7 @@ class Payouts_Admin {
 	 */
 	public static function menu(): void {
 		add_submenu_page(
-			'woocommerce',
+			Admin::PAGE,
 			__( 'Payouts', 'hexxsy-vendors' ),
 			__( 'Payouts', 'hexxsy-vendors' ),
 			Admin::CAPABILITY,

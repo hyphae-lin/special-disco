@@ -14,7 +14,7 @@ namespace Hexxsy\Vendors;
  *
  * Empty rooms (Reader seats less approved readers) are either hidden, with
  * Hexx's empty-rooms line and a link to the Ledger below the list, or shown
- * as unlit rooms. The choice is on WooCommerce > Vendors.
+ * as unlit rooms. The choice is on Hexxsy > Readers.
  *
  * Until reader rooms have their own pages, Knock opens the shop filtered to
  * that reader (?reader=ID).

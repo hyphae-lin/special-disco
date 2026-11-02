@@ -4,14 +4,15 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 
 ## What's here
 
-`wp-content/plugins/hexxsy-vendors/` is the custom vendor plugin. Version 0.7.0 covers:
+`wp-content/plugins/hexxsy-vendors/` is the custom vendor plugin. Version 0.8.0 covers:
 
-- **Invitations and the Ledger.** Readers join by invitation. Put `[hexxsy_waitlist]` on the Ledger page so anyone can sign the waitlist, no account needed. On WooCommerce > Vendors, set Reader seats and choose the application, Ledger and code of conduct pages, then invite people from the waitlist or by email. Invites last 14 days and work once, for the account with that email.
-- **Rooms list.** `[hexxsy_rooms]` lists approved readers as numbered rooms. Readers add a portrait and door line in My Account > Shop profile. Empty rooms are hidden or shown unlit (WooCommerce > Vendors).
-- **Hexx's lines.** WooCommerce > Hexx's lines edits every line the plugin speaks, including the invite and waitlist emails. `[hexxsy_line key="…"]` places one on a page.
+- **Invitations and the Ledger.** Readers join by invitation. Put `[hexxsy_waitlist]` on the Ledger page so anyone can sign the waitlist, no account needed. On Hexxsy > Readers, set Reader seats and choose the application, Ledger and code of conduct pages, then invite people from the waitlist or by email. Invites last 14 days and work once, for the account with that email.
+- **Rooms list.** `[hexxsy_rooms]` lists approved readers as numbered rooms. Readers add a portrait and door line in My Account > Shop profile. Empty rooms are hidden or shown unlit (Hexxsy > Readers).
+- **Hexxsy menu.** The plugin has its own menu in wp-admin: Readers (applications, seats, commission, the Ledger and the welcome offer check), Payouts and Hexx's lines.
+- **Hexx's lines.** Hexxsy > Hexx's lines edits every line the plugin speaks, in tabs: Rooms list, the Ledger, and Invitations. Each box holds the line as it reads now; edit it and save, or Reset to default. Under each box is a list of the {placeholders} it fills in and where its link goes. `[hexxsy_line key="…"]` places one on a page.
 - **Vendor applications.** Put `[hexxsy_vendor_application]` on a page. It opens only for someone holding a valid invite, logged in with the invited email (WooCommerce's My Account page handles sign-up).
-- **Manual approval.** WooCommerce > Vendors lists applications. Approving grants the `hexxsy_vendor` role; both decisions email the applicant.
-- **Commission.** Site default is 20%, set on the Vendors page. Override per vendor on their user profile.
+- **Manual approval.** Hexxsy > Readers lists applications. Approving grants the `hexxsy_vendor` role; both decisions email the applicant.
+- **Commission.** Site default is 20%, set on the Readers page. Override per vendor on their user profile.
 - **Reading offerings.** Any product can be marked a written reading or a live call, with turnaround days or call length. The product's author is its vendor.
 - **Intake questions.** Written readings ask for the customer's question, plus any of birth date, birth time, birth place, or the name of the person the reading is about. Answers are saved on the order.
 - **Vendor dashboard.** Approved vendors get three extra tabs in My Account: Readings I offer (add, edit, pause, remove, with an image), Reading orders (their own order lines, intake answers, and earnings) and Shop profile. New readings go live as soon as they're saved.
@@ -20,8 +21,8 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 - **Customer reading library.** A My readings tab lists every reading the customer has bought, with its reader, date, due date, and a PDF download once delivered.
 - **Shop-page buttons.** Readings show "Request reading" or "Book a call" and link to the reading's page, where intake questions (and later, booking) happen.
 - **Split records.** Each order line stores its vendor, the rate at purchase, the site's commission and the vendor's earnings. Payouts will read these.
-- **Welcome offer.** Coupons MailPoet generates from the welcome email are recognized at checkout. The discount on each reader's line is capped at the site's commission, and readers are paid on the full price; the house absorbs the discount. Set which MailPoet emails count on WooCommerce > Vendors, where the Welcome offer check also warns if the coupon's minimum spend is too low. Any coupon can be marked by hand with the Welcome offer checkbox in WooCommerce > Coupons.
-- **Payouts.** Hexxsy holds each payment. A written reading's share becomes payable once it's delivered and a hold period (7 days by default) has passed. Readers set up payouts from Reading orders, which creates a Stripe Express account. WooCommerce > Payouts sends what's owed by Stripe transfer, or records a payment made by hand, and can reverse a transfer after a refund.
+- **Welcome offer.** Coupons MailPoet generates from the welcome email are recognized at checkout. The discount on each reader's line is capped at the site's commission, and readers are paid on the full price; the house absorbs the discount. Set which MailPoet emails count on Hexxsy > Readers, where the Welcome offer check also warns if the coupon's minimum spend is too low. Any coupon can be marked by hand with the Welcome offer checkbox in WooCommerce > Coupons.
+- **Payouts.** Hexxsy holds each payment. A written reading's share becomes payable once it's delivered and a hold period (7 days by default) has passed. Readers set up payouts from Reading orders, which creates a Stripe Express account. Hexxsy > Payouts sends what's owed by Stripe transfer, or records a payment made by hand, and can reverse a transfer after a refund.
 
 `wp-content/themes/hexxsy/` is the house theme, a block theme. Version 0.3.0 covers:
 
