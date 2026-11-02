@@ -119,7 +119,7 @@ Only the customer, that reading's vendor, or an admin can download a PDF, and on
 
 The customer's **My readings** tab (first in My Account) lists every reading bought, with reader, order date and status: "Waiting for payment," "In progress, due \[date\]," a Download PDF button, or "Live call."
 
-## Wares (draft Nov 1, 2026, not decided, not built)
+## Wares (drafted Nov 1, payment model decided Nov 2, 2026, not built)
 
 Wares is the shelf for physical goods a reader ships themselves. The first things readers expect to sell are tarot and oracle decks and candles, plus similar small items. Hexxsy stays the seller of record, as with readings.
 
@@ -148,19 +148,24 @@ No intake questions. Wares can go in the cart straight from the shop page.
 
 ### Money for wares
 
-**Not decided.** The leaning (Nov 1, 2026) is that wares carry no commission and the reader is responsible for every part of shipping them. Commission stays on readings only. How the payment moves is open, and it decides who carries fees, refunds, chargebacks and sales tax:
+**Etsy-lite (decided Nov 2, 2026).** Wares sell in the same cart and checkout as readings, and Hexxsy takes the payment as seller of record. Hexxsy takes no commission on wares; commission stays on readings only. The reader is responsible for every part of shipping, and pays the card fee on their own sales so the house never loses money on a ware. Other options considered and set aside: linking out to the reader's own shop, direct charges on the reader's Stripe account (needs a separate checkout), and a 0% pass-through with no fee (leaves card fees and chargebacks with Hexxsy).
 
-| Option | Who takes the payment | Hexxsy carries | Build size |
-| --- | --- | --- | --- |
-| Link out | The reader, in their own shop (Etsy, Shopify, their site). The Wares shelf links to it | Nothing | Small: a link field and listing card |
-| Etsy-lite | Hexxsy, in the same cart as readings. Reader pays the card fee (about 3% + $0.25), paid when marked shipped, reserve only for readers with refund or chargeback problems | Sales tax as marketplace facilitator, some chargeback risk | Medium |
-| Reader's own Stripe | The reader's Stripe account, direct charge. Needs a checkout separate from readings | Little | Large |
-| Pass-through | Hexxsy, 0% commission, paid at once | Card fees on every ware, refunds and chargebacks after the money is gone, sales tax | Small, not recommended |
+- **What the reader gets.** Ware price plus shipping, minus the card fee. Nothing else comes off.
+- **Card fee.** A percentage of the reader's ware total (wares plus shipping) and a fixed amount once per reader per order. Starting values should match Hexxsy's actual Stripe rate (US standard was 2.9% + $0.30; check the account). Example: a $30.00 deck with $6.00 shipping is $36.00. The fee is $1.04 + $0.30 = $1.34, and the reader gets $34.66.
+- **The fee structure is editable in the back end (decided Nov 2, 2026).** Nothing about ware fees is fixed in code. A "Wares fees" box on WooCommerce > Vendors holds:
+  - card fee percentage (0 or more) and fixed amount per reader per order (0 or more)
+  - commission on wares, 0% by default, so a commission can be added later without new code
+  - whether fees and commission are taken on shipping too (off by default)
+  - per-reader overrides of all of the above on the reader's user profile, like the existing commission override
 
-If wares sell through Hexxsy's cart:
-
-- **Shipping charges (decided Nov 1, 2026).** The whole shipping charge goes to the reader, since they pay the postage. The split record stores it on its own, so refunds can treat it separately. The welcome offer never discounts shipping or wares (a 0% commission caps the discount at $0), so the house never covers either.
-- **Hold.** 14 days after marked shipped was chosen (Nov 1, 2026) when wares carried commission. Under Etsy-lite it would be replaced by payment on shipment.
+  Every value is stamped on the order line at checkout, so a change applies to new orders only and never rewrites past ones. Text that names a fee reads it from the setting. If wares commission is raised above 0, the welcome offer guard caps discounts on wares at that commission, as it does for readings.
+- **Shipping charges (decided Nov 1, 2026).** The whole shipping charge goes to the reader, since they pay the postage. The split record stores it on its own, so refunds can treat it separately.
+- **When the reader is paid.** As soon as they mark the ware shipped with tracking. No hold. For a reader set up on Stripe, the transfer goes out on its own, tied to the customer's charge; the Payouts page lists it as sent. Readers without Stripe show as ready to pay and are paid by hand.
+- **Reserve.** The admin can switch on a reserve for one reader, from their user profile, after refund or chargeback trouble. With it on, that reader's ware payouts wait 14 days after marked shipped (the hold chosen Nov 1, 2026). Off by default, and readers see when it's on.
+- **Refunds.** Refunds follow the reader's own return policy. A refund comes off the reader's ware share in full, shipping included if refunded. The card fee isn't given back, since Stripe keeps its fee on a refund. If the reader was already paid, the Payouts page lists the overpaid amount and Reverse transfer takes it back, as for readings.
+- **Chargebacks.** Land on Hexxsy first. The disputed amount and Stripe's dispute fee are recovered from the reader by reverse transfer, or from their next payouts if that fails. A chargeback is the usual reason to switch on a reserve.
+- **Welcome offer.** Never discounts shipping. At the default 0% wares commission, the guard caps the discount on a ware at $0, so the whole discount lands on readings. The minimum spend counts readings only, so a cart of wares alone can't unlock it. (Changes the rule in Welcome offer, which counted the whole cart.)
+- **Sales tax.** Hexxsy collects it on wares as seller of record. The tax goes to Hexxsy, not the reader, and isn't part of the reader's total. Needs a tax service and an accountant's view before wares go live (see Tax below).
 - **Late shipping.** If a ware isn't marked shipped within its Ships within days plus a grace period, the admin is notified. Auto-refund is open.
 
 ### Returns and problems
