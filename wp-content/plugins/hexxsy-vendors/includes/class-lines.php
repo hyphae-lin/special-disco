@@ -50,12 +50,8 @@ class Lines {
 			'ledger_full_title'   => array( 'ledger', 'Every room taken, first line', 'Every chair is taken. Has been for a while.' ),
 			'ledger_full_body'    => array( 'ledger', 'Every room taken, second line', 'Leave your name anyway. I go through the list on Sundays.' ),
 			'ledger_thanks'       => array( 'ledger', 'After signing', 'Your name is in the ledger. I go through it on Sundays. If it fits, I\'ll find you.' ),
-			'ledger_email_subject' => array( 'ledger', 'Confirmation email, subject', 'Your name is in the ledger' ),
-			'ledger_email_body'   => array( 'ledger', 'Confirmation email, body', "You signed the reader ledger at Hexxsy. I go through it on Sundays, and if it fits, I'll write to you with an invitation.\n\nIf you didn't sign it, ignore this and nothing more will come.\n\nHexx" ),
 
 			// Invitations and the application.
-			'invite_subject'      => array( 'apply', 'Invite email, subject', 'A key to a room at Hexxsy' ),
-			'invite_body'         => array( 'apply', 'Invite email, body', "I've kept a room aside for you at Hexxsy.\n\nThis link opens the reader application. It works once, for an account with this email address, and it goes stale in {days} days:\n\n{link_url}\n\nIf you don't have an account yet, the page will show you where to make one.\n\nHexx" ),
 			'apply_invitation'    => array( 'apply', 'No invite', 'Hexxsy readers join by invitation. If you read and want a room, {link}put your name in the ledger{/link}. I\'ll come find you if it fits.' ),
 			'apply_log_in'        => array( 'apply', 'Invite, not logged in', 'This invite is for {email}. {link}Log in or make an account{/link} with that email address, then come back to this page.' ),
 			'apply_wrong_email'   => array( 'apply', 'Invite, wrong account', 'This invite is for {email}, and you\'re logged in with a different email address. Log out and log in with that one, or ask me to send the invite somewhere else.' ),
@@ -74,11 +70,9 @@ class Lines {
 	 */
 	public static function placeholder_help(): array {
 		return array(
-			'count'    => __( 'how many rooms are empty', 'hexxsy-vendors' ),
-			'price'    => __( "the reader's lowest price, like $25.00", 'hexxsy-vendors' ),
-			'email'    => __( 'the email address the invite was sent to', 'hexxsy-vendors' ),
-			'days'     => __( 'how many days the invite lasts', 'hexxsy-vendors' ),
-			'link_url' => __( 'the invite link itself', 'hexxsy-vendors' ),
+			'count' => __( 'how many rooms are empty', 'hexxsy-vendors' ),
+			'price' => __( "the reader's lowest price, like $25.00", 'hexxsy-vendors' ),
+			'email' => __( 'the email address the invite was sent to', 'hexxsy-vendors' ),
 		);
 	}
 
@@ -315,7 +309,7 @@ class Lines {
 		?>
 		<div class="wrap hexxsy-lines">
 			<h1><?php esc_html_e( "Hexx's lines", 'hexxsy-vendors' ); ?></h1>
-			<p><?php esc_html_e( 'Every line Hexx speaks through the Hexxsy Vendors plugin. Edit any box and save. Reset to default puts the original line back. Lines in the theme (the homepage, the footer, the 404 page) are edited in Appearance > Editor.', 'hexxsy-vendors' ); ?></p>
+			<p><?php esc_html_e( 'Every line Hexx speaks on the site through the Hexxsy Vendors plugin. Edit any box and save. Reset to default puts the original line back. Emails are in WooCommerce > Settings > Emails. Lines in the theme (the homepage, the footer, the 404 page) are edited in Appearance > Editor.', 'hexxsy-vendors' ); ?></p>
 			<?php settings_errors(); ?>
 			<nav class="nav-tab-wrapper" aria-label="<?php esc_attr_e( "Hexx's lines sections", 'hexxsy-vendors' ); ?>">
 				<?php foreach ( $groups as $group => $heading ) : ?>

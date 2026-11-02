@@ -4,12 +4,13 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 
 ## What's here
 
-`wp-content/plugins/hexxsy-vendors/` is the custom vendor plugin. Version 0.8.0 covers:
+`wp-content/plugins/hexxsy-vendors/` is the custom vendor plugin. Version 0.9.0 covers:
 
 - **Invitations and the Ledger.** Readers join by invitation. Put `[hexxsy_waitlist]` on the Ledger page so anyone can sign the waitlist, no account needed. On Hexxsy > Readers, set Reader seats and choose the application, Ledger and code of conduct pages, then invite people from the waitlist or by email. Invites last 14 days and work once, for the account with that email.
 - **Rooms list.** `[hexxsy_rooms]` lists approved readers as numbered rooms. Readers add a portrait and door line in My Account > Shop profile. Empty rooms are hidden or shown unlit (Hexxsy > Readers).
 - **Hexxsy menu.** The plugin has its own menu in wp-admin: Readers (applications, seats, commission, the Ledger and the welcome offer check), Payouts and Hexx's lines.
 - **Hexx's lines.** Hexxsy > Hexx's lines edits every line the plugin speaks, in tabs: Rooms list, the Ledger, and Invitations. Each box holds the line as it reads now; edit it and save, or Reset to default. Under each box is a list of the {placeholders} it fills in and where its link goes. `[hexxsy_line key="…"]` places one on a page.
+- **Emails.** The reader emails are WooCommerce emails, in a Hexxsy group on WooCommerce > Settings > Emails: reader invite, Ledger signed, new reader application (to you), application approved, and application not approved. Each has its own subject, heading, message and on/off switch (the invite is always sent, since its link reaches the reader no other way), and uses WooCommerce's email design. Lines changed on Hexx's lines before 0.9.0 carry over. The reading-delivered email with the PDF is still sent separately.
 - **Vendor applications.** Put `[hexxsy_vendor_application]` on a page. It opens only for someone holding a valid invite, logged in with the invited email (WooCommerce's My Account page handles sign-up).
 - **Manual approval.** Hexxsy > Readers lists applications. Approving grants the `hexxsy_vendor` role; both decisions email the applicant.
 - **Commission.** Site default is 20%, set on the Readers page. Override per vendor on their user profile.

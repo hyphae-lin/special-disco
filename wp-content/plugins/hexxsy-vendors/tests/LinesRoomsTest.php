@@ -66,10 +66,9 @@ final class LinesRoomsTest extends TestCase {
 		$this->assertArrayNotHasKey( 'rooms_knock', $out );
 	}
 
-	public function test_browser_line_endings_still_match_the_default(): void {
-		$default = Lines::defaults()['ledger_email_body'][2];
-		$out     = Lines::merge( array(), array( 'ledger_email_body' => str_replace( "\n", "\r\n", $default ) ), static fn( $s ) => $s );
-		$this->assertArrayNotHasKey( 'ledger_email_body', $out );
+	public function test_browser_line_endings_are_stored_as_newlines(): void {
+		$out = Lines::merge( array(), array( 'rooms_none' => "Aired.\r\nSoon." ), static fn( $s ) => $s );
+		$this->assertSame( "Aired.\nSoon.", $out['rooms_none'] );
 	}
 
 	public function test_unknown_keys_are_dropped(): void {

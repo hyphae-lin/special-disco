@@ -178,14 +178,12 @@ class Application {
 		update_user_meta( $user_id, Vendor::STATUS_META, Vendor::PENDING );
 		Ledger::use_invite( $token, $user_id );
 
-		wp_mail(
-			get_option( 'admin_email' ),
-			/* translators: %s: shop name */
-			sprintf( __( 'New Hexxsy vendor application: %s', 'hexxsy-vendors' ), $shop_name ),
-			sprintf(
-				/* translators: %s: admin URL */
-				__( "A new vendor application is waiting for review:\n%s", 'hexxsy-vendors' ),
-				admin_url( 'admin.php?page=' . Admin::PAGE )
+		Emails::send(
+			'new_application',
+			'',
+			array(
+				'shop_name'  => $shop_name,
+				'review_url' => admin_url( 'admin.php?page=' . Admin::PAGE ),
 			)
 		);
 
