@@ -11,6 +11,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+require_once get_theme_file_path( 'inc/masthead.php' );
+
 /**
  * Load style.css on the site and in the editor.
  */
@@ -44,6 +46,12 @@ function hexxsy_block_styles(): void {
 			'notice' => __( 'Notice', 'hexxsy' ),
 			'card'   => __( 'Card', 'hexxsy' ),
 			'band'   => __( 'Band', 'hexxsy' ),
+		),
+		'core/image'     => array(
+			'framed' => __( 'Framed', 'hexxsy' ),
+		),
+		'core/list'      => array(
+			'rules' => __( 'House rules', 'hexxsy' ),
 		),
 		'core/paragraph' => array(
 			'hexx'    => __( 'Hexx speaks', 'hexxsy' ),

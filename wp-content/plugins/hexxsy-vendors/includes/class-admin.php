@@ -101,7 +101,7 @@ class Admin {
 				)
 			);
 		}
-		foreach ( array( Ledger::APPLY_PAGE_OPTION, Ledger::LEDGER_PAGE_OPTION, Ledger::CONDUCT_OPTION, Refunds::PAGE_OPTION ) as $option ) {
+		foreach ( array( Ledger::APPLY_PAGE_OPTION, Ledger::LEDGER_PAGE_OPTION, Ledger::CONDUCT_OPTION, Refunds::PAGE_OPTION, Rooms::PAGE_OPTION ) as $option ) {
 			register_setting(
 				self::PAGE,
 				$option,
@@ -244,6 +244,7 @@ class Admin {
 						Ledger::APPLY_PAGE_OPTION  => array( __( 'Application page', 'hexxsy-vendors' ), __( 'The page with [hexxsy_vendor_application]. Invite links point here.', 'hexxsy-vendors' ) ),
 						Ledger::LEDGER_PAGE_OPTION => array( __( 'Ledger page', 'hexxsy-vendors' ), __( 'The page with [hexxsy_waitlist]. People without an invite are sent here.', 'hexxsy-vendors' ) ),
 						Ledger::CONDUCT_OPTION     => array( __( 'Code of conduct page', 'hexxsy-vendors' ), __( 'Linked from the application\'s agreement checkbox.', 'hexxsy-vendors' ) ),
+						Rooms::PAGE_OPTION         => array( __( 'Room page', 'hexxsy-vendors' ), __( 'The page with [hexxsy_room]. Every reader\'s room lives under it: its address plus their shop name. Without one, Knock opens the shop filtered to that reader.', 'hexxsy-vendors' ) ),
 						Refunds::PAGE_OPTION       => array( __( 'Refund policy page', 'hexxsy-vendors' ), __( 'Linked from the note above the button on every written reading.', 'hexxsy-vendors' ) ),
 					);
 					foreach ( $pages as $option => $text ) :
@@ -463,6 +464,13 @@ class Admin {
 				<td><?php echo esc_html( ucfirst( Vendor::status( $user->ID ) ) ); ?></td>
 			</tr>
 			<tr>
+				<th><label for="hexxsy_hexx_note"><?php esc_html_e( "Hexx's note", 'hexxsy-vendors' ); ?></label></th>
+				<td>
+					<textarea id="hexxsy_hexx_note" name="<?php echo esc_attr( Rooms::NOTE_META ); ?>" rows="3" class="large-text"><?php echo esc_textarea( (string) get_user_meta( $user->ID, Rooms::NOTE_META, true ) ); ?></textarea>
+					<p class="description"><?php esc_html_e( 'One or two lines from Hexx about this reader, shown in their room. Only you can see or change this box.', 'hexxsy-vendors' ); ?></p>
+				</td>
+			</tr>
+			<tr>
 				<th><label for="hexxsy_commission_override"><?php esc_html_e( 'Commission override (%)', 'hexxsy-vendors' ); ?></label></th>
 				<td>
 					<?php wp_nonce_field( 'hexxsy_commission_override', '_hexxsy_commission_nonce' ); ?>
@@ -493,6 +501,10 @@ class Admin {
 		}
 		if ( ! isset( $_POST['_hexxsy_commission_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['_hexxsy_commission_nonce'] ), 'hexxsy_commission_override' ) ) {
 			return;
+		}
+
+		if ( isset( $_POST[ Rooms::NOTE_META ] ) ) {
+			update_user_meta( $user_id, Rooms::NOTE_META, sanitize_textarea_field( wp_unslash( $_POST[ Rooms::NOTE_META ] ) ) );
 		}
 
 		$raw = trim( sanitize_text_field( wp_unslash( $_POST['hexxsy_commission_override'] ) ) );

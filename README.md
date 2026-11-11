@@ -4,10 +4,13 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 
 ## What's here
 
-`wp-content/plugins/hexxsy-vendors/` is the custom vendor plugin. Version 0.8.0 covers:
+`wp-content/plugins/hexxsy-vendors/` is the custom vendor plugin. Version 0.9.0 covers:
 
 - **Invitations and the Ledger.** Readers join by invitation. Put `[hexxsy_waitlist]` on the Ledger page so anyone can sign the waitlist, no account needed. On WooCommerce > Vendors, set Reader seats and choose the application, Ledger and code of conduct pages, then invite people from the waitlist or by email. Invites last 14 days and work once, for the account with that email.
 - **Rooms list.** `[hexxsy_rooms]` lists approved readers as numbered rooms. Readers add a portrait and door line in My Account > Shop profile. Empty rooms are hidden or shown unlit (WooCommerce > Vendors).
+- **Shelves.** Sittings, Letters, Papers and Wares are product categories the plugin makes once. Edit each one's name, Hexx's lines, button labels and "How it goes" steps in Products > Categories. Live calls file under Sittings and written readings under Letters by themselves.
+- **Reader rooms.** `[hexxsy_room]` is a reader's room: portrait, introduction, "How I read", Hexx's note and their stocked shelves. Put it on one page (the theme's "Reader room" pattern, Full width template) and choose that page as the Room page on WooCommerce > Vendors. Each room's address is that page plus the shop name, e.g. `/room/moth-candle/`. Hexx's note is on the reader's user profile in wp-admin.
+- **Offering page.** `[hexxsy_offering]` lays out every product page: where it sits, the reader's description, "Before you buy", "How it goes", and a price box with the questions and the button. The theme's product template holds it.
 - **Hexx's lines.** WooCommerce > Hexx's lines edits every line the plugin speaks, including the invite and waitlist emails. `[hexxsy_line key="…"]` places one on a page.
 - **Vendor applications.** Put `[hexxsy_vendor_application]` on a page. It opens only for someone holding a valid invite, logged in with the invited email (WooCommerce's My Account page handles sign-up).
 - **Manual approval.** WooCommerce > Vendors lists applications. Approving grants the `hexxsy_vendor` role; both decisions email the applicant.
@@ -27,7 +30,7 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 - **Welcome offer.** Coupons MailPoet generates from the welcome email are recognized at checkout. The discount on each reader's line is capped at the site's commission, and readers are paid on the full price; the house absorbs the discount. Set which MailPoet emails count on WooCommerce > Vendors, where the Welcome offer check also warns if the coupon's minimum spend is too low. Any coupon can be marked by hand with the Welcome offer checkbox in WooCommerce > Coupons.
 - **Payouts.** Hexxsy holds each payment. A written reading's share becomes payable once it's delivered and a hold period (7 days by default) has passed. Readers set up payouts from Reading orders, which creates a Stripe Express account. WooCommerce > Payouts sends what's owed by Stripe transfer, or records a payment made by hand, and can reverse a transfer after a refund.
 
-`wp-content/themes/hexxsy/` is the house theme, a block theme. Version 0.4.0 covers:
+`wp-content/themes/hexxsy/` is the house theme, a block theme. Version 0.5.0 covers:
 
 - **Brand as global styles.** The palette, fonts and sizes live in `theme.json`, so changing the accent is one setting in Appearance > Editor > Styles. The fonts (IM Fell English, IM Fell English SC, Libre Caslon Text) are served from the theme, not from Google.
 - **Header and footer.** The masthead with the site title and tagline, navigation, and both disclaimers. Edit them in Appearance > Editor > Patterns > Template parts.
@@ -35,13 +38,17 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 - **House styles.** Block styles the editor offers by name: Double rule and Thin rule (separators), Notice, Card and Band (groups), and Hexx speaks, Small caps label and Fleuron heading (paragraphs).
 - **Homepage.** The Homepage pattern (hero with the woodcut, Readers' Rooms, house notice). Use it on a page with the full width template and set that page as the homepage in Settings > Reading. The woodcut is an ordinary image block: click it and Replace to use your own.
 - **Forms.** The plugin's forms and WooCommerce's account forms match the Ledger mockup. Patterns "Become a reader" and "The Ledger" lay out those pages.
+- **Rooms and offerings.** Styles for the reader room and the offering page, the "Reader room" pattern, and a product template that replaces WooCommerce's layout.
+- **Hexx's page.** The "Hexx's page" pattern: portrait, who she is, Rules of the House, and a contact box. Replace the placeholder portrait and set the button's link in the editor.
+- **Masthead.** Appearance > Masthead: styled text, a logo image, or the text over a darkened background image. The name is large on the homepage and small on every other page.
 - **Refund policy.** The "Refund policy" pattern is the policy page, with its numbers read from the plugin's settings. It has a placeholder for your contact address.
 - **Your own patterns.** Make them in Appearance > Editor > Patterns. Four Hexxsy categories are there to file them under. Patterns you make are kept in the database, so deploys never touch them.
 
 ## Not built yet
 
 - Live-call availability, booking and the video provider
-- Theme: reader room pages, the offering page, Hexx's page; the masthead's logo modes
+- The reader text approval queue
+- Papers and Wares that readers can add themselves
 - Vendor terms and customer terms
 
 ## Refunds

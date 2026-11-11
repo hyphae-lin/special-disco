@@ -31,7 +31,7 @@ final class LinesRoomsTest extends TestCase {
 	}
 
 	public function test_every_default_has_group_label_and_text(): void {
-		$groups = array( 'rooms', 'ledger', 'apply', 'buying', 'late', 'revoke' );
+		$groups = array( 'rooms', 'ledger', 'apply', 'room', 'offering', 'buying', 'late', 'revoke' );
 		foreach ( Lines::defaults() as $key => $line ) {
 			$this->assertContains( $line[0], $groups, $key );
 			$this->assertNotSame( '', $line[1], $key );

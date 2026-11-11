@@ -220,6 +220,16 @@ class Readings {
 		}
 		echo '<span class="description">' . esc_html__( 'Written readings always ask for the customer\'s question. Tick anything else you need.', 'hexxsy-vendors' ) . '</span></p>';
 
+		woocommerce_wp_textarea_input(
+			array(
+				'id'          => Offering::BEFORE_META,
+				'label'       => __( 'Before you buy', 'hexxsy-vendors' ),
+				'description' => __( 'Shown on the offering\'s page: how to prepare, what the reader won\'t read on, what to send.', 'hexxsy-vendors' ),
+				'desc_tip'    => true,
+				'rows'        => 4,
+			)
+		);
+
 		echo '</div>';
 	}
 
@@ -253,6 +263,10 @@ class Readings {
 
 		$intake = isset( $input[ self::INTAKE_META ] ) ? array_map( 'sanitize_key', (array) $input[ self::INTAKE_META ] ) : array();
 		$product->update_meta_data( self::INTAKE_META, array_values( array_intersect( $intake, array_keys( self::INTAKE_FIELDS ) ) ) );
+
+		if ( isset( $input[ Offering::BEFORE_META ] ) ) {
+			$product->update_meta_data( Offering::BEFORE_META, sanitize_textarea_field( (string) $input[ Offering::BEFORE_META ] ) );
+		}
 
 		// Readings are services: nothing ships, and each order needs its own reading.
 		if ( '' !== $format ) {
@@ -291,6 +305,10 @@ class Readings {
 	 */
 	public static function loop_button_text( $text, $product ) {
 		$format = self::format( $product );
+		$shelf  = '' !== $format ? Shelves::of( $product ) : null;
+		if ( $shelf && '' !== $shelf['action'] ) {
+			return $shelf['action'];
+		}
 		if ( self::WRITTEN === $format ) {
 			return __( 'Request reading', 'hexxsy-vendors' );
 		}

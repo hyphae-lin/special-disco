@@ -337,6 +337,10 @@ class Dashboard {
 		update_user_meta( $user_id, 'hexxsy_bio', sanitize_textarea_field( $input['hexxsy_bio'] ?? '' ) );
 		update_user_meta( $user_id, 'hexxsy_specialties', sanitize_text_field( $input['hexxsy_specialties'] ?? '' ) );
 		update_user_meta( $user_id, Rooms::DOOR_META, mb_substr( sanitize_text_field( $input['hexxsy_door_line'] ?? '' ), 0, 140 ) );
+		update_user_meta( $user_id, Rooms::HOW_META, sanitize_textarea_field( $input[ Rooms::HOW_META ] ?? '' ) );
+		foreach ( array_keys( Shelves::all() ) as $shelf_key ) {
+			update_user_meta( $user_id, Rooms::SHELF_NOTE . $shelf_key, mb_substr( sanitize_text_field( $input[ Rooms::SHELF_NOTE . $shelf_key ] ?? '' ), 0, 300 ) );
+		}
 
 		$portrait = self::handle_image_upload();
 		if ( $portrait ) {
@@ -488,6 +492,11 @@ class Dashboard {
 			<p class="form-row">
 				<label for="hexxsy_description"><?php esc_html_e( 'Description', 'hexxsy-vendors' ); ?></label>
 				<textarea class="input-text" id="hexxsy_description" name="description" rows="6"><?php echo esc_textarea( (string) $value( 'description', $product ? $product->get_description() : '' ) ); ?></textarea>
+			</p>
+			<p class="form-row">
+				<label for="hexxsy_before"><?php esc_html_e( 'Before you buy', 'hexxsy-vendors' ); ?></label>
+				<textarea class="input-text" id="hexxsy_before" name="<?php echo esc_attr( Offering::BEFORE_META ); ?>" rows="4" aria-describedby="hexxsy_before_hint"><?php echo esc_textarea( (string) $value( Offering::BEFORE_META, $product ? $product->get_meta( Offering::BEFORE_META ) : '' ) ); ?></textarea>
+				<span class="hexxsy-hint" id="hexxsy_before_hint"><?php esc_html_e( 'Anything a customer should know first: how to prepare, what you won\'t read on, what to send you.', 'hexxsy-vendors' ); ?></span>
 			</p>
 			<p class="form-row">
 				<label for="hexxsy_price"><?php echo esc_html( sprintf( /* translators: %s: currency symbol */ __( 'Price (%s)', 'hexxsy-vendors' ), get_woocommerce_currency_symbol() ) ); ?></label>
@@ -731,8 +740,13 @@ class Dashboard {
 				<input type="text" class="input-text" id="hexxsy_shop_name" name="hexxsy_shop_name" required maxlength="80" value="<?php echo esc_attr( (string) get_user_meta( $user_id, 'hexxsy_shop_name', true ) ); ?>">
 			</p>
 			<p class="form-row">
-				<label for="hexxsy_bio"><?php esc_html_e( 'About you', 'hexxsy-vendors' ); ?></label>
+				<label for="hexxsy_bio"><?php esc_html_e( 'Introduction', 'hexxsy-vendors' ); ?></label>
 				<textarea class="input-text" id="hexxsy_bio" name="hexxsy_bio" rows="6"><?php echo esc_textarea( (string) get_user_meta( $user_id, 'hexxsy_bio', true ) ); ?></textarea>
+			</p>
+			<p class="form-row">
+				<label for="hexxsy_how_i_read"><?php esc_html_e( 'How I read', 'hexxsy-vendors' ); ?></label>
+				<textarea class="input-text" id="hexxsy_how_i_read" name="<?php echo esc_attr( Rooms::HOW_META ); ?>" rows="4" aria-describedby="hexxsy_how_hint"><?php echo esc_textarea( (string) get_user_meta( $user_id, Rooms::HOW_META, true ) ); ?></textarea>
+				<span class="hexxsy-hint" id="hexxsy_how_hint"><?php esc_html_e( 'Shown in your room under your introduction. Your decks, your method, what a reading with you is like.', 'hexxsy-vendors' ); ?></span>
 			</p>
 			<p class="form-row">
 				<label for="hexxsy_specialties"><?php esc_html_e( 'Specialties', 'hexxsy-vendors' ); ?></label>
@@ -752,6 +766,18 @@ class Dashboard {
 				<input type="file" id="hexxsy_portrait" name="image" accept="image/jpeg,image/png,image/webp" aria-describedby="hexxsy_portrait_hint">
 				<span class="hexxsy-hint" id="hexxsy_portrait_hint"><?php esc_html_e( 'Shown on your room\'s card. A JPG, PNG or WebP, at least 600 pixels wide. Taller than wide crops best.', 'hexxsy-vendors' ); ?></span>
 			</p>
+			<?php foreach ( Shelves::all() as $shelf_key => $shelf ) : ?>
+				<p class="form-row">
+					<label for="<?php echo esc_attr( Rooms::SHELF_NOTE . $shelf_key ); ?>">
+						<?php
+						/* translators: %s: shelf name, e.g. Letters */
+						echo esc_html( sprintf( __( 'A note on your %s', 'hexxsy-vendors' ), $shelf['name'] ) );
+						?>
+					</label>
+					<input type="text" class="input-text" id="<?php echo esc_attr( Rooms::SHELF_NOTE . $shelf_key ); ?>" name="<?php echo esc_attr( Rooms::SHELF_NOTE . $shelf_key ); ?>" maxlength="300" value="<?php echo esc_attr( (string) get_user_meta( $user_id, Rooms::SHELF_NOTE . $shelf_key, true ) ); ?>">
+				</p>
+			<?php endforeach; ?>
+			<p class="hexxsy-hint"><?php esc_html_e( 'Optional. Each note shows in your room above that shelf, when you have something on it.', 'hexxsy-vendors' ); ?></p>
 			<p><button type="submit" class="button"><?php esc_html_e( 'Save profile', 'hexxsy-vendors' ); ?></button></p>
 		</form>
 		<?php

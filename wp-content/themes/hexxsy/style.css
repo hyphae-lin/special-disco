@@ -2,7 +2,7 @@
 Theme Name:        Hexxsy
 Theme URI:         https://hexxsy.com
 Description:       The house theme for Hexxsy: ink, paper and oxblood, set in IM Fell English and Libre Caslon Text.
-Version:           0.4.0
+Version:           0.5.0
 Requires at least: 6.6
 Requires PHP:      8.1
 Author:            Hexxsy
@@ -464,4 +464,699 @@ p.is-style-fleuron {
 	font-family: var(--wp--preset--font-family--fell);
 	font-size: 1.75rem;
 	line-height: 1.35;
+}
+
+/* ------------------------------------------------------------------
+ * Masthead: large on the homepage, small everywhere else, with the
+ * logo and background-image modes from Appearance > Masthead.
+ * ------------------------------------------------------------------ */
+.screen-reader-text {
+	border: 0;
+	clip: rect(1px, 1px, 1px, 1px);
+	clip-path: inset(50%);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+	word-wrap: normal !important;
+}
+
+.hexxsy-masthead .wp-block-site-title {
+	margin: 0;
+}
+
+body:not(.home) .hexxsy-masthead {
+	padding-top: 1rem !important;
+	padding-bottom: 0.75rem !important;
+}
+
+body:not(.home) .hexxsy-masthead .wp-block-site-title {
+	font-size: 2.25rem !important;
+	line-height: 1.1;
+}
+
+body:not(.home) .hexxsy-masthead .wp-block-site-tagline {
+	display: none;
+}
+
+.hexxsy-masthead-logo a {
+	display: inline-block;
+	line-height: 0;
+}
+
+.hexxsy-masthead-logo-img {
+	display: block;
+	height: var(--hexxsy-logo-height, 120px);
+	width: auto;
+	max-width: 100%;
+	max-height: 28vw;
+	object-fit: contain;
+}
+
+body:not(.home) .hexxsy-masthead-logo-img {
+	height: 48px;
+}
+
+.hexxsy-masthead.has-masthead-image {
+	background-color: var(--wp--preset--color--ink);
+	background-image:
+		linear-gradient(rgba(27, 23, 20, var(--hexxsy-masthead-overlay, 0.45)), rgba(27, 23, 20, var(--hexxsy-masthead-overlay, 0.45))),
+		var(--hexxsy-masthead-image);
+	background-size: cover;
+	background-position: var(--hexxsy-masthead-focal, 50% 50%);
+	color: var(--wp--preset--color--paper);
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+	margin-top: 0.625rem;
+}
+
+body.home .hexxsy-masthead.has-masthead-image {
+	padding-top: clamp(2.5rem, 7vw, 4.5rem) !important;
+	padding-bottom: clamp(2.25rem, 6vw, 4rem) !important;
+}
+
+.hexxsy-masthead.has-masthead-image a,
+.hexxsy-masthead.has-masthead-image a:hover {
+	color: var(--wp--preset--color--paper);
+}
+
+.hexxsy-masthead.has-masthead-image a:focus-visible {
+	outline: 2px solid var(--wp--preset--color--paper);
+	outline-offset: 4px;
+}
+
+/* Image style "Framed": the double-bordered portrait on Hexx's page. */
+.wp-block-image.is-style-framed img {
+	box-sizing: border-box;
+	width: 100%;
+	padding: 10px;
+	background: var(--wp--preset--color--card);
+	border: 1.5px solid var(--wp--preset--color--ink);
+	outline: 1px solid var(--wp--preset--color--ink);
+	outline-offset: 6px;
+	margin: 7px;
+	max-width: calc(100% - 14px);
+}
+
+.wp-block-image.is-style-framed figcaption {
+	margin-top: 1.25rem;
+	text-align: center;
+	font-family: var(--wp--preset--font-family--fell);
+	font-style: italic;
+	font-size: 1rem;
+	color: var(--wp--preset--color--muted-ink);
+}
+
+/* List style "House rules": Roman numerals in oxblood small caps. */
+ol.is-style-rules {
+	list-style: upper-roman;
+	padding-left: 2.75rem;
+	font-family: var(--wp--preset--font-family--fell);
+	font-size: 1.25rem;
+	line-height: 1.5;
+}
+
+ol.is-style-rules li {
+	padding-left: 0.5rem;
+	margin-bottom: 1.125rem;
+}
+
+ol.is-style-rules li::marker {
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 1.375rem;
+	color: var(--wp--preset--color--oxblood);
+}
+
+/* ------------------------------------------------------------------
+ * A reader's room ([hexxsy_room]) and an offering's page
+ * ([hexxsy_offering]), from the Room and Product mockups.
+ * ------------------------------------------------------------------ */
+.hexxsy-small-label {
+	margin: 0 0 0.375rem;
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 0.875rem;
+	font-weight: 400;
+	letter-spacing: 0.12em;
+	line-height: 1.4;
+}
+
+.hexxsy-room-back,
+.hexxsy-crumbs {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 0.9375rem;
+	letter-spacing: 0.08em;
+}
+
+.hexxsy-crumbs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.hexxsy-room-back a,
+.hexxsy-crumbs a,
+.hexxsy-offer-more,
+.hexxsy-offering-by a {
+	color: var(--wp--preset--color--ink);
+}
+
+.hexxsy-room-back a:hover,
+.hexxsy-crumbs a:hover,
+.hexxsy-offer-more:hover,
+.hexxsy-offering-by a:hover,
+.hexxsy-offer-card h3 a:hover {
+	color: var(--wp--preset--color--oxblood);
+}
+
+.hexxsy-room-page a:focus-visible,
+.hexxsy-offering a:focus-visible,
+.hexxsy-offering button:focus-visible {
+	outline: 2px solid var(--wp--preset--color--oxblood);
+	outline-offset: 3px;
+}
+
+.hexxsy-room-intro {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 3rem;
+	padding: 2.5rem 0 3rem;
+}
+
+.hexxsy-room-figure {
+	flex: 0 1 300px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 360px;
+	overflow: hidden;
+	border: 1.5px solid var(--wp--preset--color--ink);
+	background-color: var(--wp--preset--color--hatch);
+	background-image: repeating-linear-gradient(135deg, rgba(27, 23, 20, 0.18) 0 1px, transparent 1px 7px);
+}
+
+.hexxsy-room-figure img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.hexxsy-room-about {
+	flex: 1 1 420px;
+	display: flex;
+	flex-direction: column;
+	gap: 0.875rem;
+	max-width: 620px;
+}
+
+.hexxsy-room-about p,
+.hexxsy-offering-main p {
+	margin: 0;
+}
+
+.hexxsy-room-number {
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 1rem;
+	letter-spacing: 0.12em;
+	color: var(--wp--preset--color--oxblood);
+}
+
+.hexxsy-room-title {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--fell);
+	font-weight: 400;
+	font-size: clamp(2.5rem, 5vw, 3.75rem);
+	letter-spacing: 0;
+	line-height: 1.05;
+}
+
+.hexxsy-room-about .hexxsy-room-specialties {
+	font-size: 1.0625rem;
+}
+
+.hexxsy-room-bio {
+	margin-top: 0.5rem;
+	font-size: 1.125rem;
+	line-height: 1.7;
+}
+
+.hexxsy-room-bio p + p,
+.hexxsy-room-how p + p,
+.hexxsy-offering-words p + p,
+.hexxsy-offering-before p + p {
+	margin-top: 0.75rem;
+}
+
+.hexxsy-room-how {
+	font-size: 1.0625rem;
+	line-height: 1.7;
+}
+
+.hexxsy-room-note {
+	margin-top: 0.75rem;
+	padding: 1rem 0;
+	border-top: 1px solid var(--wp--preset--color--ink);
+	border-bottom: 1px solid var(--wp--preset--color--ink);
+}
+
+.hexxsy-room-note .hexxsy-small-label,
+.hexxsy-offering-hexx .hexxsy-small-label {
+	color: var(--wp--preset--color--oxblood);
+}
+
+.hexxsy-room-note-text {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--fell);
+	font-style: italic;
+	font-size: 1.25rem;
+	line-height: 1.45;
+}
+
+.hexxsy-shelf-nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.625rem;
+	margin-top: 0.5rem;
+}
+
+.hexxsy-shelf-nav a {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 0 1.125rem;
+	border: 1.5px solid var(--wp--preset--color--ink);
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 1rem;
+	letter-spacing: 0.06em;
+	text-decoration: none;
+	color: var(--wp--preset--color--ink);
+}
+
+.hexxsy-shelf-nav a:hover {
+	background: var(--wp--preset--color--ink);
+	color: var(--wp--preset--color--paper);
+}
+
+/* The shelves sit on a band that runs the full width of the window. */
+.hexxsy-shelves {
+	position: relative;
+	padding: 1.5rem 0 4.5rem;
+	background: var(--wp--preset--color--band);
+	box-shadow: 0 0 0 100vmax var(--wp--preset--color--band);
+	clip-path: inset(0 -100vmax);
+}
+
+/* The band's double rule, drawn as two lines so it can run the full width
+   of the window without making the page scroll sideways. */
+.hexxsy-shelves::before,
+.hexxsy-shelves::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 1px;
+	background: var(--wp--preset--color--ink);
+	box-shadow: 0 0 0 100vmax var(--wp--preset--color--ink);
+	clip-path: inset(0 -100vmax);
+}
+
+.hexxsy-shelves::after {
+	top: 3px;
+}
+
+.hexxsy-shelf {
+	padding-top: 3rem;
+	scroll-margin-top: 1rem;
+}
+
+.hexxsy-shelf-head {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.75rem 2rem;
+	padding-bottom: 0.75rem;
+	margin-bottom: 1.5rem;
+	border-bottom: 1px solid var(--wp--preset--color--ink);
+}
+
+.hexxsy-shelf-name {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.25rem 1rem;
+}
+
+.hexxsy-shelf-name h2 {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-weight: 400;
+	font-size: 2.5rem;
+	letter-spacing: 0.04em;
+	line-height: 1.1;
+}
+
+.hexxsy-shelf-name span {
+	font-size: 0.9375rem;
+	color: var(--wp--preset--color--muted-ink);
+}
+
+.hexxsy-shelf-line {
+	margin: 0;
+	max-width: 480px;
+	font-family: var(--wp--preset--font-family--fell);
+	font-style: italic;
+	font-size: 1.125rem;
+	line-height: 1.45;
+}
+
+.hexxsy-shelf-note {
+	margin: -0.5rem 0 1.5rem;
+	max-width: 640px;
+	font-size: 1.0625rem;
+	line-height: 1.6;
+}
+
+.hexxsy-shelf-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 1.375rem;
+}
+
+.hexxsy-offer-card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 1.25rem;
+	background: var(--wp--preset--color--card);
+	border: 1.5px solid var(--wp--preset--color--ink);
+}
+
+.hexxsy-offer-card h3 {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--fell);
+	font-weight: 400;
+	font-size: 1.4375rem;
+	letter-spacing: 0;
+	line-height: 1.25;
+}
+
+.hexxsy-offer-card h3 a {
+	color: var(--wp--preset--color--ink);
+	text-decoration: none;
+}
+
+.hexxsy-offer-detail {
+	margin: 0;
+	font-size: 0.9375rem;
+	font-style: italic;
+	color: var(--wp--preset--color--muted-ink);
+}
+
+.hexxsy-offer-more {
+	align-self: flex-start;
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 0.9375rem;
+	letter-spacing: 0.06em;
+}
+
+.hexxsy-offer-foot {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.75rem;
+	margin-top: auto;
+	padding-top: 0.875rem;
+}
+
+.hexxsy-offer-action {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 0 1rem;
+	background: var(--wp--preset--color--oxblood);
+	color: var(--wp--preset--color--paper);
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 1rem;
+	letter-spacing: 0.06em;
+	text-decoration: none;
+}
+
+.hexxsy-offer-action:hover {
+	background: var(--wp--preset--color--ink);
+	color: var(--wp--preset--color--paper);
+}
+
+/* Offering page. */
+.hexxsy-offering-cols {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 3rem;
+	padding: 2.5rem 0;
+}
+
+.hexxsy-offering-main {
+	flex: 1 1 520px;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	min-width: 0;
+}
+
+.hexxsy-offering-by {
+	font-size: 1.0625rem;
+}
+
+.hexxsy-offering-image {
+	margin-top: 0.5rem;
+	border: 1.5px solid var(--wp--preset--color--ink);
+	line-height: 0;
+}
+
+.hexxsy-offering-image img {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-height: 420px;
+	object-fit: cover;
+}
+
+.hexxsy-offering-words {
+	margin-top: 1rem;
+	font-size: 1.125rem;
+	line-height: 1.75;
+}
+
+.hexxsy-offering-before {
+	margin-top: 0.75rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--wp--preset--color--ink);
+	font-size: 1.0625rem;
+	line-height: 1.7;
+}
+
+.hexxsy-offering-steps {
+	margin-top: 1.5rem;
+}
+
+.hexxsy-offering-steps h2 {
+	margin: 0 0 1rem;
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-weight: 400;
+	font-size: 1.875rem;
+	letter-spacing: 0.04em;
+}
+
+.hexxsy-offering-steps ol {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 0.875rem;
+}
+
+.hexxsy-offering-steps li {
+	display: flex;
+	align-items: baseline;
+	gap: 1rem;
+	font-size: 1.0625rem;
+	line-height: 1.6;
+}
+
+.hexxsy-step-n {
+	min-width: 1.75rem;
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 1.375rem;
+	color: var(--wp--preset--color--oxblood);
+}
+
+.hexxsy-offering-side {
+	flex: 1 1 320px;
+	max-width: 420px;
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.hexxsy-buy-box {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin: 6px;
+	padding: 1.625rem;
+	background: var(--wp--preset--color--card);
+	border: 1.5px solid var(--wp--preset--color--ink);
+	outline: 1px solid var(--wp--preset--color--ink);
+	outline-offset: 5px;
+}
+
+.hexxsy-buy-price {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--fell);
+	font-size: 2.125rem;
+	line-height: 1.2;
+}
+
+.hexxsy-facts {
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.625rem;
+	font-size: 0.9375rem;
+}
+
+.hexxsy-facts div {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px dotted var(--wp--preset--color--ink);
+}
+
+.hexxsy-facts dt {
+	font-family: var(--wp--preset--font-family--fell-sc);
+	letter-spacing: 0.06em;
+}
+
+.hexxsy-facts dd {
+	margin: 0;
+	text-align: right;
+}
+
+.hexxsy-buy-box form.cart {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin: 0;
+}
+
+.hexxsy-buy-box .quantity {
+	display: none;
+}
+
+.hexxsy-buy-box .form-row {
+	display: flex;
+	flex-direction: column;
+	gap: 0.375rem;
+	margin: 0 0 0.875rem;
+}
+
+.hexxsy-buy-box label {
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 1rem;
+	letter-spacing: 0.08em;
+	line-height: 1.3;
+}
+
+.hexxsy-buy-box abbr.required {
+	color: var(--wp--preset--color--oxblood);
+	text-decoration: none;
+}
+
+.hexxsy-buy-box input[type="text"],
+.hexxsy-buy-box input[type="date"],
+.hexxsy-buy-box input[type="time"] {
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 46px;
+	padding: 0 0.75rem;
+	border: 0;
+	border-bottom: 1.5px solid var(--wp--preset--color--ink);
+	border-radius: 0;
+	background: transparent;
+	color: var(--wp--preset--color--ink);
+	font-family: var(--wp--preset--font-family--caslon);
+	font-size: 1.0625rem;
+}
+
+.hexxsy-buy-box textarea {
+	box-sizing: border-box;
+	width: 100%;
+	padding: 0.625rem 0.75rem;
+	border: 1px solid var(--wp--preset--color--ink);
+	border-radius: 0;
+	background: transparent;
+	color: var(--wp--preset--color--ink);
+	font-family: var(--wp--preset--font-family--caslon);
+	font-size: 1.0625rem;
+	line-height: 1.6;
+	resize: vertical;
+}
+
+.hexxsy-buy-box input:focus-visible,
+.hexxsy-buy-box textarea:focus-visible {
+	outline: 2px solid var(--wp--preset--color--oxblood);
+	outline-offset: 3px;
+}
+
+.hexxsy-buy-box .hexxsy-reading-policy,
+.hexxsy-buy-box .hexxsy-line {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--fell);
+	font-style: italic;
+	font-size: 1.0625rem;
+	line-height: 1.45;
+}
+
+.hexxsy-buy-box .single_add_to_cart_button {
+	width: 100%;
+	min-height: 52px;
+	border: 0;
+	border-radius: 0;
+	background: var(--wp--preset--color--oxblood);
+	color: var(--wp--preset--color--paper);
+	font-family: var(--wp--preset--font-family--fell-sc);
+	font-size: 1.1875rem;
+	letter-spacing: 0.08em;
+	cursor: pointer;
+}
+
+.hexxsy-buy-box .single_add_to_cart_button:hover {
+	background: var(--wp--preset--color--ink);
+}
+
+.hexxsy-offering-hexx {
+	padding: 0 0.75rem;
+}
+
+@media (max-width: 600px) {
+	.hexxsy-room-figure {
+		flex-basis: 100%;
+		height: 300px;
+	}
+
+	.hexxsy-offering-side {
+		max-width: none;
+	}
+
+	.hexxsy-shelf-name h2 {
+		font-size: 2rem;
+	}
 }

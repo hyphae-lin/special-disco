@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 480" role="img" aria-label="Placeholder for a portrait of Hexx">
+	<defs>
+		<pattern id="h" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+			<line x1="0" y1="0" x2="0" y2="7" stroke="#1B1714" stroke-opacity=".18" stroke-width="1"/>
+		</pattern>
+	</defs>
+	<rect width="360" height="480" fill="#E6DCC6"/>
+	<rect width="360" height="480" fill="url(#h)"/>
+	<g fill="none" stroke="#1B1714" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+		<path d="M150 170 L210 170 L228 132 L132 132 Z" fill="#F6F0E3"/>
+		<path d="M140 132 L180 92 L220 132"/>
+		<path d="M180 92 L180 76"/>
+		<path d="M180 170 L180 388"/>
+		<path d="M146 388 L214 388"/>
+		<path d="M170 150 Q180 136 190 150 Q186 160 180 162 Q174 160 170 150 Z" fill="#6E1B17" stroke="#6E1B17"/>
+	</g>
+</svg>

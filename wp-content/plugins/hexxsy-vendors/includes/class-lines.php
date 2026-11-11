@@ -65,6 +65,35 @@ class Lines {
 			'apply_approved'      => array( 'apply', 'Already a reader', 'You already have a room here. Your reader tabs are in My Account.' ),
 			'apply_rejected'      => array( 'apply', 'Application not accepted', 'Your application wasn\'t accepted this time. If you think I got it wrong, write to me.' ),
 
+			// A reader's room.
+			'room_back'           => array( 'room', 'Link back to the homepage', 'Back to the rooms' ),
+			'room_how'            => array( 'room', 'Heading over the reader\'s "How I read"', 'How I read' ),
+			'room_hexx_note'      => array( 'room', 'Heading over your note about the reader', 'Hexx\'s note' ),
+			'room_nav_label'      => array( 'room', 'Shelf menu, name for screen readers', 'What this room offers' ),
+			'room_more'           => array( 'room', 'Link on each card', 'More about this' ),
+			'room_detail_written' => array( 'room', 'Under a written reading\'s name ({days} is the turnaround)', 'Written · arrives within {days} days' ),
+			'room_detail_written_one' => array( 'room', 'The same, for a one-day turnaround', 'Written · arrives within a day' ),
+			'room_detail_live'    => array( 'room', 'Under a live call\'s name ({minutes} is its length)', 'Live · {minutes} minutes' ),
+			'room_empty'          => array( 'room', 'A room with nothing on sale', 'Nothing on the shelves just now. Come back soon.' ),
+
+			// An offering's page.
+			'offering_rooms'      => array( 'offering', 'First link in the trail at the top', 'The Rooms' ),
+			'offering_by'         => array( 'offering', 'Under the name ({reader}, {numeral} is the room number, {link}…{/link} links to the room)', 'Offered by {link}{reader}{/link}, Room {numeral}' ),
+			'offering_words'      => array( 'offering', 'Heading over the reader\'s description ({reader})', 'In {reader}\'s words' ),
+			'offering_about'      => array( 'offering', 'The same heading, for something Hexxsy sells itself', 'About this' ),
+			'offering_before'     => array( 'offering', 'Heading over the reader\'s "Before you buy"', 'Before you buy' ),
+			'offering_how'        => array( 'offering', 'Heading over the steps', 'How it goes' ),
+			'offering_hexx'       => array( 'offering', 'Label over your line under the price box', 'Hexx' ),
+			'offering_back'       => array( 'offering', 'Link at the bottom ({numeral} is the room number)', 'Back to Room {numeral}' ),
+			'fact_format'         => array( 'offering', 'Price box, label: format', 'Format' ),
+			'fact_arrives'        => array( 'offering', 'Price box, label: when a written reading arrives', 'Arrives' ),
+			'fact_length'         => array( 'offering', 'Price box, label: a live call\'s length', 'Length' ),
+			'fact_written'        => array( 'offering', 'Price box, format of a written reading', 'Written, as a PDF to keep' ),
+			'fact_live'           => array( 'offering', 'Price box, format of a live call', 'Live call' ),
+			'fact_arrives_value'  => array( 'offering', 'Price box, arrival ({days})', 'Within {days} days' ),
+			'fact_arrives_one'    => array( 'offering', 'Price box, arrival for a one-day turnaround', 'Within a day' ),
+			'fact_length_value'   => array( 'offering', 'Price box, length ({minutes})', '{minutes} minutes' ),
+
 			// Buying a reading.
 			'reading_policy'      => array( 'buying', 'Under a written reading\'s questions ({hours} is the cancellation window, {link}…{/link} links to the refund policy page)', 'Change your mind inside {hours} hours and you get your money back, so long as the reading hasn\'t reached you yet. If it comes late, you can cancel then too. {link}The whole policy{/link}.' ),
 			'live_closed'         => array( 'buying', 'On a live call\'s page while live calls are off', 'I\'m not booking calls yet. The written readings are open.' ),
@@ -105,7 +134,9 @@ class Lines {
 			'rooms'  => __( 'Rooms list', 'hexxsy-vendors' ),
 			'ledger' => __( 'The Ledger (reader waitlist)', 'hexxsy-vendors' ),
 			'apply'  => __( 'Invitations and the reader application', 'hexxsy-vendors' ),
-			'buying' => __( 'Buying a reading', 'hexxsy-vendors' ),
+			'room'     => __( "A reader's room", 'hexxsy-vendors' ),
+			'offering' => __( "An offering's page", 'hexxsy-vendors' ),
+			'buying'   => __( 'Buying a reading', 'hexxsy-vendors' ),
 			'late'   => __( 'Late readings, cancellations and refunds', 'hexxsy-vendors' ),
 			'revoke' => __( "Closing a reader's room", 'hexxsy-vendors' ),
 		);

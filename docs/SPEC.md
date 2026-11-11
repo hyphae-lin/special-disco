@@ -348,15 +348,65 @@ The admin can make new block patterns at any time in Appearance > Editor > Patte
 - {placeholders} are filled in automatically, and {link}…{/link} marks the words that become a link.
 - [hexxsy_line key="…"] places any line on a page. [hexxsy_line key="ledger"] shows the "rooms open" or "every room taken" pair, whichever is true.
 - Lines in the theme (homepage hero, footer, 404) are edited in the Site Editor.
+- Added in 0.9.0: the labels on a reader's room and an offering's page. The shelves' words are on the shelf categories.
 - Added in 0.8.0: the note on a written reading's page, the live-calls-closed line, and every reminder, late, cancellation, refund and revoke email.
 - Still in code: reader dashboard text, button labels and notices in My readings, the application decision emails, the delivery email, and admin screens.
 
 **Rooms list (built Oct 31, 2026)**
 
 - [hexxsy_rooms] shows approved readers in the order they applied, numbered I, II, III.
-- Each card: portrait, shop name, specialties, door line, the shelves they have in stock, lowest price, Knock.
+- Each card: portrait, shop name, specialties, door line, the shelves they have in stock, lowest price, Knock. Shelves are the 4 shelf categories (see Shelves); Knock opens the reader's room once a Room page is chosen.
 - Readers set the door line (140 characters) and portrait in My Account > Shop profile. These go live straight away for now; the approval queue below isn't built.
 - Empty rooms: hidden with Hexx's empty-rooms line and the Ledger link (default), or shown as unlit. Set on WooCommerce > Vendors.
+
+**Shelves (built Nov 11, 2026, plugin 0.9.0, untested on a live site)**
+
+- The 4 shelves are WooCommerce product categories, made once when the plugin updates: Sittings, Letters, Papers and Wares. If a category with one of those names already exists, it's used.
+- Each is edited in Products > Categories. The category's name is the shelf's name. Six more boxes hold the words that go with it: what it is, Hexx's line in a room, the button on a room's cards, the button on the offering's page, the "How it goes" steps (one per line), and Hexx's line on the offering's page. They start with the mockup's wording.
+- Readings file themselves: live calls under Sittings, written readings under Letters, every time one is saved. Readings that existed before the update are filed when it runs.
+- Papers and Wares are ordinary WooCommerce products the admin files under those categories by hand. Readers can't add them from their dashboard yet, and their product side still isn't specced.
+- The mockup says Letters are "written or recorded". Only written readings exist, so the shelf says "Written readings, sent later". Change it on the category if recorded readings come.
+
+**Reader rooms (built Nov 11, 2026, plugin 0.9.0, theme 0.5.0, untested on a live site)**
+
+- [hexxsy_room] is a reader's room, built to the Room board on the homepage canvas: portrait, "Room IV", shop name, specialties, the reader's introduction, "How I read", Hexx's note, a menu of the shelves they stock, then each shelf with Hexx's line and a card per offering (name, a line of detail, "More about this", price, button).
+- Setting it up: make one page, give it the Full width template, insert the "Reader room" pattern, and choose it as the Room page on WooCommerce > Vendors. Every room then lives under that page, at its address plus the shop name: /room/moth-candle/. Knock on the homepage goes there. With no Room page chosen, Knock opens the filtered shop as before.
+- The address comes from the shop name, so it changes if the reader renames their shop. Two shops with the same name: the later one gets its account number on the end. An address nobody keeps is a 404.
+- Room numbers follow the order readers applied, as on the homepage. Revoking a reader renumbers the rooms after theirs.
+- Readers add "How I read" and a note per shelf in Shop profile, where "About you" is now labelled "Introduction". These go live straight away, like the door line, until the approval queue is built.
+- Hexx's note is a box on the reader's user profile in wp-admin, under Hexxsy vendor. Only an admin can see or change it. With no note, the block doesn't show.
+- A shelf shows only when the reader has something in stock on it. Live calls don't count while they're off sale.
+- The button on a reading's card opens its page, because the questions have to be answered there. On Papers and Wares it adds to the basket.
+- Not built: the reader's contact details or hours, and a reader's own page layout. Every room has the same layout.
+
+**Offering page (built Nov 11, 2026, plugin 0.9.0, theme 0.5.0, untested on a live site)**
+
+- Every product page is laid out by [hexxsy_offering], which the theme's product template holds. Built to the Product board: a trail (The Rooms / Room IV · reader / shelf), the shelf and what it is, the name, "Offered by" with a link to the room, the picture if there is one, "In [reader]'s words" (the product description), "Before you buy", "How it goes", and "Back to Room IV".
+- The price box holds the price, the facts, the intake questions, the refund note and the button. Facts for a written reading are format and arrival; for a live call, format and length; for Papers and Wares, whatever attributes the product shows.
+- "Before you buy" is a new box on the reader's reading form, and on the product in wp-admin.
+- "How it goes", the button and Hexx's line under the box come from the offering's shelf. The labels are Hexx's lines, under "An offering's page".
+- A product Hexxsy sells itself (no reader) leaves out the room links and says "About this".
+- Not in this build: the mockup's "Available times" block (booking doesn't exist), an "Includes" fact, a gallery of more than one picture, reviews and related products.
+- This replaces WooCommerce's own product page layout. If the template has been edited in the Site Editor, that edit wins until it's reset.
+
+**Hexx's page (built Nov 11, 2026, theme 0.5.0)**
+
+- The "Hexx's page" pattern is the Hexx board: framed portrait with caption, "Proprietress", her name, her line, the 4 paragraphs about her, Rules of the House and the "Find me at the gate" box. Use it on a page with the Full width template. Every word and the portrait are edited in the page.
+- The portrait is a placeholder drawing of the lamp. Click it and Replace.
+- The contact button has no address yet. Click it in the editor and set its link.
+- Two new block styles go with it: Framed (images) and House rules (numbered lists, in Roman numerals).
+- The pattern isn't locked. Decided against locking for now so the layout can still be adjusted; say if it should be.
+
+**Masthead (built Nov 11, 2026, theme 0.5.0)**
+
+- Appearance > Masthead has the 3 modes: styled text (default), a logo image in place of the text, or the text over a background image. Images come from the media library.
+- Logo: its height on the homepage is a setting (40 to 320 pixels, 120 to start). On other pages it's 48 pixels.
+- Background image: darkened by a setting from 0 to 80% (45 to start), and the name turns paper-coloured. A focal point (across and down, in percent) says which part stays in view when it's cropped.
+- With no image chosen for a mode, the styled text shows.
+- The site name is always in the page as text. Behind a logo it's hidden from sight but read by screen readers. On the homepage it's the page's main heading.
+- The masthead is now large on the homepage only. On every other page the name is small and the tagline is hidden, as in the inner-page mockups.
+- It works on the header as rendered, so it survives edits in the Site Editor as long as the masthead group and the site title block are still in the header.
+- The focal point is typed as 2 numbers, not picked by clicking on the picture.
 
 **Reader text approval**
 
@@ -378,7 +428,7 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 
 - **Paying readers automatically.** The payout ledger is built (see Money). Stripe Connect is approved for live (Oct 14, 2026) and reader onboarding and transfers are built, but untested against real Stripe. Run the whole flow in test mode before going live.
 - **Live calls.** No availability, booking, scheduling or video provider.
-- **Theme.** Foundation built Oct 31, 2026 (theme 0.1.0, untested on a live site): brand styles, fonts, header, footer, basic templates, house block styles, pattern categories. Pass 2 built Oct 31, 2026 (theme 0.3.0, plugin 0.7.0): homepage patterns (hero with the woodcut as a replaceable image, Readers' Rooms band, house notice), the rooms list ([hexxsy_rooms]), and the Hexx's lines screen. Still to build: reader room pages, the offering page, Hexx's page, and the masthead's logo modes.
+- **Theme.** Foundation built Oct 31, 2026 (theme 0.1.0, untested on a live site): brand styles, fonts, header, footer, basic templates, house block styles, pattern categories. Pass 2 built Oct 31, 2026 (theme 0.3.0, plugin 0.7.0): homepage patterns (hero with the woodcut as a replaceable image, Readers' Rooms band, house notice), the rooms list ([hexxsy_rooms]), and the Hexx's lines screen. Pass 3 built Nov 11, 2026 (theme 0.5.0, plugin 0.9.0): reader room pages, the offering page, Hexx's page and the masthead's modes (see Editable from the back end). Still to build: the reader text approval queue, Papers and Wares for readers, and locking the theme's structural patterns.
 
 ### Found in the code
 
@@ -390,7 +440,7 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 | 4 | ~~No refund or cancellation policy for written readings~~ | Decided and built Nov 11, 2026 (0.8.0). See Policies and REFUND_POLICY.md. The policy page still has to be made on the site, and needs a contact address | Contact address for complaints |
 | 5 | Readings go live with no review | A new reader's first offering is public instantly | Approve each reading, or just the first few? |
 | 6 | Rejected applicants can never reapply | The code says an admin can reset status, but there's no button for it | Allow reapplying after a wait? Add a reset? |
-| 7 | Reader profiles are invisible (partly fixed Oct 31, 2026: the homepage rooms list shows shop name, specialties, door line, portrait, shelves and lowest price; Knock opens the shop filtered to that reader until room pages exist) | Shop name, bio and specialties are collected but never shown to customers. No reader page, no directory | How do customers choose a reader? |
+| 7 | ~~Reader profiles are invisible~~ (fixed Nov 11, 2026: every reader has a room page. Earlier, Oct 31, 2026: the homepage rooms list shows shop name, specialties, door line, portrait, shelves and lowest price; Knock opens the shop filtered to that reader until room pages exist) | Shop name, bio and specialties are collected but never shown to customers. No reader page, no directory | How do customers choose a reader? |
 | 8 | No messaging | A reader can't ask a follow-up about a vague question; the customer can't reach the reader | In-site messages, email relay, or none? |
 | 9 | Terms pages don't exist | No customer terms. The refund policy is written (Nov 11, 2026). Deferred Nov 11, 2026: terms come later | Write vendor terms and customer terms |
 | 10 | Birth data has no privacy plan | Birth date, time and place are personal data, kept on orders indefinitely | Privacy policy, retention, deletion on request |
