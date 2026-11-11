@@ -344,7 +344,11 @@ The admin can make new block patterns at any time in Appearance > Editor > Patte
 
 **Hexx's lines (built Oct 31, 2026, plugin 0.7.0)**
 
-- WooCommerce > Hexx's lines holds every line the plugin speaks: the rooms list, the Ledger, the application and invite messages, and the invite and waitlist emails. Each box shows its default; an empty box uses it.
+- WooCommerce > Hexx's lines holds every line the plugin speaks, on a tab for each part of the site: Homepage rooms, The Ledger, Invitations, Reader rooms, Offering pages, Buying a reading, Late and refund emails, Closing a room.
+- Changed Nov 11, 2026 (plugin 0.9.1), after Rebecca found the first version unusable: it was one long list, and each box was empty with the wording shown only as grey hint text, so changing a word meant retyping the whole line. Now each box holds the line as it reads, ready to edit. Emptying a box and saving brings back the original. A changed line shows its original underneath. Saving one tab leaves the others alone.
+- On the site, a logged-in admin has "Hexx's lines" in the admin bar. It opens the tab for the page in view: the homepage, a reader's room, an offering, the Ledger or the application page.
+- Rebecca wants lines editable where they appear as well as here (Nov 11, 2026). Lines on block-editor pages already are. Lines inside the rooms list, a room and an offering page need those pages rebuilt as blocks (see Known, not built). The admin bar link is the stopgap.
+- Still one screen of the plugin's own. Not done: moving the emails to WooCommerce > Settings > Emails, where WooCommerce's own emails are edited.
 - {placeholders} are filled in automatically, and {link}…{/link} marks the words that become a link.
 - [hexxsy_line key="…"] places any line on a page. [hexxsy_line key="ledger"] shows the "rooms open" or "every room taken" pair, whichever is true.
 - Lines in the theme (homepage hero, footer, 404) are edited in the Site Editor.
@@ -433,7 +437,7 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 
 - **Paying readers automatically.** The payout ledger is built (see Money). Stripe Connect is approved for live (Oct 14, 2026) and reader onboarding and transfers are built, but untested against real Stripe. Run the whole flow in test mode before going live.
 - **Live calls.** No availability, booking, scheduling or video provider.
-- **Possible later: room and offering pages as separate blocks.** Today the inside of a reader's room, an offering's page and the rooms list are each one shortcode block, laid out in code (see What the block editor can and can't reach). They could be broken into blocks Rebecca arranges herself in the block editor: portrait, introduction, Hexx's note, shelf menu, shelves, price box, "How it goes". Rebecca said on Nov 11, 2026 that the fixed layout is fine for now. Build it only if she asks to change those layouts.
+- **Possible later: room and offering pages as separate blocks.** Today the inside of a reader's room, an offering's page and the rooms list are each one shortcode block, laid out in code (see What the block editor can and can't reach). They could be broken into blocks Rebecca arranges herself in the block editor: portrait, introduction, Hexx's note, shelf menu, shelves, price box, "How it goes". Rebecca said on Nov 11, 2026 that the fixed layout is fine for now, and later the same day that she wants Hexx's lines editable where they appear. This is the work that would do it: once these are blocks, their wording is typed in place. Ask her before building.
 - **Theme.** Foundation built Oct 31, 2026 (theme 0.1.0, untested on a live site): brand styles, fonts, header, footer, basic templates, house block styles, pattern categories. Pass 2 built Oct 31, 2026 (theme 0.3.0, plugin 0.7.0): homepage patterns (hero with the woodcut as a replaceable image, Readers' Rooms band, house notice), the rooms list ([hexxsy_rooms]), and the Hexx's lines screen. Pass 3 built Nov 11, 2026 (theme 0.5.0, plugin 0.9.0): reader room pages, the offering page, Hexx's page and the masthead's modes (see Editable from the back end). Still to build: the reader text approval queue, and Papers and Wares for readers.
 
 ### Found in the code

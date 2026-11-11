@@ -8,9 +8,10 @@
 namespace Hexxsy\Vendors;
 
 /**
- * WooCommerce > Hexx's lines lists every customer- and reader-facing line the
- * plugin writes, grouped by where it appears, each with its default. A blank
- * field falls back to the default.
+ * WooCommerce > Hexx's lines holds every customer- and reader-facing line the
+ * plugin writes, on a tab for each part of the site. Each box holds the line
+ * as it reads now; emptying one brings back the original wording. On the
+ * site, "Hexx's lines" in the admin bar opens the tab for the page in view.
  *
  * Lines are plain text. {placeholders} are filled in when the line is used;
  * {link}…{/link} marks the words that become a link.
@@ -131,14 +132,14 @@ class Lines {
 	 */
 	public static function groups(): array {
 		return array(
-			'rooms'  => __( 'Rooms list', 'hexxsy-vendors' ),
-			'ledger' => __( 'The Ledger (reader waitlist)', 'hexxsy-vendors' ),
-			'apply'  => __( 'Invitations and the reader application', 'hexxsy-vendors' ),
-			'room'     => __( "A reader's room", 'hexxsy-vendors' ),
-			'offering' => __( "An offering's page", 'hexxsy-vendors' ),
+			'rooms'  => __( 'Homepage rooms', 'hexxsy-vendors' ),
+			'ledger' => __( 'The Ledger', 'hexxsy-vendors' ),
+			'apply'  => __( 'Invitations', 'hexxsy-vendors' ),
+			'room'     => __( 'Reader rooms', 'hexxsy-vendors' ),
+			'offering' => __( 'Offering pages', 'hexxsy-vendors' ),
 			'buying'   => __( 'Buying a reading', 'hexxsy-vendors' ),
-			'late'   => __( 'Late readings, cancellations and refunds', 'hexxsy-vendors' ),
-			'revoke' => __( "Closing a reader's room", 'hexxsy-vendors' ),
+			'late'   => __( 'Late and refund emails', 'hexxsy-vendors' ),
+			'revoke' => __( 'Closing a room', 'hexxsy-vendors' ),
 		);
 	}
 
@@ -211,6 +212,7 @@ class Lines {
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 61 );
 		add_action( 'admin_init', array( __CLASS__, 'register' ) );
 		add_shortcode( 'hexxsy_line', array( __CLASS__, 'shortcode' ) );
+		add_action( 'admin_bar_menu', array( __CLASS__, 'admin_bar' ), 90 );
 	}
 
 	/**
@@ -266,68 +268,133 @@ class Lines {
 	}
 
 	/**
-	 * Keep known keys only. Lines that match their default aren't stored, so
-	 * a later change to a default still reaches the site.
+	 * Merge one tab's submitted lines into what's saved. Only the lines on
+	 * the tab being saved are touched. A line that matches its default isn't
+	 * stored, so a later change to a default still reaches the site.
+	 *
+	 * @param array<string,string> $saved     Lines stored now.
+	 * @param array<string,mixed>  $submitted Lines from the form.
+	 * @param callable             $clean     Sanitizer for one line.
+	 * @return array<string,string>
+	 */
+	public static function merge( array $saved, array $submitted, callable $clean ): array {
+		foreach ( self::defaults() as $key => $line ) {
+			if ( ! array_key_exists( $key, $submitted ) ) {
+				continue;
+			}
+			// Browsers send textarea line breaks as \r\n.
+			$text = str_replace( array( "\r\n", "\r" ), "\n", (string) $clean( (string) $submitted[ $key ] ) );
+			if ( '' === trim( $text ) || $text === $line[2] ) {
+				unset( $saved[ $key ] );
+			} else {
+				$saved[ $key ] = $text;
+			}
+		}
+		return array_intersect_key( $saved, self::defaults() );
+	}
+
+	/**
+	 * Sanitize the option on save.
 	 *
 	 * @param mixed $value Submitted lines.
 	 * @return array<string,string>
 	 */
 	public static function sanitize( $value ): array {
-		$clean = array();
-		if ( ! is_array( $value ) ) {
-			return $clean;
-		}
-		foreach ( self::defaults() as $key => $line ) {
-			if ( ! isset( $value[ $key ] ) ) {
-				continue;
-			}
-			$text = sanitize_textarea_field( (string) $value[ $key ] );
-			if ( '' !== trim( $text ) && $text !== $line[2] ) {
-				$clean[ $key ] = $text;
-			}
-		}
-		return $clean;
+		$saved = get_option( self::OPTION, array() );
+		return self::merge( is_array( $saved ) ? $saved : array(), is_array( $value ) ? $value : array(), 'sanitize_textarea_field' );
 	}
 
 	/**
-	 * The settings screen.
+	 * The tab that holds the lines for the page being looked at, or ''.
+	 */
+	private static function tab_for_this_page(): string {
+		$pages = array(
+			'room'   => Rooms::PAGE_OPTION,
+			'ledger' => Ledger::LEDGER_PAGE_OPTION,
+			'apply'  => Ledger::APPLY_PAGE_OPTION,
+		);
+		foreach ( $pages as $tab => $option ) {
+			$page = (int) get_option( $option, 0 );
+			if ( $page && is_page( $page ) ) {
+				return $tab;
+			}
+		}
+		if ( function_exists( 'is_product' ) && is_product() ) {
+			return 'offering';
+		}
+		return is_front_page() ? 'rooms' : '';
+	}
+
+	/**
+	 * On the site, the admin bar gets "Hexx's lines", which opens the tab
+	 * for the page being looked at.
+	 *
+	 * @param \WP_Admin_Bar $bar Admin bar.
+	 */
+	public static function admin_bar( $bar ): void {
+		if ( is_admin() || ! current_user_can( Admin::CAPABILITY ) ) {
+			return;
+		}
+		$tab = self::tab_for_this_page();
+		$bar->add_node(
+			array(
+				'id'    => 'hexxsy-lines',
+				'title' => __( "Hexx's lines", 'hexxsy-vendors' ),
+				'href'  => admin_url( 'admin.php?page=' . self::PAGE . ( '' !== $tab ? '&tab=' . $tab : '' ) ),
+			)
+		);
+	}
+
+	/**
+	 * The settings screen: one tab per part of the site. Each box holds the
+	 * line as it reads now, ready to edit.
 	 */
 	public static function render(): void {
 		if ( ! current_user_can( Admin::CAPABILITY ) ) {
 			return;
 		}
-		$saved = get_option( self::OPTION, array() );
-		$saved = is_array( $saved ) ? $saved : array();
+		$saved  = get_option( self::OPTION, array() );
+		$saved  = is_array( $saved ) ? $saved : array();
+		$groups = self::groups();
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- choosing a tab.
+		$tab  = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : '';
+		$tab  = isset( $groups[ $tab ] ) ? $tab : (string) array_key_first( $groups );
+		$base = admin_url( 'admin.php?page=' . self::PAGE );
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( "Hexx's lines", 'hexxsy-vendors' ); ?></h1>
-			<p><?php esc_html_e( 'Every line Hexx speaks through the Hexxsy Vendors plugin. Leave a box empty to use the default shown under it. Words in {braces} are filled in for you; keep them as they are. {link} and {/link} go around the words that become a link.', 'hexxsy-vendors' ); ?></p>
-			<p><?php esc_html_e( 'Lines in the theme (the homepage, the footer, the 404 page) are edited in Appearance > Editor.', 'hexxsy-vendors' ); ?></p>
+			<?php settings_errors(); ?>
+			<nav class="nav-tab-wrapper">
+				<?php foreach ( $groups as $group => $heading ) : ?>
+					<a class="nav-tab <?php echo $group === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'tab', $group, $base ) ); ?>" <?php echo $group === $tab ? 'aria-current="page"' : ''; ?>><?php echo esc_html( $heading ); ?></a>
+				<?php endforeach; ?>
+			</nav>
+			<p><?php esc_html_e( 'Edit a line and save. Words in {braces} are filled in for you, so keep them as they are. {link} and {/link} go around the words that become a link. To go back to the original wording, empty the box and save.', 'hexxsy-vendors' ); ?></p>
 			<form method="post" action="options.php">
 				<?php settings_fields( self::PAGE ); ?>
-				<?php foreach ( self::groups() as $group => $heading ) : ?>
-					<h2><?php echo esc_html( $heading ); ?></h2>
-					<table class="form-table" role="presentation">
-						<?php foreach ( self::defaults() as $key => $line ) : ?>
-							<?php
-							if ( $line[0] !== $group ) {
-								continue;
-							}
-							$id    = 'hexxsy_line_' . $key;
-							$value = $saved[ $key ] ?? '';
-							$rows  = max( 2, min( 10, substr_count( $line[2], "\n" ) + 2 ) );
-							?>
-							<tr>
-								<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $line[1] ); ?></label></th>
-								<td>
-									<textarea id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( self::OPTION . '[' . $key . ']' ); ?>" rows="<?php echo (int) $rows; ?>" class="large-text" placeholder="<?php echo esc_attr( $line[2] ); ?>"><?php echo esc_textarea( (string) $value ); ?></textarea>
-									<p class="description"><?php echo esc_html( __( 'Default:', 'hexxsy-vendors' ) . ' ' . $line[2] ); ?></p>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-					</table>
-				<?php endforeach; ?>
-				<?php submit_button( __( "Save Hexx's lines", 'hexxsy-vendors' ) ); ?>
+				<table class="form-table" role="presentation">
+					<?php foreach ( self::defaults() as $key => $line ) : ?>
+						<?php
+						if ( $line[0] !== $tab ) {
+							continue;
+						}
+						$id      = 'hexxsy_line_' . $key;
+						$changed = isset( $saved[ $key ] );
+						$value   = $changed ? (string) $saved[ $key ] : $line[2];
+						$rows    = max( 2, min( 12, substr_count( $value, "\n" ) + 2 ) );
+						?>
+						<tr>
+							<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $line[1] ); ?></label></th>
+							<td>
+								<textarea id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( self::OPTION . '[' . $key . ']' ); ?>" rows="<?php echo (int) $rows; ?>" class="large-text"><?php echo esc_textarea( $value ); ?></textarea>
+								<?php if ( $changed ) : ?>
+									<p class="description"><?php echo esc_html( __( 'Original:', 'hexxsy-vendors' ) . ' ' . $line[2] ); ?></p>
+								<?php endif; ?>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+				<?php submit_button( __( 'Save these lines', 'hexxsy-vendors' ) ); ?>
 			</form>
 		</div>
 		<?php
