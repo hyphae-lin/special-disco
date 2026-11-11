@@ -302,7 +302,7 @@ This applies to the custom theme (see "Theme" under gaps) and to everything the 
 | Area | What must be editable | How |
 | --- | --- | --- |
 | Hexx's lines | Every line she speaks in templates: shelf intros, the empty-rooms note and ledger link, both ledger messages (rooms open / all rooms full), offering-page asides, 404, footer sign-off, booking and order confirmations | One admin settings screen ("Hexx's lines"), grouped by page, one labeled field per line. Advanced Custom Fields options page or equivalent |
-| Static pages | Homepage welcome, house notice (disclaimer), Hexx's page (portrait, bio, Rules of the House, contact box) | Block-editor pages built from locked block patterns, so words and images change without breaking layout |
+| Static pages | Homepage welcome, house notice (disclaimer), Hexx's page (portrait, bio, Rules of the House, contact box) | Block-editor pages built from the theme's block patterns. Nothing is locked (decided Nov 11, 2026): words, images and layout all change in the block editor |
 | Shelves | The 4 category names, Hexx's line for each, button labels ("Book," "Request," "Take a copy," "Add to basket") | Editable per category, e.g. product category name, description and term meta |
 | Readers | Everything a reader writes: door line (one sentence on their homepage card), introduction, "How I read," a note per shelf, product descriptions, "Before you buy" | Reader profile and product fields, through the approval queue below |
 | Hexx's note | One or 2 lines from Hexx about each reader, shown in their room | Admin-only field on the reader's profile. Readers can never see an edit box for it |
@@ -339,7 +339,7 @@ The admin can make new block patterns at any time in Appearance > Editor > Patte
 
 - The editor's color and font choices are the brand palette and fonts (see Brand), so new patterns stay on brand. Custom colors stay available in Styles for the rare exception.
 - The theme registers Hexxsy pattern categories so the admin's patterns sort alongside the theme's.
-- Only the theme's structural pieces are locked. Admin-made patterns are never locked.
+- No pattern is ever locked, the theme's or the admin's (decided Nov 11, 2026, replacing the earlier plan to lock the theme's structural pieces). Rebecca adjusts any of them as needed in the WordPress block editor. Don't add lock, templateLock or contentOnly settings to any pattern, template or template part.
 - Admin-made patterns, and any template or template part edited in the Site Editor, are stored in the database. Deploys replace the theme folder but never touch them. The catch: once a template is edited in the Site Editor, later changes to that template in the theme files don't show until the edit is reset ("Reset" in the Site Editor).
 
 **Hexx's lines (built Oct 31, 2026, plugin 0.7.0)**
@@ -395,7 +395,7 @@ The admin can make new block patterns at any time in Appearance > Editor > Patte
 - The portrait is a placeholder drawing of the lamp. Click it and Replace.
 - The contact button has no address yet. Click it in the editor and set its link.
 - Two new block styles go with it: Framed (images) and House rules (numbered lists, in Roman numerals).
-- The pattern isn't locked. Decided against locking for now so the layout can still be adjusted; say if it should be.
+- The pattern isn't locked, like every other (see Your own block patterns).
 
 **Masthead (built Nov 11, 2026, theme 0.5.0)**
 
@@ -407,6 +407,11 @@ The admin can make new block patterns at any time in Appearance > Editor > Patte
 - The masthead is now large on the homepage only. On every other page the name is small and the tagline is hidden, as in the inner-page mockups.
 - It works on the header as rendered, so it survives edits in the Site Editor as long as the masthead group and the site title block are still in the header.
 - The focal point is typed as 2 numbers, not picked by clicking on the picture.
+
+**What the block editor can and can't reach (as built Nov 11, 2026)**
+
+- Fully editable as blocks: the header, the footer, every template, the homepage, the Ledger and application pages, Hexx's page and the refund policy page.
+- Not blocks: the inside of a reader's room, an offering's page and the rooms list. Each is one shortcode block whose layout is in the plugin's code and whose look is in the theme's style.css. In the editor you can move that block, and put anything above or below it, but not rearrange what's inside it. Their words are edited in Hexx's lines, on the shelf categories, and by the readers.
 
 **Reader text approval**
 
@@ -428,7 +433,7 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 
 - **Paying readers automatically.** The payout ledger is built (see Money). Stripe Connect is approved for live (Oct 14, 2026) and reader onboarding and transfers are built, but untested against real Stripe. Run the whole flow in test mode before going live.
 - **Live calls.** No availability, booking, scheduling or video provider.
-- **Theme.** Foundation built Oct 31, 2026 (theme 0.1.0, untested on a live site): brand styles, fonts, header, footer, basic templates, house block styles, pattern categories. Pass 2 built Oct 31, 2026 (theme 0.3.0, plugin 0.7.0): homepage patterns (hero with the woodcut as a replaceable image, Readers' Rooms band, house notice), the rooms list ([hexxsy_rooms]), and the Hexx's lines screen. Pass 3 built Nov 11, 2026 (theme 0.5.0, plugin 0.9.0): reader room pages, the offering page, Hexx's page and the masthead's modes (see Editable from the back end). Still to build: the reader text approval queue, Papers and Wares for readers, and locking the theme's structural patterns.
+- **Theme.** Foundation built Oct 31, 2026 (theme 0.1.0, untested on a live site): brand styles, fonts, header, footer, basic templates, house block styles, pattern categories. Pass 2 built Oct 31, 2026 (theme 0.3.0, plugin 0.7.0): homepage patterns (hero with the woodcut as a replaceable image, Readers' Rooms band, house notice), the rooms list ([hexxsy_rooms]), and the Hexx's lines screen. Pass 3 built Nov 11, 2026 (theme 0.5.0, plugin 0.9.0): reader room pages, the offering page, Hexx's page and the masthead's modes (see Editable from the back end). Still to build: the reader text approval queue, and Papers and Wares for readers.
 
 ### Found in the code
 
