@@ -48,6 +48,7 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 
 - Live-call availability, booking and the video provider
 - The reader text approval queue
+- Possible later: reader room and offering pages as separate blocks you can rearrange in the editor (today each is one fixed block)
 - Papers and Wares that readers can add themselves
 - Vendor terms and customer terms
 
