@@ -108,13 +108,15 @@ class Rooms {
 	 * @return \WC_Product[]
 	 */
 	private static function products( int $user_id ): array {
-		return wc_get_products(
+		$products = wc_get_products(
 			array(
 				'status' => 'publish',
 				'author' => $user_id,
 				'limit'  => 100,
 			)
 		);
+		// Live calls while they're off sale don't count toward shelves or prices.
+		return array_values( array_filter( $products, static fn( $product ) => '' === Readings::off_sale( $product ) ) );
 	}
 
 	/**

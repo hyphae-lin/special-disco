@@ -81,15 +81,19 @@ class Dashboard {
 	 * @param array $items Menu items.
 	 */
 	public static function menu_items( $items ) {
-		if ( ! Vendor::is_approved( get_current_user_id() ) ) {
+		$user_id = get_current_user_id();
+		if ( Vendor::is_approved( $user_id ) ) {
+			$vendor_items = array(
+				self::READINGS => __( 'Readings I offer', 'hexxsy-vendors' ),
+				self::ORDERS   => __( 'Reading orders', 'hexxsy-vendors' ),
+				self::SHOP     => __( 'Shop profile', 'hexxsy-vendors' ),
+			);
+		} elseif ( Vendor::can_fulfil( $user_id ) ) {
+			// Revoked, with orders still to deliver.
+			$vendor_items = array( self::ORDERS => __( 'Reading orders', 'hexxsy-vendors' ) );
+		} else {
 			return $items;
 		}
-
-		$vendor_items = array(
-			self::READINGS => __( 'Readings I offer', 'hexxsy-vendors' ),
-			self::ORDERS   => __( 'Reading orders', 'hexxsy-vendors' ),
-			self::SHOP     => __( 'Shop profile', 'hexxsy-vendors' ),
-		);
 
 		$first = array_slice( $items, 0, 1, true );
 		return $first + $vendor_items + array_slice( $items, 1, null, true );
@@ -97,9 +101,13 @@ class Dashboard {
 
 	/**
 	 * Whether the current user may use the dashboard. Prints a notice if not.
+	 *
+	 * @param bool $fulfil_only The tab is for delivering, which a revoked
+	 *                          reader finishing their orders may still do.
 	 */
-	private static function guard(): bool {
-		if ( Vendor::is_approved( get_current_user_id() ) ) {
+	private static function guard( bool $fulfil_only = false ): bool {
+		$user_id = get_current_user_id();
+		if ( $fulfil_only ? Vendor::can_fulfil( $user_id ) : Vendor::is_approved( $user_id ) ) {
 			return true;
 		}
 		echo '<p>' . esc_html__( 'This area is for approved Hexxsy vendors.', 'hexxsy-vendors' ) . '</p>';
@@ -130,12 +138,14 @@ class Dashboard {
 			wc_add_notice( __( 'Your session expired. Please try again.', 'hexxsy-vendors' ), 'error' );
 			return;
 		}
-		if ( ! Vendor::is_approved( get_current_user_id() ) ) {
-			return;
-		}
-
 		$action = sanitize_key( $_POST['hexxsy_dashboard_action'] );
 		$input  = wp_unslash( $_POST );
+
+		// A revoked reader finishing their orders can deliver and get paid, nothing else.
+		$fulfilling = in_array( $action, array( 'deliver_reading', 'stripe_onboard', 'stripe_dashboard' ), true );
+		if ( ! ( $fulfilling ? Vendor::can_fulfil( get_current_user_id() ) : Vendor::is_approved( get_current_user_id() ) ) ) {
+			return;
+		}
 
 		switch ( $action ) {
 			case 'save_reading':
@@ -223,6 +233,8 @@ class Dashboard {
 			$errors[] = __( 'Choose written reading or live call.', 'hexxsy-vendors' );
 		} elseif ( Readings::WRITTEN === $format && absint( $input[ Readings::TURNAROUND_META ] ?? 0 ) < 1 ) {
 			$errors[] = __( 'Set how many days you need to deliver a written reading.', 'hexxsy-vendors' );
+		} elseif ( Readings::LIVE === $format && ! Readings::live_enabled() && Readings::LIVE !== Readings::format( $product ) ) {
+			$errors[] = __( 'Live calls are not open yet.', 'hexxsy-vendors' );
 		} elseif ( Readings::LIVE === $format && absint( $input[ Readings::DURATION_META ] ?? 0 ) < 5 ) {
 			$errors[] = __( 'Set the call length in minutes.', 'hexxsy-vendors' );
 		}
@@ -394,12 +406,18 @@ class Dashboard {
 			</thead>
 			<tbody>
 			<?php foreach ( $products as $product ) : ?>
-				<?php $live = 'publish' === $product->get_status(); ?>
+				<?php
+				$live   = 'publish' === $product->get_status();
+				$status = $live ? __( 'Live', 'hexxsy-vendors' ) : __( 'Paused', 'hexxsy-vendors' );
+				if ( $live && 'live' === Readings::off_sale( $product ) ) {
+					$status = __( 'Hidden until live calls open', 'hexxsy-vendors' );
+				}
+				?>
 				<tr>
 					<td data-title="<?php esc_attr_e( 'Reading', 'hexxsy-vendors' ); ?>"><a href="<?php echo esc_url( $product->get_permalink() ); ?>"><?php echo esc_html( $product->get_name() ); ?></a></td>
 					<td data-title="<?php esc_attr_e( 'Type', 'hexxsy-vendors' ); ?>"><?php echo esc_html( self::format_label( $product ) ); ?></td>
 					<td data-title="<?php esc_attr_e( 'Price', 'hexxsy-vendors' ); ?>"><?php echo wp_kses_post( wc_price( (float) $product->get_regular_price() ) ); ?></td>
-					<td data-title="<?php esc_attr_e( 'Status', 'hexxsy-vendors' ); ?>"><?php echo esc_html( $live ? __( 'Live', 'hexxsy-vendors' ) : __( 'Paused', 'hexxsy-vendors' ) ); ?></td>
+					<td data-title="<?php esc_attr_e( 'Status', 'hexxsy-vendors' ); ?>"><?php echo esc_html( $status ); ?></td>
 					<td>
 						<a class="button" href="<?php echo esc_url( add_query_arg( 'edit', $product->get_id(), $base ) ); ?>"><?php esc_html_e( 'Edit', 'hexxsy-vendors' ); ?></a>
 						<form method="post" style="display:inline">
@@ -451,6 +469,12 @@ class Dashboard {
 		$turnaround = $value( Readings::TURNAROUND_META, $product ? $product->get_meta( Readings::TURNAROUND_META ) : 3 );
 		$duration   = $value( Readings::DURATION_META, $product ? $product->get_meta( Readings::DURATION_META ) : 30 );
 		$intake     = (array) $value( Readings::INTAKE_META, $product ? Readings::intake_fields( $product ) : array() );
+
+		// Live calls are offered only once they're open, or to keep editing one made earlier.
+		$offer_live = Readings::live_enabled() || ( $product && Readings::LIVE === Readings::format( $product ) );
+		if ( ! $offer_live ) {
+			$format = Readings::WRITTEN;
+		}
 		?>
 		<h3><?php echo esc_html( $product ? __( 'Edit reading', 'hexxsy-vendors' ) : __( 'Add a reading', 'hexxsy-vendors' ) ); ?></h3>
 		<form method="post" enctype="multipart/form-data" class="hexxsy-reading-form">
@@ -470,11 +494,18 @@ class Dashboard {
 				<input type="number" class="input-text" id="hexxsy_price" name="price" required min="1" step="0.01" value="<?php echo esc_attr( (string) $value( 'price', $product ? $product->get_regular_price() : '' ) ); ?>">
 			</p>
 
+			<?php if ( $offer_live ) : ?>
 			<fieldset>
 				<legend><?php esc_html_e( 'Type', 'hexxsy-vendors' ); ?></legend>
 				<label><input type="radio" name="<?php echo esc_attr( Readings::FORMAT_META ); ?>" value="<?php echo esc_attr( Readings::WRITTEN ); ?>" <?php checked( Readings::WRITTEN, $format ); ?>> <?php esc_html_e( 'Written reading', 'hexxsy-vendors' ); ?></label><br>
 				<label><input type="radio" name="<?php echo esc_attr( Readings::FORMAT_META ); ?>" value="<?php echo esc_attr( Readings::LIVE ); ?>" <?php checked( Readings::LIVE, $format ); ?>> <?php esc_html_e( 'Live call', 'hexxsy-vendors' ); ?></label>
+				<?php if ( ! Readings::live_enabled() ) : ?>
+					<br><small><?php esc_html_e( 'Live calls are not open yet, so this one is hidden from customers.', 'hexxsy-vendors' ); ?></small>
+				<?php endif; ?>
 			</fieldset>
+			<?php else : ?>
+				<input type="hidden" name="<?php echo esc_attr( Readings::FORMAT_META ); ?>" value="<?php echo esc_attr( Readings::WRITTEN ); ?>">
+			<?php endif; ?>
 
 			<p class="form-row">
 				<label for="hexxsy_turnaround"><?php esc_html_e( 'Written readings: days to deliver', 'hexxsy-vendors' ); ?></label>
@@ -487,10 +518,12 @@ class Dashboard {
 				<?php endforeach; ?>
 			</fieldset>
 
+			<?php if ( $offer_live ) : ?>
 			<p class="form-row">
 				<label for="hexxsy_duration"><?php esc_html_e( 'Live calls: length in minutes', 'hexxsy-vendors' ); ?></label>
 				<input type="number" class="input-text" id="hexxsy_duration" name="<?php echo esc_attr( Readings::DURATION_META ); ?>" min="5" step="5" value="<?php echo esc_attr( (string) $duration ); ?>">
 			</p>
+			<?php endif; ?>
 
 			<p class="form-row">
 				<label for="hexxsy_image"><?php esc_html_e( 'Image (JPG, PNG or WebP)', 'hexxsy-vendors' ); ?></label>
@@ -510,8 +543,11 @@ class Dashboard {
 	 * Reading orders: the vendor's own lines only, plus earnings so far.
 	 */
 	public static function render_orders(): void {
-		if ( ! self::guard() ) {
+		if ( ! self::guard( true ) ) {
 			return;
+		}
+		if ( ! Vendor::is_approved( get_current_user_id() ) ) {
+			echo '<p><strong>' . esc_html__( 'Your room is closed. The orders below were paid for before it closed: deliver them and you will be paid as usual.', 'hexxsy-vendors' ) . '</strong></p>';
 		}
 
 		$vendor_id = get_current_user_id();
@@ -620,7 +656,7 @@ class Dashboard {
 			<?php
 			printf(
 				/* translators: %d: number of days */
-				esc_html__( 'Hexxsy holds each payment until you deliver the reading, then for %d more days in case the customer needs a refund. Live calls stay on hold until booking is set up.', 'hexxsy-vendors' ),
+				esc_html__( 'Hexxsy holds each payment until you deliver the reading, then for %d more days in case the customer needs a refund.', 'hexxsy-vendors' ),
 				(int) Payout::hold_days()
 			);
 			?>

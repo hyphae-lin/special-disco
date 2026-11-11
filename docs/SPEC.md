@@ -31,7 +31,7 @@ A reader goes from account to selling in four steps, and only the admin's approv
 
 1. **Apply.** The `[hexxsy_vendor_application]` shortcode shows a form to logged-in users only. Fields: shop name (required, 80 characters), about you (required), specialties, experience, and a required checkbox agreeing that readings are for entertainment only and to the vendor terms.
 2. **Wait.** Status becomes pending. The admin gets an email linking to WooCommerce > Vendors. One application per account; a second submit is ignored.
-3. **Decision.** The admin approves (grants the vendor role) or rejects. Either way the applicant gets a short email. An approved vendor can later be revoked, which is the same action as reject.
+3. **Decision.** The admin approves (grants the vendor role) or rejects. Either way the applicant gets a short email. An approved vendor can later be revoked (see Revoking a reader).
 4. **Sell.** Approved vendors get three tabs in My Account.
 
 | Tab | What the vendor does there |
@@ -97,6 +97,8 @@ Every reading is a WooCommerce simple product, marked virtual and sold one per o
 | --- | --- | --- | --- |
 | Written reading | Turnaround in days (1 or more) | Request reading | Their question, always (up to 2,000 characters), plus any the vendor ticks: birth date, birth time, birth place, name of the person the reading is about |
 | Live call | Call length in minutes (5 or more) | Book a call | Nothing yet |
+
+**Live calls are off sale (decided Nov 11, 2026, built in 0.8.0).** Until booking exists, live calls can't be bought. "Customers can buy live calls" on WooCommerce > Vendors is off by default. While it's off, live calls are left out of the shop, the rooms list and related products, their own pages show Hexx's line in place of the button, and WooCommerce drops them from any cart they're already in. Readers can't add new live calls; ones made earlier stay in Readings I offer, marked "Hidden until live calls open". Turn the setting on when booking is built.
 
 Shop-page buttons send people to the reading's own page instead of adding to cart, because intake answers have to be collected there.
 
@@ -220,6 +222,55 @@ The coupon only works on carts over a minimum spend. WooCommerce splits a Fixed 
 
 ## Policies
 
+### Written readings: cancellations and refunds (decided Nov 11, 2026, built in 0.8.0, untested on a live site)
+
+The customer-facing wording is in [REFUND_POLICY.md](REFUND_POLICY.md), and the theme's "Refund policy" pattern lays it out as a page.
+
+| Situation | What happens |
+| --- | --- |
+| Customer cancels within 24 hours of paying, reading not delivered | Full refund. The customer does it from My readings |
+| After 24 hours, reading not yet due | The order stands |
+| Reading passes its due date undelivered | Reader and customer are both emailed. The customer can cancel for a full refund from My readings, or wait |
+| Still undelivered 7 days after the due date | Cancelled and refunded in full, automatically |
+| Reading delivered | No refund. A customer with a real complaint writes to Hexxsy within 7 days of delivery (the payout hold), and the admin decides case by case |
+| Reader revoked before delivering | Refunded in full, or the reader finishes it (see Revoking a reader) |
+
+- **Settings.** WooCommerce > Vendors has Cancellation window (hours, 24), Remind the reader (days before due, 1) and Refund late readings after (days, 7). 0 turns the window or the reminder off; 0 days of grace refunds a reading the moment it's late. A Refund policy page setting chooses the page the product note links to.
+- **Reminders.** Once an hour the site checks every paid, undelivered written reading. One day before the due date the reader gets a reminder (skipped when the turnaround is one day, since it would land on the order itself). When the due date passes, the reader and the customer each get one email, and the customer's names the date the automatic refund will happen.
+- **Cancelling.** My readings shows "Cancel for a full refund" on a reading while the customer is allowed to use it: inside the window, or once it's late. A late reading shows "Late. It was due [date]".
+- **One refund path.** Customer cancellations, the automatic late refund and revoking a reader all go through the same code. The order line is marked cancelled, with the reason. What's left on the line, with its tax, is refunded through the payment gateway as a WooCommerce refund, so the payout ledger sees it and the reader's share drops to nothing. The customer and the reader are each emailed. If the other readings on the order are all delivered, the order completes; if every line is refunded, WooCommerce marks the order refunded.
+- **If the gateway refuses.** The line stays cancelled, so the reader can't deliver something the customer was told is off. The order gets a note, and the admin gets an email with a link to refund it by hand.
+- **A cancelled line can't be delivered.** Reading orders shows "Cancelled and refunded. Nothing to deliver." A line refunded in full by hand in WooCommerce counts as cancelled too.
+- **Exceptions after delivery** are made by hand with WooCommerce's Refund button on the order. The reader's share shrinks with the refund; if they were already paid, WooCommerce > Payouts lists what to take back.
+- **On the reading's page.** A short note above the button gives the cancellation window and links to the policy page. It's one of Hexx's lines.
+- **Shortcode.** [hexxsy_setting key="cancel_hours"], "late_refund_days" or "hold_days" prints the number, so the policy page never disagrees with the settings.
+- **Emails.** All of them are in WooCommerce > Hexx's lines, under "Late readings, cancellations and refunds".
+
+Limits of the build:
+
+- The hourly check runs on WordPress's own scheduler, which only fires when someone visits the site. On a quiet day an email or refund can run hours late. A real cron job on DreamHost calling wp-cron.php fixes that.
+- WooCommerce sends its own "order refunded" email as well as Hexx's. Turn it off in WooCommerce > Settings > Emails if one is enough.
+- Due dates still count calendar days, weekends included.
+- The cancel button asks nothing about why. No partial refunds from the customer side.
+- Whether a refunded customer's welcome code is reissued isn't decided. As built it stays used.
+- The contact address for complaints isn't decided. The policy pattern has a placeholder.
+- No checkout tick box for the written-reading policy. The live call acknowledgment below is still not built either.
+
+### Revoking a reader (decided Nov 11, 2026, built in 0.8.0, untested on a live site)
+
+Revoking closes a reader's room. It is no longer the same action as rejecting an applicant.
+
+- **Readings come off sale at once.** Every published product of theirs is set to draft. As a backstop, a product whose author applied to read and isn't an approved reader can't be bought at all, so a sale can never be recorded with no split.
+- **Open orders: the admin chooses each time.** If the reader has paid orders they haven't delivered, the Vendors page shows how many and offers two buttons. "Revoke and refund open orders" refunds each one in full and emails the customers. "Revoke, let them finish" leaves the orders with the reader.
+- **Finishing.** A reader left to finish keeps the Reading orders tab and nothing else: no Readings I offer, no Shop profile, no new sales. They're listed on the Vendors page under "Revoked, finishing open orders", with a "Refund what is left" button. They're paid for what they deliver, as usual. Anything that runs late follows the late-reading rule. When the last order is delivered or refunded they move to Rejected on their own.
+- **Live calls** on open orders are refunded either way, since nobody can fulfil them.
+- **Seats.** A revoked reader frees their seat straight away, finishing or not.
+- **Email.** The reader gets one email saying the room is closed, and either that open orders were refunded or how many they still owe. Both are Hexx's lines.
+- **Coming back.** Approving them again restores the tabs. Their readings stay paused until they resume them.
+- **Money already earned** is still paid (see Holding payment and payouts).
+
+### Live calls
+
 The live call policy is written in the README but nothing in the code enforces it yet, since booking doesn't exist.
 
 | Situation | Customer gets |
@@ -297,7 +348,8 @@ The admin can make new block patterns at any time in Appearance > Editor > Patte
 - {placeholders} are filled in automatically, and {link}…{/link} marks the words that become a link.
 - [hexxsy_line key="…"] places any line on a page. [hexxsy_line key="ledger"] shows the "rooms open" or "every room taken" pair, whichever is true.
 - Lines in the theme (homepage hero, footer, 404) are edited in the Site Editor.
-- Still in code: reader dashboard text, order and delivery emails, and admin screens.
+- Added in 0.8.0: the note on a written reading's page, the live-calls-closed line, and every reminder, late, cancellation, refund and revoke email.
+- Still in code: reader dashboard text, button labels and notices in My readings, the application decision emails, the delivery email, and admin screens.
 
 **Rooms list (built Oct 31, 2026)**
 
@@ -332,19 +384,19 @@ Three pieces are known to be missing. Reading the code turned up more, and a few
 
 | # | Gap | Why it matters | Decision needed |
 | --- | --- | --- | --- |
-| 1 | Live calls can be bought today | A customer can pay for "Book a call" and nothing happens. The order sits in Processing forever | Hide live-call readings until booking exists? |
-| 2 | Revoking a reader leaves their readings on sale | New sales record no split, so the site silently keeps 100%. The reader also loses the dashboard, so paid orders can't be delivered | On revoke: pause their readings? Who fulfils or refunds open orders? |
-| 3 | Nothing happens when a reading is late | Due dates show, but no reminder to the reader, no notice to the customer, no refund path. Turnaround counts weekends | Reminders? Grace period? Auto-refund after X days? |
-| 4 | No refund or cancellation policy for written readings | Only live calls have one | Can a customer cancel before delivery? After? |
+| 1 | ~~Live calls can be bought today~~ | Fixed Nov 11, 2026 (0.8.0): live calls are off sale until a setting turns them on. See Readings and intake | None |
+| 2 | ~~Revoking a reader leaves their readings on sale~~ | Fixed Nov 11, 2026 (0.8.0): readings are paused, and the admin chooses to refund open orders or let the reader finish. See Revoking a reader | None |
+| 3 | ~~Nothing happens when a reading is late~~ | Fixed Nov 11, 2026 (0.8.0): reader reminder, late emails to both, customer can cancel, automatic refund after 7 days. Turnaround still counts weekends | Count business days? |
+| 4 | ~~No refund or cancellation policy for written readings~~ | Decided and built Nov 11, 2026 (0.8.0). See Policies and REFUND_POLICY.md. The policy page still has to be made on the site, and needs a contact address | Contact address for complaints |
 | 5 | Readings go live with no review | A new reader's first offering is public instantly | Approve each reading, or just the first few? |
 | 6 | Rejected applicants can never reapply | The code says an admin can reset status, but there's no button for it | Allow reapplying after a wait? Add a reset? |
 | 7 | Reader profiles are invisible (partly fixed Oct 31, 2026: the homepage rooms list shows shop name, specialties, door line, portrait, shelves and lowest price; Knock opens the shop filtered to that reader until room pages exist) | Shop name, bio and specialties are collected but never shown to customers. No reader page, no directory | How do customers choose a reader? |
 | 8 | No messaging | A reader can't ask a follow-up about a vague question; the customer can't reach the reader | In-site messages, email relay, or none? |
-| 9 | Terms pages don't exist | The application asks readers to agree to "vendor terms" that aren't written. No customer terms either | Write vendor terms, customer terms, refund policy |
+| 9 | Terms pages don't exist | No customer terms. The refund policy is written (Nov 11, 2026). Deferred Nov 11, 2026: terms come later | Write vendor terms and customer terms |
 | 10 | Birth data has no privacy plan | Birth date, time and place are personal data, kept on orders indefinitely | Privacy policy, retention, deletion on request |
 | 11 | PDF can't show symbols | No ♈, ☽ or emoji, which astrology readers will want | Accept it, or add a font library |
 | 12 | ~~Earnings view caps at 50 orders~~ | Fixed: payout totals read every order. The order list itself still shows the latest 50 | None |
-| 13 | Thin test coverage | Tests cover commission math and the PDF only | Tests for checkout, delivery and permissions before launch |
+| 13 | Thin test coverage | Tests cover the pure rules only (commission, payouts, welcome offer, invites, cancellation and late-reading timing, the PDF). Nothing that touches WooCommerce is tested: checkout, delivery, refunds through the gateway, permissions | Tests for checkout, delivery and permissions before launch |
 
 ### Outside the code
 

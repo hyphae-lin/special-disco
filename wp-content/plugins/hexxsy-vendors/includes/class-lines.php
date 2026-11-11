@@ -64,6 +64,34 @@ class Lines {
 			'apply_pending'       => array( 'apply', 'Application waiting', 'Your application is in. I read every one myself, and I\'ll write to you once I\'ve decided.' ),
 			'apply_approved'      => array( 'apply', 'Already a reader', 'You already have a room here. Your reader tabs are in My Account.' ),
 			'apply_rejected'      => array( 'apply', 'Application not accepted', 'Your application wasn\'t accepted this time. If you think I got it wrong, write to me.' ),
+
+			// Buying a reading.
+			'reading_policy'      => array( 'buying', 'Under a written reading\'s questions ({hours} is the cancellation window, {link}…{/link} links to the refund policy page)', 'Change your mind inside {hours} hours and you get your money back, so long as the reading hasn\'t reached you yet. If it comes late, you can cancel then too. {link}The whole policy{/link}.' ),
+			'live_closed'         => array( 'buying', 'On a live call\'s page while live calls are off', 'I\'m not booking calls yet. The written readings are open.' ),
+
+			// Late readings, cancellations and refunds.
+			'due_soon_subject'    => array( 'late', 'Reader reminder before the due date, subject ({due} is the date)', 'A reading is due {due}' ),
+			'due_soon_body'       => array( 'late', 'Reader reminder, body ({reading}, {order}, {due}, {link_url} is Reading orders)', "\"{reading}\" (order #{order}) is due {due}.\n\nWrite it and deliver it from Reading orders:\n{link_url}\n\nHexx" ),
+			'reader_late_subject' => array( 'late', 'Reader, reading is late, subject', 'A reading is late' ),
+			'reader_late_body'    => array( 'late', 'Reader, reading is late, body ({refund_date} is when it gets refunded)', "\"{reading}\" (order #{order}) was due {due} and hasn't been delivered.\n\nThe customer can cancel it for a full refund from now on. If it's still not delivered on {refund_date}, I refund it myself and you earn nothing on it.\n\nDeliver it here:\n{link_url}\n\nHexx" ),
+			'customer_late_subject' => array( 'late', 'Customer, reading is late, subject', 'Your reading is late' ),
+			'customer_late_body'  => array( 'late', 'Customer, reading is late, body ({name}, {reading}, {reader}, {due}, {refund_date}, {link_url} is My readings)', "{name},\n\nYour reading \"{reading}\" from {reader} was due {due}, and it hasn't come. I've told them so.\n\nYou can wait for it, or cancel for a full refund from My readings:\n{link_url}\n\nIf it still hasn't come on {refund_date}, I'll refund you without being asked.\n\nHexx" ),
+			'refund_subject'      => array( 'late', 'Customer, cancelled and refunded, subject', 'Your reading is cancelled and refunded' ),
+			'refund_body'         => array( 'late', 'Customer, cancelled and refunded, body ({reason} is one of the four lines below, {amount} the refund)', "{name},\n\n{reason}\n\n{amount} is on its way back to however you paid. Banks take a few days over it.\n\nHexx" ),
+			'refund_reason_window' => array( 'late', 'Customer reason: they cancelled in time', 'You cancelled "{reading}" from {reader}.' ),
+			'refund_reason_late'  => array( 'late', 'Customer reason: they cancelled a late reading', 'You cancelled "{reading}" from {reader} because it was late. Fair enough.' ),
+			'refund_reason_auto'  => array( 'late', 'Customer reason: late past the grace period', '"{reading}" from {reader} never came, so I\'ve cancelled it.' ),
+			'refund_reason_revoked' => array( 'late', 'Customer reason: the reader was revoked', '{reader} no longer reads at Hexxsy, so "{reading}" is cancelled.' ),
+			'reader_cancelled_subject' => array( 'late', 'Reader, an order was cancelled, subject', 'An order was cancelled' ),
+			'reader_cancelled_body' => array( 'late', 'Reader, an order was cancelled, body ({reason} is one of the three lines below)', "\"{reading}\" (order #{order}) was cancelled and refunded. {reason}\n\nThere's nothing to deliver, and nothing is owed on it.\n\nHexx" ),
+			'reader_reason_window' => array( 'late', 'Reader reason: customer cancelled in time ({hours})', 'The customer changed their mind inside the first {hours} hours.' ),
+			'reader_reason_late'  => array( 'late', 'Reader reason: customer cancelled a late reading', 'It was late, and the customer cancelled.' ),
+			'reader_reason_auto'  => array( 'late', 'Reader reason: late past the grace period ({days})', 'It was {days} days late.' ),
+
+			// Closing a reader's room.
+			'revoke_subject'      => array( 'revoke', 'Reader revoked, subject', 'Your room at Hexxsy is closed' ),
+			'revoke_body'         => array( 'revoke', 'Reader revoked, nothing left to deliver', "Your room at Hexxsy is closed, and your readings are off sale.\n\nAny orders you hadn't delivered have been refunded to the customers. Whatever you'd already earned will still be paid.\n\nHexx" ),
+			'revoke_finish_body'  => array( 'revoke', 'Reader revoked, orders still to deliver ({count} is how many, {link_url} is Reading orders)', "Your room at Hexxsy is closed, and your readings are off sale.\n\nCustomers have paid for readings you haven't delivered yet: {count}, by my count. Deliver them from Reading orders and you'll be paid for them as usual:\n{link_url}\n\nAnything that runs late gets refunded.\n\nHexx" ),
 		);
 	}
 
@@ -77,6 +105,9 @@ class Lines {
 			'rooms'  => __( 'Rooms list', 'hexxsy-vendors' ),
 			'ledger' => __( 'The Ledger (reader waitlist)', 'hexxsy-vendors' ),
 			'apply'  => __( 'Invitations and the reader application', 'hexxsy-vendors' ),
+			'buying' => __( 'Buying a reading', 'hexxsy-vendors' ),
+			'late'   => __( 'Late readings, cancellations and refunds', 'hexxsy-vendors' ),
+			'revoke' => __( "Closing a reader's room", 'hexxsy-vendors' ),
 		);
 	}
 

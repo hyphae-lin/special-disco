@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Hexxsy Vendors
- * Description:       Multi-vendor marketplace for readings on Hexxsy: invitations, the reader waitlist, the rooms list, Hexx's lines, vendor applications and approval, reading offerings, intake questions, commission tracking, the welcome offer and the payout ledger.
- * Version:           0.7.0
+ * Description:       Multi-vendor marketplace for readings on Hexxsy: invitations, the reader waitlist, the rooms list, Hexx's lines, vendor applications and approval, reading offerings, intake questions, commission tracking, the welcome offer, the payout ledger, late-reading reminders, cancellations and refunds.
+ * Version:           0.8.0
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Requires Plugins:  woocommerce
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'HEXXSY_VENDORS_VERSION', '0.7.0' );
+define( 'HEXXSY_VENDORS_VERSION', '0.8.0' );
 define( 'HEXXSY_VENDORS_FILE', __FILE__ );
 define( 'HEXXSY_VENDORS_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -37,6 +37,8 @@ require_once HEXXSY_VENDORS_DIR . 'includes/class-dashboard.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-pdf.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-delivery.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-customer.php';
+require_once HEXXSY_VENDORS_DIR . 'includes/class-refunds.php';
+require_once HEXXSY_VENDORS_DIR . 'includes/class-reminders.php';
 
 register_activation_hook( __FILE__, array( 'Hexxsy\Vendors\Roles', 'install' ) );
 register_deactivation_hook( __FILE__, array( 'Hexxsy\Vendors\Roles', 'uninstall' ) );
@@ -68,5 +70,7 @@ add_action(
 		Hexxsy\Vendors\Dashboard::init();
 		Hexxsy\Vendors\Delivery::init();
 		Hexxsy\Vendors\Customer::init();
+		Hexxsy\Vendors\Refunds::init();
+		Hexxsy\Vendors\Reminders::init();
 	}
 );

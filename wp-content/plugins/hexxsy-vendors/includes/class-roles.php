@@ -42,5 +42,6 @@ class Roles {
 	 */
 	public static function uninstall(): void {
 		remove_role( self::ROLE );
+		wp_clear_scheduled_hook( Reminders::HOOK );
 	}
 }

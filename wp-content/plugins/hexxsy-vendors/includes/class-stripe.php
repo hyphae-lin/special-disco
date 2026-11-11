@@ -235,7 +235,7 @@ class Stripe {
 	 * Readers come back here from Stripe's onboarding.
 	 */
 	public static function handle_return(): void {
-		if ( ! isset( $_GET[ self::RETURN_VAR ] ) || ! is_user_logged_in() || ! Vendor::is_approved( get_current_user_id() ) ) {
+		if ( ! isset( $_GET[ self::RETURN_VAR ] ) || ! is_user_logged_in() || ! Vendor::can_fulfil( get_current_user_id() ) ) {
 			return;
 		}
 		$user_id = get_current_user_id();

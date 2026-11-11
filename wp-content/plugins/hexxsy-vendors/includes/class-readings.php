@@ -23,6 +23,11 @@ class Readings {
 	const LIVE    = 'live';
 
 	/**
+	 * Live calls stay off sale until booking exists. 'yes' puts them on.
+	 */
+	const LIVE_OPTION = 'hexxsy_live_calls';
+
+	/**
 	 * Optional intake fields a vendor can ask for on written readings. The
 	 * question itself is always asked.
 	 */
@@ -42,6 +47,95 @@ class Readings {
 		add_filter( 'woocommerce_product_supports', array( __CLASS__, 'disable_ajax_add_to_cart' ), 10, 3 );
 		add_filter( 'woocommerce_product_add_to_cart_url', array( __CLASS__, 'loop_button_url' ), 10, 2 );
 		add_filter( 'woocommerce_product_add_to_cart_text', array( __CLASS__, 'loop_button_text' ), 10, 2 );
+
+		add_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'purchasable' ), 10, 2 );
+		add_filter( 'woocommerce_product_is_visible', array( __CLASS__, 'visible' ), 10, 2 );
+		add_action( 'woocommerce_product_query', array( __CLASS__, 'hide_from_shop' ) );
+		add_action( 'woocommerce_single_product_summary', array( __CLASS__, 'closed_note' ), 25 );
+	}
+
+	/**
+	 * Whether live calls can be bought.
+	 */
+	public static function live_enabled(): bool {
+		return 'yes' === get_option( self::LIVE_OPTION, 'no' );
+	}
+
+	/**
+	 * Why a product can't be sold right now: 'live' for a live call while
+	 * live calls are off, 'reader' when it belongs to someone who applied to
+	 * read here and isn't an approved reader (pending, rejected or revoked),
+	 * or '' when it can.
+	 *
+	 * @param \WC_Product $product Product.
+	 */
+	public static function off_sale( \WC_Product $product ): string {
+		if ( self::LIVE === self::format( $product ) && ! self::live_enabled() ) {
+			return 'live';
+		}
+		$author = (int) get_post_field( 'post_author', $product->get_id() );
+		if ( $author && '' !== Vendor::status( $author ) && ! Vendor::is_approved( $author ) ) {
+			return 'reader';
+		}
+		return '';
+	}
+
+	/**
+	 * Nobody can buy an off-sale product, whatever page they find it on.
+	 * WooCommerce also drops it from carts it's already in.
+	 *
+	 * @param bool        $purchasable Whether it can be bought.
+	 * @param \WC_Product $product     Product.
+	 */
+	public static function purchasable( $purchasable, $product ) {
+		return $purchasable && $product instanceof \WC_Product && '' === self::off_sale( $product );
+	}
+
+	/**
+	 * Keep off-sale products out of product lists and related products.
+	 *
+	 * @param bool $visible    Whether it's listed.
+	 * @param int  $product_id Product ID.
+	 */
+	public static function visible( $visible, $product_id ) {
+		$product = $visible ? wc_get_product( $product_id ) : null;
+		return $product ? '' === self::off_sale( $product ) : $visible;
+	}
+
+	/**
+	 * Leave live calls out of the shop's own queries while they're off, so
+	 * pages and counts come out right.
+	 *
+	 * @param \WP_Query $query Shop query.
+	 */
+	public static function hide_from_shop( $query ): void {
+		if ( self::live_enabled() ) {
+			return;
+		}
+		$meta   = (array) $query->get( 'meta_query' );
+		$meta[] = array(
+			'relation' => 'OR',
+			array(
+				'key'     => self::FORMAT_META,
+				'compare' => 'NOT EXISTS',
+			),
+			array(
+				'key'     => self::FORMAT_META,
+				'value'   => self::LIVE,
+				'compare' => '!=',
+			),
+		);
+		$query->set( 'meta_query', $meta );
+	}
+
+	/**
+	 * Say why there's no button on a live call's page.
+	 */
+	public static function closed_note(): void {
+		global $product;
+		if ( $product instanceof \WC_Product && 'live' === self::off_sale( $product ) ) {
+			echo '<p class="hexxsy-line">' . Lines::html( 'live_closed' ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in Lines::html.
+		}
 	}
 
 	/**

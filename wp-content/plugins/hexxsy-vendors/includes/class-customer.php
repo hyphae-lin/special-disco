@@ -64,7 +64,7 @@ class Customer {
 				'limit'       => -1,
 				'orderby'     => 'date',
 				'order'       => 'DESC',
-				'status'      => array( 'wc-processing', 'wc-completed', 'wc-on-hold' ),
+				'status'      => array( 'wc-processing', 'wc-completed', 'wc-on-hold', 'wc-refunded' ),
 			)
 		);
 
@@ -112,6 +112,11 @@ class Customer {
 	 * @param \WC_Order_Item $item  Order line.
 	 */
 	private static function render_status( $order, $item ): void {
+		if ( ! Delivery::delivered_at( $item ) && ( 'refunded' === $order->get_status() || Refunds::is_cancelled( $order, $item ) ) ) {
+			esc_html_e( 'Cancelled and refunded', 'hexxsy-vendors' );
+			return;
+		}
+
 		if ( ! Delivery::is_written( $item ) ) {
 			// Live calls: the booking flow will fill this in.
 			esc_html_e( 'Live call', 'hexxsy-vendors' );
@@ -124,11 +129,20 @@ class Customer {
 		}
 
 		$due = Delivery::due_date( $order, $item );
+		if ( ! $due ) {
+			esc_html_e( 'Waiting for payment', 'hexxsy-vendors' );
+			return;
+		}
 		echo esc_html(
-			$due
-				/* translators: %s: date */
-				? sprintf( __( 'In progress, due %s', 'hexxsy-vendors' ), wc_format_datetime( $due ) )
-				: __( 'Waiting for payment', 'hexxsy-vendors' )
+			sprintf(
+				time() > $due->getTimestamp()
+					/* translators: %s: date */
+					? __( 'Late. It was due %s', 'hexxsy-vendors' )
+					/* translators: %s: date */
+					: __( 'In progress, due %s', 'hexxsy-vendors' ),
+				wc_format_datetime( $due )
+			)
 		);
+		Refunds::render_cancel_button( $order, $item );
 	}
 }

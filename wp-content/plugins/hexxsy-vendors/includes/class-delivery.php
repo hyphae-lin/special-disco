@@ -91,6 +91,10 @@ class Delivery {
 			wc_add_notice( __( 'This reading was already delivered.', 'hexxsy-vendors' ), 'error' );
 			return $back;
 		}
+		if ( Refunds::is_cancelled( $order, $item ) ) {
+			wc_add_notice( __( 'This order was cancelled and refunded, so there is nothing to deliver.', 'hexxsy-vendors' ), 'error' );
+			return $back;
+		}
 		if ( 'processing' !== $order->get_status() ) {
 			wc_add_notice( __( 'This order is not paid, or was cancelled, so it cannot be delivered.', 'hexxsy-vendors' ), 'error' );
 			return $back;
@@ -129,24 +133,37 @@ class Delivery {
 
 		self::email_customer( $order, $item );
 		self::maybe_complete( $order );
+		Vendor::settle_closing( get_current_user_id() );
 
 		wc_add_notice( __( 'Reading delivered. The customer has been emailed a PDF copy.', 'hexxsy-vendors' ) );
 		return $back;
 	}
 
 	/**
-	 * Mark the order completed once every line is a delivered written
-	 * reading. Orders with live calls are left for the booking flow.
+	 * Mark the order completed once every line that wasn't cancelled is a
+	 * delivered written reading. Orders with live calls are left for the
+	 * booking flow. An order whose lines were all cancelled is left to
+	 * WooCommerce, which marks it refunded.
 	 *
 	 * @param \WC_Order $order Order.
 	 */
-	private static function maybe_complete( $order ): void {
+	public static function maybe_complete( $order ): void {
+		if ( 'processing' !== $order->get_status() ) {
+			return;
+		}
+		$delivered = 0;
 		foreach ( $order->get_items() as $item ) {
+			if ( Refunds::is_cancelled( $order, $item ) ) {
+				continue;
+			}
 			if ( ! self::is_written( $item ) || ! self::delivered_at( $item ) ) {
 				return;
 			}
+			++$delivered;
 		}
-		$order->update_status( 'completed' );
+		if ( $delivered ) {
+			$order->update_status( 'completed' );
+		}
 	}
 
 	/**
@@ -316,18 +333,23 @@ class Delivery {
 			) . ' <a href="' . esc_url( self::download_url( $item->get_id() ) ) . '">' . esc_html__( 'Download PDF', 'hexxsy-vendors' ) . '</a></p>';
 			return;
 		}
+		if ( Refunds::is_cancelled( $order, $item ) ) {
+			echo '<p><strong>' . esc_html__( 'Cancelled and refunded. Nothing to deliver.', 'hexxsy-vendors' ) . '</strong></p>';
+			return;
+		}
 		if ( 'processing' !== $order->get_status() ) {
 			return;
 		}
 
-		$due = self::due_date( $order, $item );
+		$due  = self::due_date( $order, $item );
+		$late = $due && time() > $due->getTimestamp();
 		?>
 		<form method="post" id="reading-<?php echo esc_attr( (string) $item->get_id() ); ?>">
 			<?php wp_nonce_field( Dashboard::NONCE, '_hexxsy_nonce' ); ?>
 			<input type="hidden" name="hexxsy_dashboard_action" value="deliver_reading">
 			<input type="hidden" name="item_id" value="<?php echo esc_attr( (string) $item->get_id() ); ?>">
 			<?php if ( $due ) : ?>
-				<p><strong><?php echo esc_html( sprintf( /* translators: %s: date */ __( 'Due %s', 'hexxsy-vendors' ), wc_format_datetime( $due ) ) ); ?></strong></p>
+				<p><strong><?php echo esc_html( sprintf( /* translators: %s: date */ $late ? __( 'Late. It was due %s, and the customer can cancel for a refund.', 'hexxsy-vendors' ) : __( 'Due %s', 'hexxsy-vendors' ), wc_format_datetime( $due ) ) ); ?></strong></p>
 			<?php endif; ?>
 			<p class="form-row">
 				<label for="reading-text-<?php echo esc_attr( (string) $item->get_id() ); ?>"><?php esc_html_e( 'Your reading', 'hexxsy-vendors' ); ?></label>

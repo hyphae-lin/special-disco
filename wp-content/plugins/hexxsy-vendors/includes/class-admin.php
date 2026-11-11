@@ -76,7 +76,32 @@ class Admin {
 				'sanitize_callback' => static fn( $value ) => Rooms::UNLIT === $value ? Rooms::UNLIT : Rooms::HIDDEN,
 			)
 		);
-		foreach ( array( Ledger::APPLY_PAGE_OPTION, Ledger::LEDGER_PAGE_OPTION, Ledger::CONDUCT_OPTION ) as $option ) {
+		register_setting(
+			self::PAGE,
+			Readings::LIVE_OPTION,
+			array(
+				'type'              => 'string',
+				'default'           => 'no',
+				'sanitize_callback' => static fn( $value ) => 'yes' === $value ? 'yes' : 'no',
+			)
+		);
+		$numbers = array(
+			Refunds::WINDOW_OPTION => Refunds::DEFAULT_WINDOW,
+			Refunds::GRACE_OPTION  => Refunds::DEFAULT_GRACE,
+			Refunds::LEAD_OPTION   => Refunds::DEFAULT_LEAD,
+		);
+		foreach ( $numbers as $option => $default ) {
+			register_setting(
+				self::PAGE,
+				$option,
+				array(
+					'type'              => 'integer',
+					'default'           => $default,
+					'sanitize_callback' => 'absint',
+				)
+			);
+		}
+		foreach ( array( Ledger::APPLY_PAGE_OPTION, Ledger::LEDGER_PAGE_OPTION, Ledger::CONDUCT_OPTION, Refunds::PAGE_OPTION ) as $option ) {
 			register_setting(
 				self::PAGE,
 				$option,
@@ -181,6 +206,7 @@ class Admin {
 		$groups = array(
 			Vendor::PENDING  => __( 'Waiting for review', 'hexxsy-vendors' ),
 			Vendor::APPROVED => __( 'Approved vendors', 'hexxsy-vendors' ),
+			Vendor::CLOSING  => __( 'Revoked, finishing open orders', 'hexxsy-vendors' ),
 			Vendor::REJECTED => __( 'Rejected', 'hexxsy-vendors' ),
 		);
 		?>
@@ -218,6 +244,7 @@ class Admin {
 						Ledger::APPLY_PAGE_OPTION  => array( __( 'Application page', 'hexxsy-vendors' ), __( 'The page with [hexxsy_vendor_application]. Invite links point here.', 'hexxsy-vendors' ) ),
 						Ledger::LEDGER_PAGE_OPTION => array( __( 'Ledger page', 'hexxsy-vendors' ), __( 'The page with [hexxsy_waitlist]. People without an invite are sent here.', 'hexxsy-vendors' ) ),
 						Ledger::CONDUCT_OPTION     => array( __( 'Code of conduct page', 'hexxsy-vendors' ), __( 'Linked from the application\'s agreement checkbox.', 'hexxsy-vendors' ) ),
+						Refunds::PAGE_OPTION       => array( __( 'Refund policy page', 'hexxsy-vendors' ), __( 'Linked from the note above the button on every written reading.', 'hexxsy-vendors' ) ),
 					);
 					foreach ( $pages as $option => $text ) :
 						?>
@@ -240,6 +267,34 @@ class Admin {
 						</tr>
 					<?php endforeach; ?>
 					<tr>
+						<th scope="row"><?php esc_html_e( 'Live calls', 'hexxsy-vendors' ); ?></th>
+						<td>
+							<label><input type="checkbox" name="<?php echo esc_attr( Readings::LIVE_OPTION ); ?>" value="yes" <?php checked( Readings::live_enabled() ); ?>> <?php esc_html_e( 'Customers can buy live calls', 'hexxsy-vendors' ); ?></label>
+							<p class="description"><?php esc_html_e( 'Leave this off until booking is built. While it is off, live calls are hidden from the shop and the rooms list and cannot be bought, and readers cannot add new ones.', 'hexxsy-vendors' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="hexxsy_cancel_window"><?php esc_html_e( 'Cancellation window (hours)', 'hexxsy-vendors' ); ?></label></th>
+						<td>
+							<input type="number" id="hexxsy_cancel_window" name="<?php echo esc_attr( Refunds::WINDOW_OPTION ); ?>" value="<?php echo esc_attr( (string) Refunds::window_hours() ); ?>" min="0" step="1" class="small-text">
+							<p class="description"><?php esc_html_e( 'How long after paying a customer can cancel a written reading for a full refund, if it has not been delivered. 0 turns this off.', 'hexxsy-vendors' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="hexxsy_reminder_days"><?php esc_html_e( 'Remind the reader (days before due)', 'hexxsy-vendors' ); ?></label></th>
+						<td>
+							<input type="number" id="hexxsy_reminder_days" name="<?php echo esc_attr( Refunds::LEAD_OPTION ); ?>" value="<?php echo esc_attr( (string) Refunds::lead_days() ); ?>" min="0" step="1" class="small-text">
+							<p class="description"><?php esc_html_e( 'Readings with a turnaround this short or shorter get no reminder. 0 turns reminders off.', 'hexxsy-vendors' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="hexxsy_late_refund_days"><?php esc_html_e( 'Refund late readings after (days)', 'hexxsy-vendors' ); ?></label></th>
+						<td>
+							<input type="number" id="hexxsy_late_refund_days" name="<?php echo esc_attr( Refunds::GRACE_OPTION ); ?>" value="<?php echo esc_attr( (string) Refunds::grace_days() ); ?>" min="0" step="1" class="small-text">
+							<p class="description"><?php esc_html_e( 'A reading still undelivered this many days past its due date is cancelled and refunded automatically. Before that, the customer can cancel a late reading themselves.', 'hexxsy-vendors' ); ?></p>
+						</td>
+					</tr>
+					<tr>
 						<th scope="row"><label for="hexxsy_welcome_email_ids"><?php esc_html_e( 'Welcome offer emails', 'hexxsy-vendors' ); ?></label></th>
 						<td>
 							<input type="text" id="hexxsy_welcome_email_ids" name="<?php echo esc_attr( Welcome_Offer::EMAILS_OPTION ); ?>" value="<?php echo esc_attr( implode( ', ', Welcome_Offer::email_ids() ) ); ?>" class="regular-text">
@@ -256,6 +311,12 @@ class Admin {
 
 			<?php foreach ( $groups as $status => $heading ) : ?>
 				<?php
+				if ( Vendor::CLOSING === $status ) {
+					// Anyone who has finished since the page was last opened moves to Rejected.
+					foreach ( get_users( array( 'meta_key' => Vendor::STATUS_META, 'meta_value' => Vendor::CLOSING, 'fields' => 'ID' ) ) as $closing_id ) { // phpcs:ignore WordPress.DB.SlowDBQuery
+						Vendor::settle_closing( (int) $closing_id );
+					}
+				}
 				$users = get_users(
 					array(
 						'meta_key'   => Vendor::STATUS_META, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
@@ -265,6 +326,9 @@ class Admin {
 					)
 				);
 				?>
+				<?php if ( ! $users && Vendor::CLOSING === $status ) : ?>
+					<?php continue; ?>
+				<?php endif; ?>
 				<h2><?php echo esc_html( $heading ); ?> (<?php echo count( $users ); ?>)</h2>
 				<?php if ( ! $users ) : ?>
 					<p><?php esc_html_e( 'None.', 'hexxsy-vendors' ); ?></p>
@@ -296,15 +360,33 @@ class Admin {
 							</td>
 							<td><?php echo esc_html( Commission::rate_for_vendor( $user->ID ) . '%' ); ?></td>
 							<td>
-								<?php if ( Vendor::APPROVED !== $status && Ledger::can_approve() ) : ?>
+								<?php
+								$selling = in_array( $status, array( Vendor::APPROVED, Vendor::CLOSING ), true );
+								$open    = $selling ? count( Refunds::open_lines( $user->ID ) ) : 0;
+								?>
+								<?php if ( ! $selling && Ledger::can_approve() ) : ?>
 									<a class="button button-primary" href="<?php echo esc_url( self::review_url( $user->ID, 'approve' ) ); ?>"><?php esc_html_e( 'Approve', 'hexxsy-vendors' ); ?></a>
-								<?php elseif ( Vendor::APPROVED !== $status ) : ?>
+								<?php elseif ( ! $selling ) : ?>
 									<button type="button" class="button button-primary" disabled title="<?php esc_attr_e( 'Every seat is taken. Raise Reader seats to approve.', 'hexxsy-vendors' ); ?>"><?php esc_html_e( 'Approve', 'hexxsy-vendors' ); ?></button>
 								<?php endif; ?>
-								<?php if ( Vendor::REJECTED !== $status ) : ?>
-									<a class="button" href="<?php echo esc_url( self::review_url( $user->ID, 'reject' ) ); ?>" onclick="return confirm('<?php echo esc_js( __( 'Reject this vendor? They will be emailed.', 'hexxsy-vendors' ) ); ?>');">
-										<?php echo esc_html( Vendor::APPROVED === $status ? __( 'Revoke', 'hexxsy-vendors' ) : __( 'Reject', 'hexxsy-vendors' ) ); ?>
+								<?php if ( Vendor::PENDING === $status ) : ?>
+									<a class="button" href="<?php echo esc_url( self::review_url( $user->ID, 'reject' ) ); ?>" onclick="return confirm('<?php echo esc_js( __( 'Reject this vendor? They will be emailed.', 'hexxsy-vendors' ) ); ?>');"><?php esc_html_e( 'Reject', 'hexxsy-vendors' ); ?></a>
+								<?php endif; ?>
+								<?php if ( $selling && $open ) : ?>
+									<p>
+										<?php
+										/* translators: %d: number of orders */
+										echo esc_html( sprintf( _n( '%d paid order not delivered yet.', '%d paid orders not delivered yet.', $open, 'hexxsy-vendors' ), $open ) );
+										?>
+									</p>
+									<a class="button" href="<?php echo esc_url( self::review_url( $user->ID, 'revoke_refund' ) ); ?>" onclick="return confirm('<?php echo esc_js( __( 'Close this room and refund every order they have not delivered? Customers get their money back now. This cannot be undone.', 'hexxsy-vendors' ) ); ?>');">
+										<?php echo esc_html( Vendor::APPROVED === $status ? __( 'Revoke and refund open orders', 'hexxsy-vendors' ) : __( 'Refund what is left', 'hexxsy-vendors' ) ); ?>
 									</a>
+									<?php if ( Vendor::APPROVED === $status ) : ?>
+										<a class="button" href="<?php echo esc_url( self::review_url( $user->ID, 'revoke_finish' ) ); ?>" onclick="return confirm('<?php echo esc_js( __( 'Close this room and let them finish the orders they have been paid for? Their readings come off sale now.', 'hexxsy-vendors' ) ); ?>');"><?php esc_html_e( 'Revoke, let them finish', 'hexxsy-vendors' ); ?></a>
+									<?php endif; ?>
+								<?php elseif ( Vendor::APPROVED === $status ) : ?>
+									<a class="button" href="<?php echo esc_url( self::review_url( $user->ID, 'revoke_refund' ) ); ?>" onclick="return confirm('<?php echo esc_js( __( 'Close this room? Their readings come off sale and they will be emailed.', 'hexxsy-vendors' ) ); ?>');"><?php esc_html_e( 'Revoke', 'hexxsy-vendors' ); ?></a>
 								<?php endif; ?>
 							</td>
 						</tr>
@@ -320,7 +402,7 @@ class Admin {
 	 * Signed URL for approving or rejecting a vendor.
 	 *
 	 * @param int    $user_id  Vendor.
-	 * @param string $decision approve|reject.
+	 * @param string $decision approve|reject|revoke_refund|revoke_finish.
 	 */
 	private static function review_url( int $user_id, string $decision ): string {
 		return wp_nonce_url(
@@ -353,8 +435,10 @@ class Admin {
 				wp_die( esc_html__( 'Every seat is taken. Raise Reader seats on the Vendors page to approve another reader.', 'hexxsy-vendors' ) );
 			}
 			Vendor::approve( $user_id );
-		} elseif ( 'reject' === $decision ) {
+		} elseif ( 'reject' === $decision && Vendor::PENDING === Vendor::status( $user_id ) ) {
 			Vendor::reject( $user_id );
+		} elseif ( 'revoke_refund' === $decision || 'revoke_finish' === $decision ) {
+			Vendor::revoke( $user_id, 'revoke_refund' === $decision );
 		}
 
 		wp_safe_redirect( admin_url( 'admin.php?page=' . self::PAGE ) );
