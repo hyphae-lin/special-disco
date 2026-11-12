@@ -184,26 +184,15 @@ class Delivery {
 		file_put_contents( $path, self::build_pdf( $order, $item ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 
 		$first = $order->get_billing_first_name();
-		$body  = sprintf(
-			/* translators: 1: customer first name, 2: reading name, 3: shop name */
-			__( "Hi %1\$s,\n\nYour reading \"%2\$s\" from %3\$s is ready. It's attached as a PDF to keep.", 'hexxsy-vendors' ),
-			$first ? $first : __( 'there', 'hexxsy-vendors' ),
-			$item->get_name(),
-			self::shop_name( (int) $item->get_meta( Order_Split::VENDOR_META ) )
-		);
-		$body .= "\n\n" . sprintf(
-			/* translators: %s: account readings URL */
-			__( 'All your readings are kept in your account, ready to download any time: %s', 'hexxsy-vendors' ),
-			wc_get_account_endpoint_url( Customer::ENDPOINT )
-		);
-		$body .= "\n\n" . __( 'Readings are for entertainment purposes only.', 'hexxsy-vendors' );
-
-		wp_mail(
+		Emails::send(
+			'delivered',
 			$order->get_billing_email(),
-			/* translators: %s: reading name */
-			sprintf( __( 'Your Hexxsy reading is ready: %s', 'hexxsy-vendors' ), $item->get_name() ),
-			$body,
-			'',
+			array(
+				'name'     => $first ? $first : __( 'there', 'hexxsy-vendors' ),
+				'reading'  => $item->get_name(),
+				'reader'   => self::shop_name( (int) $item->get_meta( Order_Split::VENDOR_META ) ),
+				'link_url' => wc_get_account_endpoint_url( Customer::ENDPOINT ),
+			),
 			array( $path )
 		);
 

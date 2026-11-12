@@ -244,7 +244,7 @@ The customer-facing wording is in [REFUND_POLICY.md](REFUND_POLICY.md), and the 
 - **Exceptions after delivery** are made by hand with WooCommerce's Refund button on the order. The reader's share shrinks with the refund; if they were already paid, WooCommerce > Payouts lists what to take back.
 - **On the reading's page.** A short note above the button gives the cancellation window and links to the policy page. It's one of Hexx's lines.
 - **Shortcode.** [hexxsy_setting key="cancel_hours"], "late_refund_days" or "hold_days" prints the number, so the policy page never disagrees with the settings.
-- **Emails.** All of them are in WooCommerce > Hexx's lines, under "Late readings, cancellations and refunds".
+- **Emails.** Each is its own WooCommerce email (see Emails under Editable from the back end).
 
 Limits of the build:
 
@@ -265,7 +265,7 @@ Revoking closes a reader's room. It is no longer the same action as rejecting an
 - **Finishing.** A reader left to finish keeps the Reading orders tab and nothing else: no Readings I offer, no Shop profile, no new sales. They're listed on the Vendors page under "Revoked, finishing open orders", with a "Refund what is left" button. They're paid for what they deliver, as usual. Anything that runs late follows the late-reading rule. When the last order is delivered or refunded they move to Rejected on their own.
 - **Live calls** on open orders are refunded either way, since nobody can fulfil them.
 - **Seats.** A revoked reader frees their seat straight away, finishing or not.
-- **Email.** The reader gets one email saying the room is closed, and either that open orders were refunded or how many they still owe. Both are Hexx's lines.
+- **Email.** The reader gets one email saying the room is closed, and either that open orders were refunded or how many they still owe. Both messages are on the "Hexxsy: Room closed" email.
 - **Coming back.** Approving them again restores the tabs. Their readings stay paused until they resume them.
 - **Money already earned** is still paid (see Holding payment and payouts).
 
@@ -348,13 +348,40 @@ The admin can make new block patterns at any time in Appearance > Editor > Patte
 - Changed Nov 11, 2026 (plugin 0.9.1), after Rebecca found the first version unusable: it was one long list, and each box was empty with the wording shown only as grey hint text, so changing a word meant retyping the whole line. Now each box holds the line as it reads, ready to edit. Emptying a box and saving brings back the original. A changed line shows its original underneath. Saving one tab leaves the others alone.
 - On the site, a logged-in admin has "Hexx's lines" in the admin bar. It opens the tab for the page in view: the homepage, a reader's room, an offering, the Ledger or the application page.
 - Rebecca wants lines editable where they appear as well as here (Nov 11, 2026). Lines on block-editor pages already are. Lines inside the rooms list, a room and an offering page need those pages rebuilt as blocks (see Known, not built). The admin bar link is the stopgap.
-- Still one screen of the plugin's own. Not done: moving the emails to WooCommerce > Settings > Emails, where WooCommerce's own emails are edited.
+- The emails moved out of Hexx's lines on Nov 12, 2026 (see Emails below), which took 24 boxes and 2 tabs with them. What's left here is page wording only: Homepage rooms, The Ledger, Invitations, Reader rooms, Offering pages, Buying a reading.
+
+**Emails (built Nov 12, 2026, plugin 0.10.0, untested on a live site)**
+
+Rebecca asked for the emails to live where WordPress users expect them. Every email Hexxsy sends to a customer, a reader or someone on the waitlist is now a WooCommerce email, listed under WooCommerce > Settings > Emails with "Hexxsy:" in front of its name.
+
+| Email | Goes to | When |
+| --- | --- | --- |
+| Ledger: name signed | The person who signed | They sign the waitlist |
+| Reader invitation | The invited address | You invite someone |
+| Reader application approved | The applicant | You approve them |
+| Reader application not accepted | The applicant | You reject them |
+| Reading delivered | The customer | A written reading is delivered. The PDF is attached |
+| Reading due soon | The reader | Before a written reading is due |
+| Reading late (reader) | The reader | A written reading passes its due date |
+| Reading late (customer) | The customer | The same moment |
+| Reading cancelled and refunded | The customer | Any cancellation and refund. One box per reason |
+| Order cancelled (reader) | The reader | The same. One box per reason |
+| Room closed | The reader | You revoke them. A second message for when they still have orders to deliver |
+
+- Each has WooCommerce's usual screen: an on/off switch, subject, heading, message, and plain text or HTML. The boxes hold the wording as it reads now. Emptying the message and saving brings back the original.
+- They go out in WooCommerce's email design, so the header image, colours and footer text set at the top of WooCommerce > Settings > Emails apply to them. Before this they were plain text.
+- {braces} work as before, and each screen says which ones that email can use.
+- The approval, rejection and delivery emails were fixed text in the code until now. Their wording is unchanged, and is not yet in Hexx's voice.
+- Wording already changed in Hexx's lines is carried over to the new screens once, when the plugin updates.
+- Switching an email off stops it. Leave Reader invitation on: the link in it is the only way into the application.
+- Still in code: the 2 emails to the admin (a new application, and a refund the payment gateway refused).
+- WooCommerce shows "Customer" in the recipient column for all of them, including the ones that go to readers. Each email's description says who really gets it.
 - {placeholders} are filled in automatically, and {link}…{/link} marks the words that become a link.
 - [hexxsy_line key="…"] places any line on a page. [hexxsy_line key="ledger"] shows the "rooms open" or "every room taken" pair, whichever is true.
 - Lines in the theme (homepage hero, footer, 404) are edited in the Site Editor.
 - Added in 0.9.0: the labels on a reader's room and an offering's page. The shelves' words are on the shelf categories.
-- Added in 0.8.0: the note on a written reading's page, the live-calls-closed line, and every reminder, late, cancellation, refund and revoke email.
-- Still in code: reader dashboard text, button labels and notices in My readings, the application decision emails, the delivery email, and admin screens.
+- Added in 0.8.0: the note on a written reading's page and the live-calls-closed line.
+- Still in code: reader dashboard text, button labels and notices in My readings, and admin screens.
 
 **Rooms list (built Oct 31, 2026)**
 

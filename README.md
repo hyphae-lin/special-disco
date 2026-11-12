@@ -4,14 +4,15 @@ A multi-vendor marketplace for novelty tarot readings and divinations, built on 
 
 ## What's here
 
-`wp-content/plugins/hexxsy-vendors/` is the custom vendor plugin. Version 0.9.1 covers:
+`wp-content/plugins/hexxsy-vendors/` is the custom vendor plugin. Version 0.10.0 covers:
 
 - **Invitations and the Ledger.** Readers join by invitation. Put `[hexxsy_waitlist]` on the Ledger page so anyone can sign the waitlist, no account needed. On WooCommerce > Vendors, set Reader seats and choose the application, Ledger and code of conduct pages, then invite people from the waitlist or by email. Invites last 14 days and work once, for the account with that email.
 - **Rooms list.** `[hexxsy_rooms]` lists approved readers as numbered rooms. Readers add a portrait and door line in My Account > Shop profile. Empty rooms are hidden or shown unlit (WooCommerce > Vendors).
 - **Shelves.** Sittings, Letters, Papers and Wares are product categories the plugin makes once. Edit each one's name, Hexx's lines, button labels and "How it goes" steps in Products > Categories. Live calls file under Sittings and written readings under Letters by themselves.
 - **Reader rooms.** `[hexxsy_room]` is a reader's room: portrait, introduction, "How I read", Hexx's note and their stocked shelves. Put it on one page (the theme's "Reader room" pattern, Full width template) and choose that page as the Room page on WooCommerce > Vendors. Each room's address is that page plus the shop name, e.g. `/room/moth-candle/`. Hexx's note is on the reader's user profile in wp-admin.
 - **Offering page.** `[hexxsy_offering]` lays out every product page: where it sits, the reader's description, "Before you buy", "How it goes", and a price box with the questions and the button. The theme's product template holds it.
-- **Hexx's lines.** WooCommerce > Hexx's lines edits every line the plugin speaks, emails included, on a tab for each part of the site. Each box holds the line as it reads now; empty it and save to get the original back. On the site, "Hexx's lines" in the admin bar opens the tab for the page you're on. `[hexxsy_line key="…"]` places a line on a page.
+- **Hexx's lines.** WooCommerce > Hexx's lines edits every line the plugin speaks on the site's pages, on a tab for each part of the site. Each box holds the line as it reads now; empty it and save to get the original back. On the site, "Hexx's lines" in the admin bar opens the tab for the page you're on. `[hexxsy_line key="…"]` places a line on a page.
+- **Emails.** Every email to a customer, a reader or someone on the waitlist is a WooCommerce email. Find them under WooCommerce > Settings > Emails, each starting "Hexxsy:", with the usual on/off switch, subject, heading and message. They use WooCommerce's email design. Leave "Hexxsy: Reader invitation" switched on, since its link is the only way into the application.
 - **Vendor applications.** Put `[hexxsy_vendor_application]` on a page. It opens only for someone holding a valid invite, logged in with the invited email (WooCommerce's My Account page handles sign-up).
 - **Manual approval.** WooCommerce > Vendors lists applications. Approving grants the `hexxsy_vendor` role; both decisions email the applicant.
 - **Revoking a reader.** Revoke pauses their readings at once. If they have paid orders they haven't delivered, you choose: refund those orders now, or let the reader finish them. A reader finishing keeps only the Reading orders tab.

@@ -47,11 +47,15 @@ final class LinesRoomsTest extends TestCase {
 	}
 
 	public function test_a_line_left_as_the_original_is_not_stored(): void {
-		$same     = static fn( string $s ): string => $s;
-		$original = Lines::defaults()['ledger_email_body'][2];
-		// The box arrives prefilled, with the browser's \r\n line breaks.
-		$out = Lines::merge( array(), array( 'ledger_email_body' => str_replace( "\n", "\r\n", $original ), 'rooms_knock' => 'Knock' ), $same );
+		$same = static fn( string $s ): string => $s;
+		// The box arrives prefilled with the original wording.
+		$out = Lines::merge( array(), array( 'rooms_ledger' => Lines::defaults()['rooms_ledger'][2], 'rooms_knock' => 'Knock' ), $same );
 		$this->assertSame( array(), $out );
+	}
+
+	public function test_browser_line_breaks_are_stored_plainly(): void {
+		$same = static fn( string $s ): string => $s;
+		$this->assertSame( array( 'rooms_none' => "One.\nTwo." ), Lines::merge( array(), array( 'rooms_none' => "One.\r\nTwo." ), $same ) );
 	}
 
 	public function test_emptying_a_box_brings_back_the_original(): void {

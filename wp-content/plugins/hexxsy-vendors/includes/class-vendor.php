@@ -79,11 +79,7 @@ class Vendor {
 		update_user_meta( $user_id, self::STATUS_META, self::APPROVED );
 		$user->add_role( Roles::ROLE );
 
-		self::notify(
-			$user,
-			__( 'Your Hexxsy vendor application was approved', 'hexxsy-vendors' ),
-			__( 'Welcome to Hexxsy. Your vendor account is approved, and you can now set up your readings.', 'hexxsy-vendors' )
-		);
+		Emails::send( 'approved', $user->user_email, array( 'link_url' => wc_get_page_permalink( 'myaccount' ) ) );
 
 		do_action( 'hexxsy_vendor_approved', $user_id );
 	}
@@ -102,11 +98,7 @@ class Vendor {
 		update_user_meta( $user_id, self::STATUS_META, self::REJECTED );
 		$user->remove_role( Roles::ROLE );
 
-		self::notify(
-			$user,
-			__( 'About your Hexxsy vendor application', 'hexxsy-vendors' ),
-			__( 'Thank you for applying to sell on Hexxsy. We are not able to approve your application at this time.', 'hexxsy-vendors' )
-		);
+		Emails::send( 'rejected', $user->user_email );
 
 		do_action( 'hexxsy_vendor_rejected', $user_id );
 	}
@@ -143,18 +135,15 @@ class Vendor {
 		$left = count( Refunds::open_lines( $user_id ) );
 		update_user_meta( $user_id, self::STATUS_META, $left ? self::CLOSING : self::REJECTED );
 
-		wp_mail(
+		Emails::send(
+			'revoke',
 			$user->user_email,
-			Lines::text( 'revoke_subject' ),
-			$left
-				? Lines::text(
-					'revoke_finish_body',
-					array(
-						'count'    => (string) $left,
-						'link_url' => wc_get_account_endpoint_url( Dashboard::ORDERS ),
-					)
-				)
-				: Lines::text( 'revoke_body' )
+			array(
+				'count'    => (string) $left,
+				'link_url' => wc_get_account_endpoint_url( Dashboard::ORDERS ),
+			),
+			array(),
+			$left ? 'body_finish' : 'body'
 		);
 
 		do_action( 'hexxsy_vendor_rejected', $user_id );
@@ -169,16 +158,5 @@ class Vendor {
 		if ( $user_id && self::CLOSING === self::status( $user_id ) && ! Refunds::open_lines( $user_id ) ) {
 			update_user_meta( $user_id, self::STATUS_META, self::REJECTED );
 		}
-	}
-
-	/**
-	 * Email a vendor.
-	 *
-	 * @param \WP_User $user    Recipient.
-	 * @param string   $subject Subject.
-	 * @param string   $message Body.
-	 */
-	private static function notify( \WP_User $user, string $subject, string $message ): void {
-		wp_mail( $user->user_email, $subject, $message );
 	}
 }

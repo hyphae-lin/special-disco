@@ -278,15 +278,12 @@ class Ledger {
 		self::save_invites( $invites );
 
 		$link = add_query_arg( self::QUERY_ARG, rawurlencode( $token ), $apply );
-		wp_mail(
+		Emails::send(
+			'invite',
 			$email,
-			Lines::text( 'invite_subject' ),
-			Lines::text(
-				'invite_body',
-				array(
-					'link_url' => $link,
-					'days'     => (string) self::INVITE_DAYS,
-				)
+			array(
+				'link_url' => $link,
+				'days'     => (string) self::INVITE_DAYS,
 			)
 		);
 
@@ -518,7 +515,7 @@ class Ledger {
 				update_post_meta( $id, '_hexxsy_practice', isset( $_POST['hexxsy_ledger_practice'] ) ? sanitize_text_field( wp_unslash( $_POST['hexxsy_ledger_practice'] ) ) : '' );
 				update_post_meta( $id, '_hexxsy_note', isset( $_POST['hexxsy_ledger_note'] ) ? sanitize_textarea_field( wp_unslash( $_POST['hexxsy_ledger_note'] ) ) : '' );
 
-				wp_mail( $email, Lines::text( 'ledger_email_subject' ), Lines::text( 'ledger_email_body' ) );
+				Emails::send( 'ledger_signed', $email );
 				do_action( 'hexxsy_waitlist_signed', $id );
 			}
 		}

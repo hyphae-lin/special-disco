@@ -5,12 +5,13 @@
  * @package Hexxsy\Vendors
  */
 
-use Hexxsy\Vendors\Lines;
+use Hexxsy\Vendors\Emails;
 use Hexxsy\Vendors\Refunds;
 use Hexxsy\Vendors\Reminders;
 use PHPUnit\Framework\TestCase;
 
 require_once dirname( __DIR__ ) . '/includes/class-lines.php';
+require_once dirname( __DIR__ ) . '/includes/class-emails.php';
 require_once dirname( __DIR__ ) . '/includes/class-refunds.php';
 require_once dirname( __DIR__ ) . '/includes/class-reminders.php';
 
@@ -83,18 +84,17 @@ final class RefundsRemindersTest extends TestCase {
 		$this->assertSame( Reminders::NONE, Reminders::stage( 0, self::PAID, 1, 7, 5 ) );
 	}
 
-	public function test_every_reason_has_its_lines(): void {
-		$lines = Lines::defaults();
+	public function test_every_reason_has_its_wording(): void {
+		$emails = Emails::definitions();
 		foreach ( array( Refunds::WINDOW, Refunds::LATE, Refunds::AUTO, Refunds::REVOKED ) as $reason ) {
-			$this->assertArrayHasKey( 'refund_reason_' . $reason, $lines );
+			$this->assertNotSame( '', $emails['refund']['extra'][ 'reason_' . $reason ][1] ?? '' );
 		}
-		// A revoked reader gets the revoke email instead of a per-order one.
+		// A revoked reader gets the room-closed email instead of a per-order one.
 		foreach ( array( Refunds::WINDOW, Refunds::LATE, Refunds::AUTO ) as $reason ) {
-			$this->assertArrayHasKey( 'reader_reason_' . $reason, $lines );
+			$this->assertNotSame( '', $emails['reader_cancelled']['extra'][ 'reason_' . $reason ][1] ?? '' );
 		}
-		foreach ( array( 'due_soon', 'reader_late', 'customer_late', 'refund', 'reader_cancelled' ) as $email ) {
-			$this->assertArrayHasKey( $email . '_subject', $lines );
-			$this->assertArrayHasKey( $email . '_body', $lines );
+		foreach ( array( 'due_soon', 'reader_late', 'customer_late' ) as $id ) {
+			$this->assertArrayHasKey( $id, $emails );
 		}
 	}
 }

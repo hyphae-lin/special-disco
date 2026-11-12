@@ -346,9 +346,9 @@ class Refunds {
 	 */
 	private static function tell_customer( $order, $item, string $reason, float $amount ): void {
 		$vars           = self::line_vars( $order, $item );
-		$vars['reason'] = Lines::text( 'refund_reason_' . $reason, $vars );
+		$vars['reason'] = Emails::text( 'refund', 'reason_' . $reason, $vars );
 		$vars['amount'] = self::money( $amount, $order );
-		wp_mail( $order->get_billing_email(), Lines::text( 'refund_subject', $vars ), Lines::text( 'refund_body', $vars ) );
+		Emails::send( 'refund', $order->get_billing_email(), $vars );
 	}
 
 	/**
@@ -364,8 +364,8 @@ class Refunds {
 			return;
 		}
 		$vars           = self::line_vars( $order, $item );
-		$vars['reason'] = Lines::text( 'reader_reason_' . $reason, $vars );
-		wp_mail( $reader->user_email, Lines::text( 'reader_cancelled_subject', $vars ), Lines::text( 'reader_cancelled_body', $vars ) );
+		$vars['reason'] = Emails::text( 'reader_cancelled', 'reason_' . $reason, $vars );
+		Emails::send( 'reader_cancelled', $reader->user_email, $vars );
 	}
 
 	/**

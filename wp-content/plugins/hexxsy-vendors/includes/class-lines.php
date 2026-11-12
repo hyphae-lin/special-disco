@@ -51,12 +51,8 @@ class Lines {
 			'ledger_full_title'   => array( 'ledger', 'Every room taken, first line', 'Every chair is taken. Has been for a while.' ),
 			'ledger_full_body'    => array( 'ledger', 'Every room taken, second line', 'Leave your name anyway. I go through the list on Sundays.' ),
 			'ledger_thanks'       => array( 'ledger', 'After signing', 'Your name is in the ledger. I go through it on Sundays. If it fits, I\'ll find you.' ),
-			'ledger_email_subject' => array( 'ledger', 'Confirmation email, subject', 'Your name is in the ledger' ),
-			'ledger_email_body'   => array( 'ledger', 'Confirmation email, body', "You signed the reader ledger at Hexxsy. I go through it on Sundays, and if it fits, I'll write to you with an invitation.\n\nIf you didn't sign it, ignore this and nothing more will come.\n\nHexx" ),
 
 			// Invitations and the application.
-			'invite_subject'      => array( 'apply', 'Invite email, subject', 'A key to a room at Hexxsy' ),
-			'invite_body'         => array( 'apply', 'Invite email, body ({link_url} is the link, {days} how long it lasts)', "I've kept a room aside for you at Hexxsy.\n\nThis link opens the reader application. It works once, for an account with this email address, and it goes stale in {days} days:\n\n{link_url}\n\nIf you don't have an account yet, the page will show you where to make one.\n\nHexx" ),
 			'apply_invitation'    => array( 'apply', 'No invite ({link}…{/link} links to the Ledger)', 'Hexxsy readers join by invitation. If you read and want a room, {link}put your name in the ledger{/link}. I\'ll come find you if it fits.' ),
 			'apply_log_in'        => array( 'apply', 'Invite, not logged in ({email} is the invited address)', 'This invite is for {email}. {link}Log in or make an account{/link} with that email address, then come back to this page.' ),
 			'apply_wrong_email'   => array( 'apply', 'Invite, wrong account', 'This invite is for {email}, and you\'re logged in with a different email address. Log out and log in with that one, or ask me to send the invite somewhere else.' ),
@@ -99,29 +95,7 @@ class Lines {
 			'reading_policy'      => array( 'buying', 'Under a written reading\'s questions ({hours} is the cancellation window, {link}…{/link} links to the refund policy page)', 'Change your mind inside {hours} hours and you get your money back, so long as the reading hasn\'t reached you yet. If it comes late, you can cancel then too. {link}The whole policy{/link}.' ),
 			'live_closed'         => array( 'buying', 'On a live call\'s page while live calls are off', 'I\'m not booking calls yet. The written readings are open.' ),
 
-			// Late readings, cancellations and refunds.
-			'due_soon_subject'    => array( 'late', 'Reader reminder before the due date, subject ({due} is the date)', 'A reading is due {due}' ),
-			'due_soon_body'       => array( 'late', 'Reader reminder, body ({reading}, {order}, {due}, {link_url} is Reading orders)', "\"{reading}\" (order #{order}) is due {due}.\n\nWrite it and deliver it from Reading orders:\n{link_url}\n\nHexx" ),
-			'reader_late_subject' => array( 'late', 'Reader, reading is late, subject', 'A reading is late' ),
-			'reader_late_body'    => array( 'late', 'Reader, reading is late, body ({refund_date} is when it gets refunded)', "\"{reading}\" (order #{order}) was due {due} and hasn't been delivered.\n\nThe customer can cancel it for a full refund from now on. If it's still not delivered on {refund_date}, I refund it myself and you earn nothing on it.\n\nDeliver it here:\n{link_url}\n\nHexx" ),
-			'customer_late_subject' => array( 'late', 'Customer, reading is late, subject', 'Your reading is late' ),
-			'customer_late_body'  => array( 'late', 'Customer, reading is late, body ({name}, {reading}, {reader}, {due}, {refund_date}, {link_url} is My readings)', "{name},\n\nYour reading \"{reading}\" from {reader} was due {due}, and it hasn't come. I've told them so.\n\nYou can wait for it, or cancel for a full refund from My readings:\n{link_url}\n\nIf it still hasn't come on {refund_date}, I'll refund you without being asked.\n\nHexx" ),
-			'refund_subject'      => array( 'late', 'Customer, cancelled and refunded, subject', 'Your reading is cancelled and refunded' ),
-			'refund_body'         => array( 'late', 'Customer, cancelled and refunded, body ({reason} is one of the four lines below, {amount} the refund)', "{name},\n\n{reason}\n\n{amount} is on its way back to however you paid. Banks take a few days over it.\n\nHexx" ),
-			'refund_reason_window' => array( 'late', 'Customer reason: they cancelled in time', 'You cancelled "{reading}" from {reader}.' ),
-			'refund_reason_late'  => array( 'late', 'Customer reason: they cancelled a late reading', 'You cancelled "{reading}" from {reader} because it was late. Fair enough.' ),
-			'refund_reason_auto'  => array( 'late', 'Customer reason: late past the grace period', '"{reading}" from {reader} never came, so I\'ve cancelled it.' ),
-			'refund_reason_revoked' => array( 'late', 'Customer reason: the reader was revoked', '{reader} no longer reads at Hexxsy, so "{reading}" is cancelled.' ),
-			'reader_cancelled_subject' => array( 'late', 'Reader, an order was cancelled, subject', 'An order was cancelled' ),
-			'reader_cancelled_body' => array( 'late', 'Reader, an order was cancelled, body ({reason} is one of the three lines below)', "\"{reading}\" (order #{order}) was cancelled and refunded. {reason}\n\nThere's nothing to deliver, and nothing is owed on it.\n\nHexx" ),
-			'reader_reason_window' => array( 'late', 'Reader reason: customer cancelled in time ({hours})', 'The customer changed their mind inside the first {hours} hours.' ),
-			'reader_reason_late'  => array( 'late', 'Reader reason: customer cancelled a late reading', 'It was late, and the customer cancelled.' ),
-			'reader_reason_auto'  => array( 'late', 'Reader reason: late past the grace period ({days})', 'It was {days} days late.' ),
 
-			// Closing a reader's room.
-			'revoke_subject'      => array( 'revoke', 'Reader revoked, subject', 'Your room at Hexxsy is closed' ),
-			'revoke_body'         => array( 'revoke', 'Reader revoked, nothing left to deliver', "Your room at Hexxsy is closed, and your readings are off sale.\n\nAny orders you hadn't delivered have been refunded to the customers. Whatever you'd already earned will still be paid.\n\nHexx" ),
-			'revoke_finish_body'  => array( 'revoke', 'Reader revoked, orders still to deliver ({count} is how many, {link_url} is Reading orders)', "Your room at Hexxsy is closed, and your readings are off sale.\n\nCustomers have paid for readings you haven't delivered yet: {count}, by my count. Deliver them from Reading orders and you'll be paid for them as usual:\n{link_url}\n\nAnything that runs late gets refunded.\n\nHexx" ),
 		);
 	}
 
@@ -138,8 +112,6 @@ class Lines {
 			'room'     => __( 'Reader rooms', 'hexxsy-vendors' ),
 			'offering' => __( 'Offering pages', 'hexxsy-vendors' ),
 			'buying'   => __( 'Buying a reading', 'hexxsy-vendors' ),
-			'late'   => __( 'Late and refund emails', 'hexxsy-vendors' ),
-			'revoke' => __( 'Closing a room', 'hexxsy-vendors' ),
 		);
 	}
 
@@ -369,6 +341,15 @@ class Lines {
 					<a class="nav-tab <?php echo $group === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'tab', $group, $base ) ); ?>" <?php echo $group === $tab ? 'aria-current="page"' : ''; ?>><?php echo esc_html( $heading ); ?></a>
 				<?php endforeach; ?>
 			</nav>
+			<p>
+				<?php
+				printf(
+					/* translators: %s: link to WooCommerce's email settings */
+					esc_html__( 'Emails are not here. Each has its own screen under %s.', 'hexxsy-vendors' ),
+					'<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=email' ) ) . '">' . esc_html__( 'WooCommerce > Settings > Emails', 'hexxsy-vendors' ) . '</a>'
+				);
+				?>
+			</p>
 			<p><?php esc_html_e( 'Edit a line and save. Words in {braces} are filled in for you, so keep them as they are. {link} and {/link} go around the words that become a link. To go back to the original wording, empty the box and save.', 'hexxsy-vendors' ); ?></p>
 			<form method="post" action="options.php">
 				<?php settings_fields( self::PAGE ); ?>

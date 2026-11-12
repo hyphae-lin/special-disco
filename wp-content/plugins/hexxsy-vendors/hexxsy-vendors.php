@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Hexxsy Vendors
  * Description:       Multi-vendor marketplace for readings on Hexxsy: invitations, the reader waitlist, the rooms list, reader rooms, shelves, the offering page, Hexx's lines, vendor applications and approval, reading offerings, intake questions, commission tracking, the welcome offer, the payout ledger, late-reading reminders, cancellations and refunds.
- * Version:           0.9.1
+ * Version:           0.10.0
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Requires Plugins:  woocommerce
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'HEXXSY_VENDORS_VERSION', '0.9.1' );
+define( 'HEXXSY_VENDORS_VERSION', '0.10.0' );
 define( 'HEXXSY_VENDORS_FILE', __FILE__ );
 define( 'HEXXSY_VENDORS_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -22,6 +22,7 @@ require_once HEXXSY_VENDORS_DIR . 'includes/class-commission.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-vendor.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-roles.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-lines.php';
+require_once HEXXSY_VENDORS_DIR . 'includes/class-emails.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-ledger.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-rooms.php';
 require_once HEXXSY_VENDORS_DIR . 'includes/class-shelves.php';
@@ -59,6 +60,7 @@ add_action(
 		}
 
 		Hexxsy\Vendors\Lines::init();
+		Hexxsy\Vendors\Emails::init();
 		Hexxsy\Vendors\Ledger::init();
 		Hexxsy\Vendors\Rooms::init();
 		Hexxsy\Vendors\Shelves::init();

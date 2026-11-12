@@ -115,12 +115,12 @@ class Reminders {
 	}
 
 	/**
-	 * Send one of Hexx's emails about an order line.
+	 * Send one of Hexxsy's emails about an order line.
 	 *
 	 * @param \WC_Order      $order     Order.
 	 * @param \WC_Order_Item $item      Order line.
 	 * @param bool           $to_reader To the reader, rather than the customer.
-	 * @param string         $line      Line key, without _subject or _body.
+	 * @param string         $line      Email id.
 	 */
 	private static function send( $order, $item, bool $to_reader, string $line ): void {
 		$vars = Refunds::line_vars( $order, $item );
@@ -135,6 +135,6 @@ class Reminders {
 			$to               = $order->get_billing_email();
 			$vars['link_url'] = wc_get_account_endpoint_url( Customer::ENDPOINT );
 		}
-		wp_mail( $to, Lines::text( $line . '_subject', $vars ), Lines::text( $line . '_body', $vars ) );
+		Emails::send( $line, $to, $vars );
 	}
 }
